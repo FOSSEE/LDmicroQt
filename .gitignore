@@ -1,0 +1,11 @@
+# exclude all files in build folder
+/.vscode
+/ldmicro/build/*
+/ldmicro/obj/*
+!/ldmicro/obj/dummy
+/ldmicro/testMain.cpp
+/ldmicro/reg/results/*
+/ldmicro/includes/testMain.h
+/ldmicro/includes/ldlogo.h
+LDMicro-linux-Workspace.code-workspace
+ldmicro/reg/t.pl
