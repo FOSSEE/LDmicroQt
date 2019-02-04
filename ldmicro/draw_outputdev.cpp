@@ -403,6 +403,7 @@ static void SetSyntaxHighlightingColours(void)
 //-----------------------------------------------------------------------------
 void InitForDrawing(void)
 {
+    DrawWindow = new QWidget;
     SetSyntaxHighlightingColours();
 
     FixedWidthFont = CreateFont(

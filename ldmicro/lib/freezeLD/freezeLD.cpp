@@ -137,7 +137,7 @@ static void Clamp(LONG *v, LONG min, LONG max)
  */
 void ThawWindowPosF(HWID hwid, char *subKey, char *name)
 {
-    /*char* Ld_CWD = (char *)malloc(MAX_PATH);
+    char* Ld_CWD = (char *)malloc(MAX_PATH);
     getcwd(Ld_CWD, MAX_PATH);
     
     if (!Ld_CWD)
@@ -191,7 +191,10 @@ void ThawWindowPosF(HWID hwid, char *subKey, char *name)
     Register.read((char*) &newKey2, sizeof(newKey2));
     Register.close();
     if (newKey1.type == 'i' && newKey2.type == 'i')
-        gtk_window_resize(GTK_WINDOW(hwid), newKey1.val.i, newKey2.val.i);
+        {
+            QSize MwSize(newKey1.val.i,newKey2.val.i);
+            hwid->resize(MwSize);
+        }
 
 
     /// set position
@@ -217,7 +220,7 @@ void ThawWindowPosF(HWID hwid, char *subKey, char *name)
     Register.read((char*) &newKey2, sizeof(newKey2));
     Register.close();
     if (newKey1.type == 'i' && newKey2.type == 'i')
-        gtk_window_move(GTK_WINDOW(hwid), newKey1.val.i, newKey2.val.i);
+        hwid->move(newKey1.val.i, newKey2.val.i);
 
 
     sprintf(keyName, "%s_maximized", name);
@@ -232,14 +235,14 @@ void ThawWindowPosF(HWID hwid, char *subKey, char *name)
     Register.close();
     if  (newKey1.type == 'b')
         if (newKey1.val.b)
-            gtk_window_maximize(GTK_WINDOW(hwid));
+            hwid->showMaximized();
 
 
     /// gtk_window_move handles off-screen window placement
 
     free(keyName);
     chdir(Ld_CWD);
-    free(Ld_CWD);*/
+    free(Ld_CWD);
 }
 
 /*

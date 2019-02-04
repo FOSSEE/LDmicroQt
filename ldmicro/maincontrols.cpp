@@ -546,13 +546,12 @@ void MakeMainWindowControls(void)
     /*QList<QTreeWidgetItem *> items;
     items.append(new QTreeWidgetItem(QStringList(QString("Item1"))));
     IoList->insertTopLevelItems(0, items);*/
-    DrawWindow = new QWidget;
     DrawWindow->setAutoFillBackground(true);
     QSize DWSize;
 
     DWSize.setHeight(MainWindow->height() - IoListHeight);
     DWSize.setWidth(MainWindow->width());
-    // DrawWindow->setMinimumHeight(100);
+    DrawWindow->setMinimumHeight(100);
     splitter->addWidget(DrawWindow);
     DrawWindow->resize(DWSize);
     /*QPalette pal = QPalette();
@@ -1007,7 +1006,7 @@ void SetUndoEnabled(BOOL undoEnabled, BOOL redoEnabled)
     UpdateMainWindowTitleBar();
     RefreshControlsToSettings();
 }
-
+*/
 //-----------------------------------------------------------------------------
 // Cause the status bar and the list view to be in sync with the actual data
 // structures describing the settings and the I/O configuration. Listview
@@ -1016,7 +1015,7 @@ void SetUndoEnabled(BOOL undoEnabled, BOOL redoEnabled)
 //-----------------------------------------------------------------------------
 void RefreshControlsToSettings(void)
 {
-    GtkTreeIter iter;
+    /*GtkTreeIter iter;
     BOOL path_not_empty = gtk_tree_model_get_iter_first (GTK_TREE_MODEL(IoList), &iter);
     // g_print("path e = %i\n", path_not_empty);
     
@@ -1067,23 +1066,16 @@ void RefreshControlsToSettings(void)
     }
 
     IoListOutOfSync = FALSE;
-
+*/
     if(Prog.mcu) {
-        gtk_statusbar_push (GTK_STATUSBAR (StatusBar[0]),
-                        gtk_statusbar_get_context_id (GTK_STATUSBAR (StatusBar[0]), "MCU Name"), 
-                        (gchar*)Prog.mcu->mcuName);
+        StatusBar[0]->setText(Prog.mcu->mcuName);
     } 
     else {
-        gtk_statusbar_push (GTK_STATUSBAR (StatusBar[0]),
-                        gtk_statusbar_get_context_id (GTK_STATUSBAR (StatusBar[0]), "MCU Name"), 
-                        "no MCU selected");
+        StatusBar[0]->setText("no MCU selected");
     }
     char buf[256];
     sprintf(buf, _("cycle time %.2f ms"), (double)Prog.cycleTime/1000.0);
-
-    gtk_statusbar_push (GTK_STATUSBAR (StatusBar[1]),
-                        gtk_statusbar_get_context_id (GTK_STATUSBAR (StatusBar[1]), "Cycle time"), 
-                        buf);
+    StatusBar[1]->setText(buf);
 
     if(Prog.mcu && (Prog.mcu->whichIsa == ISA_ANSIC ||
         Prog.mcu->whichIsa == ISA_INTERPRETED))
@@ -1093,11 +1085,9 @@ void RefreshControlsToSettings(void)
         sprintf(buf, _("processor clock %.4f MHz"),
             (double)Prog.mcuClock/1000000.0);
     }
-    gtk_statusbar_push (GTK_STATUSBAR (StatusBar[2]),
-                        gtk_statusbar_get_context_id (GTK_STATUSBAR (StatusBar[2]), "Processor time"), 
-                        buf);
+    StatusBar[2]->setText(buf);
 
-
+/*
     for(i = 0; i < NUM_SUPPORTED_MCUS; i++) {
         if(&SupportedMcus[i] == Prog.mcu) {
             CheckMenuItem(ProcessorMenu, ProcessorMenuItems[i], MF_CHECKED);
@@ -1112,7 +1102,7 @@ void RefreshControlsToSettings(void)
     }
     else {
         CheckMenuItem(ProcessorMenu, ProcessorMenuItems[NUM_SUPPORTED_MCUS], MF_UNCHECKED);
-    }
+    }*/
 }
 
 //-----------------------------------------------------------------------------
@@ -1121,7 +1111,7 @@ void RefreshControlsToSettings(void)
 //-----------------------------------------------------------------------------
 void GenerateIoListDontLoseSelection(void)
 {
-    GtkTreeIter iter;
+    /*GtkTreeIter iter;
     BOOL path_not_empty = gtk_tree_model_get_iter_first (GTK_TREE_MODEL(IoList), &iter);
     // g_print("path e = %i\n", path_not_empty);
 
@@ -1140,7 +1130,7 @@ void GenerateIoListDontLoseSelection(void)
         path = gtk_tree_model_get_path ( IoModelPtr , &iter ) ;
         i = gtk_tree_path_get_indices ( path ) ;
         IoListSelectionPoint = i[0];
-    }
+    }*/
     // gtk_tree_model_iter_next (GTK_TREE_MODEL(IoList), iter);
     //     BOOL iter_v = gtk_list_store_iter_is_valid(GTK_LIST_STORE(IoList), iter);
     //     g_print("iter = %i\n", iter_v);
@@ -1152,14 +1142,14 @@ void GenerateIoListDontLoseSelection(void)
     //     return i [ 0 ] ;
     // }
 
-    IoListSelectionPoint = GenerateIoList(IoListSelectionPoint);
+    /*IoListSelectionPoint = GenerateIoList(IoListSelectionPoint);
     
     // can't just update the listview index; if I/O has been added then the
     // new selection point might be out of range till we refill it
-    IoListOutOfSync = TRUE;
+    IoListOutOfSync = TRUE;*/
     RefreshControlsToSettings();
 }
-*/
+
 //-----------------------------------------------------------------------------
 // Called when the main window has been resized. Adjust the size of the
 // status bar and the listview to reflect the new window size.

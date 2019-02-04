@@ -1271,11 +1271,25 @@ int main(int argc, char** argv)
     //Icon for main window
     MainWindow->setWindowIcon(*MWIcon);
     MakeMainWindowMenus();
+    MakeDialogBoxClass();
     InitForDrawing();
+
+    ThawWindowPos(MainWindow);
+    IoListHeight = 100;
+    ThawDWORD(IoListHeight);
+    
     MakeMainWindowControls();
-    MainWindow->show();
     MainWindowResized();
+
     MenuHandler();
+    
+    NewProgram();
+    strcpy(CurrentSaveFile, "");
+
+    MainWindow->show();
+    
+    GenerateIoListDontLoseSelection(); 
+    
     // MakeDialogBoxClass();
 
 

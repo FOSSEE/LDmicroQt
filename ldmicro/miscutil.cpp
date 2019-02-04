@@ -305,7 +305,7 @@ void FixedFont(HWID h)
 
   //  SendMessage(h, WM_SETFONT, (WPARAM)MyFixedFont, TRUE);
 }
-
+*/
 //-----------------------------------------------------------------------------
 // Create our dialog box class, used for most of the popup dialogs.
 //-----------------------------------------------------------------------------
@@ -339,7 +339,7 @@ void MakeDialogBoxClass(void)
 
     // if(!MyFixedFont)
     //     MyFixedFont = (HFONT)GetStockObject(SYSTEM_FONT);
-}*/
+}
 
 //-----------------------------------------------------------------------------
 // Map an I/O type to a string describing it. Used both in the on-screen
