@@ -1156,7 +1156,7 @@ void GenerateIoListDontLoseSelection(void)
 //-----------------------------------------------------------------------------
 void MainWindowResized(void)
 {
-    PaintWindow();
+    //PaintWindow();
     /*RECT main;
     //GetClientRect(DrawWindow, &main);
 

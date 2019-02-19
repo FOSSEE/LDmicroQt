@@ -134,14 +134,14 @@ BOOL BlinkCursor(BOOL kill = FALSE)
 
     return !kill;
 }
-
+*/
 //-----------------------------------------------------------------------------
 // Output a string to the screen at a particular location, in character-
 // sized units.
 //-----------------------------------------------------------------------------
 static void DrawCharsToScreen(HCRDC Hcr, int cx, int cy, const char *str)
 {
-    cy -= ScrollYOffset*POS_HEIGHT;
+    /*cy -= ScrollYOffset*POS_HEIGHT;
     if(cy < -2) return;
     if(cy*FONT_HEIGHT + Y_PADDING > IoListTop) return;
 
@@ -211,9 +211,10 @@ static void DrawCharsToScreen(HCRDC Hcr, int cx, int cy, const char *str)
         }
 
         firstTime = FALSE;
-    }
+    }*/
+    printf("DrawCharsToScreen\n");
 }
-*/
+
 //-----------------------------------------------------------------------------
 // Total number of columns that we can display in the given amount of 
 // window area. Need to leave some slop on the right for the scrollbar, of
@@ -225,7 +226,7 @@ int ScreenColsAvailable(void)
 
     return (rw - (X_PADDING + X_RIGHT_PADDING)) / (POS_WIDTH*FONT_WIDTH);
 }
-/*
+
 //-----------------------------------------------------------------------------
 // Total number of columns that we can display in the given amount of 
 // window area. Need to leave some slop on the right for the scrollbar, of
@@ -242,29 +243,53 @@ int ScreenRowsAvailable(void)
     }
     return (IoListTop - Y_PADDING - adj) / (POS_HEIGHT*FONT_HEIGHT);
 }
-*/
+
 //-----------------------------------------------------------------------------
 // Paint the ladder logic program to the screen. Also figure out where the
 // cursor should go and fill in coordinates for BlinkCursor. Not allowed to
 // draw deeper than IoListTop, as we would run in to the I/O listbox.
 //-----------------------------------------------------------------------------
-void PaintWindow()
+void PaintWidget::paintEvent(QPaintEvent *event)
 {
+    QPainter painter(this);
+    painter.setClipping(true);
+    QPalette pal = DrawWindow->palette();
+    HCRDC Hcr = &pal;
+    //a simple line
+/*    painter.drawLine(1,1,100,100);
+ 
+    //create a black pen that has solid line
+    //and the width is 2.
+    QPen myPen(Qt::blue, 2, Qt::SolidLine);
+    painter.setPen(myPen);
+    painter.drawLine(100,100,100,1);
+ 
+    //draw a point
+    myPen.setColor(Qt::red);
+    painter.setPen(myPen);
+    painter.drawPoint(110,110);
+ 
+    //draw a polygon
+    QPolygon polygon;
+    polygon << QPoint(130, 140) << QPoint(180, 170)
+            << QPoint(180, 140) << QPoint(220, 110)
+            << QPoint(140, 100);
+    painter.drawPolygon(polygon);
+ 
+     //draw an ellipse
+     //The setRenderHint() call enables antialiasing, telling QPainter to use different
+     //color intensities on the edges to reduce the visual distortion that normally
+     //occurs when the edges of a shape are converted into pixels
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setPen(QPen(Qt::blue, 3, Qt::DashDotLine, Qt::RoundCap));
+    painter.setBrush(QBrush(Qt::green, Qt::SolidPattern));
+    painter.drawEllipse(200, 80, 400, 240);
+*/
+
     ok();
-    // DrawWindow->setStyleSheet("background-color:black;");
-
-    static QPalette pal = QPalette(InSimulationMode ?
-        SimBgBrush->rgb() : BgBrush->rgb());
-    DrawWindow->setPalette(pal);
-
-    /// now figure out how we should draw the ladder logic
-    ColsAvailable = ProgCountWidestRow();
-    if(ColsAvailable < ScreenColsAvailable()) {
-        ColsAvailable = ScreenColsAvailable();
-    }
    
-    /*int bw =  gtk_widget_get_allocated_width (DrawWindow);// = r.right;
-    int bh = IoListTop;
+    int bw = this->width();// = r.right;
+    int bh = this->height();
     
     /// now figure out how we should draw the ladder logic
     ColsAvailable = ProgCountWidestRow();
@@ -280,6 +305,7 @@ void PaintWindow()
     int i;
     int cy = 0;
     int rowsAvailable = ScreenRowsAvailable();
+
     for(i = 0; i < Prog.numRungs; i++) {
         int thisHeight = POS_HEIGHT*CountHeightOfElement(ELEM_SERIES_SUBCKT,
             Prog.rungs[i]);
@@ -295,7 +321,7 @@ void PaintWindow()
                 HighlightColours.bg);
             SetTextColor(Hcr, InSimulationMode ? HighlightColours.simRungNum :
                 HighlightColours.rungNum);
-            SelectObject(Hcr, FixedWidthFont);
+            SelectObject(painter, FixedWidthFont);
             int rung = i + 1;
             int y = Y_PADDING + FONT_HEIGHT*cy;
             int yp = y + FONT_HEIGHT*(POS_HEIGHT/2) - 
@@ -311,13 +337,13 @@ void PaintWindow()
 
             int cx = 0;
             DrawElement(Hcr, ELEM_SERIES_SUBCKT, Prog.rungs[i], &cx, &cy, 
-                Prog.rungPowered[i]); 
+                Prog.rungPowered[i]);
         }
 
         cy += thisHeight;
         cy += POS_HEIGHT;
     }
-    cy -= 2;
+    /*cy -= 2;
     DrawEndRung(Hcr, 0, cy);
     
     if(SelectedGxAfterNextPaint >= 0) {
@@ -360,8 +386,8 @@ void PaintWindow()
     } else {
         SetTimer(DrawWindow, TIMER_BLINK_CURSOR, 200, BlinkCursor);
     }
-
-    ok();*/
+*/
+    ok();
 }
 
 //-----------------------------------------------------------------------------
@@ -403,7 +429,7 @@ static void SetSyntaxHighlightingColours(void)
 //-----------------------------------------------------------------------------
 void InitForDrawing(void)
 {
-    DrawWindow = new QWidget;
+    DrawWindow = new PaintWidget();
     SetSyntaxHighlightingColours();
 
     FixedWidthFont = CreateFont(

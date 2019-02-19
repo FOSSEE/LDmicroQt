@@ -9,6 +9,8 @@
 #include <QMenuBar>
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QPainter>
+// #include <QtGui>
 // #include <QSize>
 // #include "freezeLD.h"
 // #include "linuxLD.h"
@@ -186,7 +188,7 @@ void CheckMenuItem(
 HANDLE GetStockObject(int fnObject);
 
 void SelectObject(
-    HCRDC hcr, 
+    QPainter* hcr, 
     HFONT hfont);
 
 HBRUSH CreateBrushIndirect(PLOGBRUSH plb);
@@ -265,6 +267,17 @@ BOOL KillTimer(
 
 void DestroyWindow (HWID widget);
 
-
+class PaintWidget : public QWidget
+{
+    Q_OBJECT
+public:
+ //  MyWidget();
+ 
+protected:
+    void paintEvent(QPaintEvent *event);
+signals:
+ 
+public slots:
+};
 
 #endif

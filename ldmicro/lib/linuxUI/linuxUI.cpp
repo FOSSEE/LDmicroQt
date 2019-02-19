@@ -284,26 +284,15 @@ HANDLE GetStockObject(int fnObject)
     }
 }
 
-void SelectObject(HCRDC hcr, HFONT hfont)
+void SelectObject(QPainter* hcr, HFONT hfont)
 {
     if (hcr ==NULL)
         return;
-    
-    cairo_select_font_face(hcr, hfont->lpszFace,
-        hfont->fdwItalic ? CAIRO_FONT_SLANT_ITALIC : CAIRO_FONT_SLANT_NORMAL,
-        hfont->fnWeight == FW_BOLD ? CAIRO_FONT_WEIGHT_BOLD : CAIRO_FONT_WEIGHT_NORMAL);
-
-    cairo_rotate(hcr, hfont->nOrientation);
-    // cairo_text_extents_t extents;
-    // cairo_text_extents (hcr, "Z", &extents);
-    // cairo_matrix_t matrix;
-    // cairo_matrix_init_scale (&matrix,
-    //                 (double)hfont->nWidth,
-    //                 (double)hfont->nHeight);
- 
-    // cairo_set_font_matrix (hcr, &matrix);
-
-    cairo_set_font_size(hcr, 10);
+    QFont qtfont(hfont->lpszFace);
+    qtfont.setPointSize(hfont->nHeight);
+    qtfont.setStyle(hfont->fdwItalic ? QFont::StyleItalic : QFont::StyleNormal);
+    qtfont.setWeight(hfont->fnWeight == FW_BOLD ? QFont::Bold : QFont::Normal);
+    hcr->setFont();
 }
 
 HBRUSH CreateBrushIndirect(PLOGBRUSH plb)
@@ -334,28 +323,8 @@ HFONT CreateFont(int nHeight, int nWidth, int nOrientation, int fnWeight,
 
 void SetBkColor(HWID widget, HCRDC hcr, COLORREF bkCol)
 {
-/*    if (hcr == NULL)
-        return;
-    
-    gtk_widget_override_background_color(GTK_WIDGET(widget), 
-                        GTK_STATE_FLAG_NORMAL, &bkCol);
-
-    gint width = gtk_widget_get_allocated_width (widget);
-    gint height = gtk_widget_get_allocated_height (widget);
-
-    // COLORREF col;
-    // GtkStyleContext *context;
-
-    // context = gtk_widget_get_style_context (widget);
-
-    // gtk_style_context_get_color (context,
-    //                     gtk_style_context_get_state (context),
-    //                     &col);
-    gdk_cairo_set_source_rgba (hcr, &bkCol);
-    // cairo_rectangle(hcr, 0, 0, width, height);
-    // cairo_stroke_preserve(hcr);
-
-    cairo_fill (hcr);*/
+    hcr->setColor(QPalette::Background, bkCol);
+    widget->setPalette(*hcr);
 }
 
 void SetTextColor(HCRDC hcr, COLORREF color)
@@ -540,3 +509,5 @@ void DestroyWindow (HWID widget)
         gtk_widget_destroy (widget);
     }*/
 }
+
+

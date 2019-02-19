@@ -711,7 +711,7 @@ void AddFormattedString(void);
 void DeleteSelectedFromProgram(void);
 void DeleteSelectedRung(void);
 void InsertRung(BOOL afterCursor);
-int RungContainingSelected(void);
+int  RungContainingSelected(void);
 BOOL ItemIsLastInCircuit(ElemLeaf *item);
 BOOL UartFunctionUsed(void);
 BOOL PwmFunctionUsed(void);
@@ -734,7 +734,7 @@ BOOL LoadProjectFromFile(char *filename);
 BOOL SaveProjectToFile(char *filename);
 
 // iolist.cpp
-int GenerateIoList(int prevSel);
+int  GenerateIoList(int prevSel);
 void SaveIoListToFile(FILE *f);
 BOOL LoadIoListFromFile(FILE *f);
 void ShowIoDialog(int item);
@@ -749,7 +749,7 @@ void ShowContactsDialog(BOOL *negated, char *name);
 void ShowCoilDialog(BOOL *negated, BOOL *setOnly, BOOL *resetOnly, char *name);
 
 //naminglist.cpp
-void   MakeSmplDialogClass(void);
+void MakeSmplDialogClass(void);
 
 // simpledialog.cpp
 void ShowTimerDialog(int which, int *delay, char *name);

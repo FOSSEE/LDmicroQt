@@ -70,18 +70,19 @@ typedef PVOID HANDLE;
 typedef HANDLE HINSTANCE;
 typedef HANDLE HGDIOBJ;
 
-typedef cairo_t *HCRDC;
-typedef QWidget* HWID;
-typedef QWidget* HWND;
-typedef QTreeWidget *HLIST;
-typedef GtkTreeIter ITLIST;
-typedef GtkApplication *HAPP;
-typedef GtkTreeViewColumn *HTVC;
-typedef GdkPixbuf *HICON;
-typedef GdkRectangle GDRECT;
-typedef GDRECT *PGDRECT;
-typedef QMenu* HMENU;
-typedef ITLIST *HITLIST;
+typedef GtkApplication*     HAPP;
+typedef GtkTreeViewColumn*  HTVC;
+typedef GdkRectangle*   GDRECT;
+typedef QTreeWidget*    HLIST;
+typedef GtkTreeIter     ITLIST;
+typedef GDRECT*     PGDRECT;
+typedef QMenu*      HMENU;
+typedef ITLIST*     HITLIST;
+typedef QPalette*   HCRDC;
+typedef QWidget*    HWID;
+typedef QWidget*    HWND;
+typedef GdkPixbuf*  HICON;
+
 
 /// Check if system is x64 or x86
 #if defined(__UNIX64)

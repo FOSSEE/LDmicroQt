@@ -180,7 +180,7 @@ static int CountWidthOfElement(int which, void *elem, int soFar)
             oops();
     }
 }
-/*
+
 //-----------------------------------------------------------------------------
 // Determine the height, in leaf element units, of a particular subcircuit.
 // The height of a leaf is 1, the height of a parallel circuit is the sum of
@@ -225,7 +225,7 @@ int CountHeightOfElement(int which, void *elem)
             oops();
     }
 }
-*/
+
 //-----------------------------------------------------------------------------
 // Determine the width, in leaf element units, of the widest row of the PLC
 // program (i.e. loop over all the rungs and find the widest).
@@ -915,7 +915,7 @@ cmp:
 
     return poweredAfter;
 }
-
+*/
 //-----------------------------------------------------------------------------
 // Draw a particular subcircuit with its top left corner at *cx and *cy (in
 // characters). If it is a leaf element then just print it and return; else
@@ -934,7 +934,7 @@ BOOL DrawElement(HCRDC Hcr, int which, void *elem, int *cx, int *cy, BOOL powere
     ElemLeaf *leaf = (ElemLeaf *)elem;
     SetBkColor(DrawWindow,Hcr, InSimulationMode ? HighlightColours.simBg :
         HighlightColours.bg);
-    NormText(Hcr);
+    /*NormText(Hcr);
 
     if(elem == Selected && !InSimulationMode) {
         EmphText(Hcr);
@@ -1044,7 +1044,7 @@ BOOL DrawElement(HCRDC Hcr, int which, void *elem, int *cx, int *cy, BOOL powere
     }
 
 
-    NormText(Hcr);
+    NormText(Hcr);*/
     return poweredAfter;
 }
 
@@ -1067,4 +1067,3 @@ void DrawEndRung(HCRDC Hcr, int cx, int cy)
         DrawChars(Hcr, cx + i, cy + (POS_HEIGHT/2), "-");
     }
 }
-*/
