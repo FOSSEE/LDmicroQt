@@ -710,7 +710,7 @@ void MakeMainWindowControls(void)
     /// Adding box to Main Window
     gtk_container_add(GTK_CONTAINER(MainWindow), PackBoxMenu);*/
 }
-/*
+
 //-----------------------------------------------------------------------------
 // Adjust the size and visibility of the scrollbars as necessary, either due
 // to a change in the size of the program or a change in the size of the
@@ -718,8 +718,8 @@ void MakeMainWindowControls(void)
 //-----------------------------------------------------------------------------
 void RefreshScrollbars(void)
 {
-    SCROLLINFO vert, horiz;
-    SetUpScrollbars(&NeedHoriz, &horiz, &vert);
+    // SCROLLINFO vert, horiz;
+    // SetUpScrollbars(&NeedHoriz, &horiz, &vert);
 
     // SetScrollInfo(HorizScrollBar, SB_CTL, &horiz, TRUE);
     // SetScrollInfo(VertScrollBar, SB_CTL, &vert, TRUE);
@@ -741,9 +741,9 @@ void RefreshScrollbars(void)
     // MoveWindow(VertScrollBar, main.right - ScrollWidth - 2, 1, ScrollWidth,
     //     NeedHoriz ? (IoListTop - ScrollHeight - 4) : (IoListTop - 3), TRUE);
 
-    InvalidateRect(DrawWindow, NULL, FALSE);
+    // InvalidateRect(DrawWindow, NULL, FALSE);
 }
-
+/*
 //-----------------------------------------------------------------------------
 // Respond to a WM_VSCROLL sent to the main window, presumably by the one and
 // only vertical scrollbar that it has as a child.
@@ -866,7 +866,7 @@ void UpdateMainWindowTitleBar(void)
     
   gtk_window_set_title (GTK_WINDOW (MainWindow), line);
 }
-
+*/
 //-----------------------------------------------------------------------------
 // Set the enabled state of the logic menu items to reflect where we are on
 // the schematic (e.g. can't insert two coils in series).
@@ -935,7 +935,7 @@ void SetMenusEnabled(BOOL canNegate, BOOL canNormal, BOOL canResetOnly,
     EnableMenuItem(InstructionMenu, InsertUartSendMenu, t);
     EnableMenuItem(InstructionMenu, InsertUartRecvMenu, t);
     EnableMenuItem(InstructionMenu, InsertFmtdStrMenu, t);
-}*/
+}
 
 //-----------------------------------------------------------------------------
 // Set the enabled state of the undo/redo menus.
@@ -950,7 +950,7 @@ void SetUndoEnabled(BOOL undoEnabled, BOOL redoEnabled)
 // Toggle whether we are in simulation mode. A lot of options are only
 // available in one mode or the other.
 //-----------------------------------------------------------------------------
-/*void ToggleSimulationMode(void)
+void ToggleSimulationMode(void)
 {
     InSimulationMode = !InSimulationMode;
     if(InSimulationMode) {
@@ -973,13 +973,13 @@ void SetUndoEnabled(BOOL undoEnabled, BOOL redoEnabled)
         ClearSimulationData(); // simulation.cpp, ldmicro.h
         // Recheck InSimulationMode, because there could have been a Compile
         // error, which would have kicked us out of simulation mode.
-        if(UartFunctionUsed() && InSimulationMode) {
+        /*if(UartFunctionUsed() && InSimulationMode) {
             ShowUartSimulationWindow(); // simulate.cpp
-        }
+        }*/
     }
     else {
         RealTimeSimulationRunning = FALSE;
-        KillTimer(MainWindow, TIMER_SIMULATE);
+        // KillTimer(MainWindow, TIMER_SIMULATE);
 
         EnableMenuItem(SimulateMenu, StartSimulationMenu, MF_GRAYED);
         EnableMenuItem(SimulateMenu, StopSimulationMenu, MF_GRAYED);
@@ -1003,10 +1003,10 @@ void SetUndoEnabled(BOOL undoEnabled, BOOL redoEnabled)
         }
         }
 
-    UpdateMainWindowTitleBar();
+    // UpdateMainWindowTitleBar();
     RefreshControlsToSettings();
 }
-*/
+
 //-----------------------------------------------------------------------------
 // Cause the status bar and the list view to be in sync with the actual data
 // structures describing the settings and the I/O configuration. Listview
@@ -1156,7 +1156,8 @@ void GenerateIoListDontLoseSelection(void)
 //-----------------------------------------------------------------------------
 void MainWindowResized(void)
 {
-    PaintWindow();
+    IoListTop = DrawWindow->height();
+    //PaintWindow();
     /*RECT main;
     //GetClientRect(DrawWindow, &main);
 
@@ -1185,8 +1186,9 @@ void MainWindowResized(void)
     // RefreshScrollbars();
     
     // InvalidateRect(DrawWindow, NULL, FALSE);
+
 }
-/*
+
 //-----------------------------------------------------------------------------
 // Start real-time simulation. Have to update the controls grayed status
 // to reflect this.
@@ -1197,7 +1199,7 @@ void StartSimulation(void)
     EnableMenuItem(SimulateMenu, StartSimulationMenu, MF_GRAYED);
     EnableMenuItem(SimulateMenu, StopSimulationMenu, MF_ENABLED);
     StartSimulationTimer();
-    UpdateMainWindowTitleBar();
+    // UpdateMainWindowTitleBar();
 }
 
 //-----------------------------------------------------------------------------
@@ -1210,7 +1212,7 @@ void StopSimulation(void)
 
     EnableMenuItem(SimulateMenu, StartSimulationMenu, MF_ENABLED);
     EnableMenuItem(SimulateMenu, StopSimulationMenu, MF_GRAYED);
-    KillTimer(MainWindow, TIMER_SIMULATE);
+    // KillTimer(MainWindow, TIMER_SIMULATE);
     
-    UpdateMainWindowTitleBar();
-}*/
+    // UpdateMainWindowTitleBar();
+}

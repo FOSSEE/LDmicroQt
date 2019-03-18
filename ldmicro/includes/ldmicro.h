@@ -38,11 +38,7 @@ typedef signed long SDWORD;
 
 // Size of the font that we will use to draw the ladder diagrams, in pixels
 #define FONT_WIDTH   7
-#define FONT_HEIGHT 13
-
-// Timer IDs associated with the main window.
-#define TIMER_BLINK_CURSOR      1
-#define TIMER_SIMULATE          2
+#define FONT_HEIGHT 14
 
 //-----------------------------------------------
 // Constants for the GUI. We have drop-down menus, a listview for the I/Os,
@@ -299,6 +295,10 @@ extern HWID PinList;
 #define MAX_COMMENT_LEN             384
 #define MAX_LOOK_UP_TABLE_LEN        60
 
+// Timer IDs associated with the main window.
+extern int CursorTimer;
+extern int SimulateTimer;
+
 typedef struct ElemSubckParallelTag ElemSubcktParallel;
 
 typedef struct ElemCommentTag {
@@ -495,7 +495,7 @@ typedef struct PlcProgramTag {
 #define X_PADDING    35
 #define Y_PADDING    14
 
-typedef struct PlcCursorTag {
+typedef class PlcCursorTag{
     int left;
     int top;
     int width;
@@ -683,7 +683,7 @@ extern ElemLeaf DisplayMatrixFiller;
 extern ElemLeaf *Selected;
 extern int SelectedWhich;
 
-extern PlcCursor Cursor;
+extern QRect Cursor;
 extern BOOL CanInsertEnd;
 extern BOOL CanInsertOther;
 extern BOOL CanInsertComment;
@@ -711,7 +711,7 @@ void AddFormattedString(void);
 void DeleteSelectedFromProgram(void);
 void DeleteSelectedRung(void);
 void InsertRung(BOOL afterCursor);
-int RungContainingSelected(void);
+int  RungContainingSelected(void);
 BOOL ItemIsLastInCircuit(ElemLeaf *item);
 BOOL UartFunctionUsed(void);
 BOOL PwmFunctionUsed(void);
@@ -734,7 +734,7 @@ BOOL LoadProjectFromFile(char *filename);
 BOOL SaveProjectToFile(char *filename);
 
 // iolist.cpp
-int GenerateIoList(int prevSel);
+int  GenerateIoList(int prevSel);
 void SaveIoListToFile(FILE *f);
 BOOL LoadIoListFromFile(FILE *f);
 void ShowIoDialog(int item);
@@ -749,7 +749,7 @@ void ShowContactsDialog(BOOL *negated, char *name);
 void ShowCoilDialog(BOOL *negated, BOOL *setOnly, BOOL *resetOnly, char *name);
 
 //naminglist.cpp
-void   MakeSmplDialogClass(void);
+void MakeSmplDialogClass(void);
 
 // simpledialog.cpp
 void ShowTimerDialog(int which, int *delay, char *name);

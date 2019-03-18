@@ -31,7 +31,6 @@
 
 #include "ldmicro.h"
 
-BOOL InSimulationMode; //Temporary
 
 void (*DrawChars)(HCRDC Hcr, int, int, const char *);
 
@@ -75,7 +74,7 @@ static BOOL CursorDrawn;
 SyntaxHighlightingColours HighlightColours;
 
 #define X_RIGHT_PADDING 30
-/*
+
 //-----------------------------------------------------------------------------
 // Blink the cursor on the schematic; called by a Windows timer. We XOR
 // draw it so just draw the same rectangle every time to show/erase the
@@ -87,50 +86,56 @@ BOOL BlinkCursor(BOOL kill = FALSE)
 {
     // if(GetFocus(MainWindow) != !CursorDrawn) return TRUE;
     
-    if(Cursor.left == 0) return TRUE;
+    if(Cursor.left() == 0) return TRUE;
 
-    PlcCursor c;
+    QRect c;
     memcpy(&c, &Cursor, sizeof(c));
 
-    c.top -= ScrollYOffset*POS_HEIGHT*FONT_HEIGHT;
-    c.left -= ScrollXOffset;
+    c.setTop(c.top() - ScrollYOffset*POS_HEIGHT*FONT_HEIGHT);
+    c.setLeft(c.left() - ScrollXOffset);
 
-    if(c.top >= IoListTop) return TRUE;
+    if(c.top() >= IoListTop) return TRUE;
 
-    if(c.top + c.height >= IoListTop) {
-        c.height = IoListTop - c.top - 3;
+    if(c.top() + c.height() >= IoListTop) {
+        c.setHeight(IoListTop - c.top() - 3);
     }
+    if(DrawWindow == NULL)
+        return FALSE;
 
     // if(!GDK_IS_DRAWING_CONTEXT(Hdc))
         // return FALSE;
 
-    HCRDC Hcr = gdk_cairo_create(gtk_widget_get_window(DrawWindow));
+    // HCRDC Hcr = gdk_cairo_create(gtk_widget_get_window(DrawWindow));
+    HWID Hcr = DrawWindow;
 
-    static int PREV_x = c.left;
-    static int PREV_y = c.top;
-    static int PREV_w = c.width;
-    static int PREV_h = c.height;
+    static int PREV_x = c.left();
+    static int PREV_y = c.top();
+    static int PREV_w = c.width();
+    static int PREV_h = c.height();
 
-    if (PREV_x != c.left || PREV_y != c.top || PREV_w != c.width || PREV_h != c.height)
+    if (PREV_x != c.left() || PREV_y != c.top() || PREV_w != c.width() || PREV_h != c.height())
     {
-        PatBlt(Hcr, PREV_x, PREV_y, PREV_w, PREV_h, PATINVERT, (HBRUSH)GetStockObject(BLACK_BRUSH));
-        PREV_x = c.left;
-        PREV_y = c.top;
-        PREV_w = c.width;
-        PREV_h = c.height;
+        CursorObject->setGeometry(c);
+        CursorObject->setVisible(TRUE);
+        PREV_x = c.left();
+        PREV_y = c.top();
+        PREV_w = c.width();
+        PREV_h = c.height();
 
         // MainWindowResized();
         // PaintWindow(Hcr);
-        gtk_widget_queue_draw(DrawWindow);
+        // gtk_widget_queue_draw(DrawWindow);
     }
+    CursorObject->setGeometry(c);
 
-    if (CursorDrawn)
-        PatBlt(Hcr, c.left, c.top, c.width, c.height, PATINVERT, (HBRUSH)GetStockObject(WHITE_BRUSH));
+    if (CursorObject->isVisible())
+        CursorObject->setVisible(FALSE);
     else
-        PatBlt(Hcr, c.left, c.top, c.width, c.height, PATINVERT, (HBRUSH)GetStockObject(BLACK_BRUSH));
+        // PatBlt(Hcr, c.left(), c.top(), c.width(), c.height(), PATINVERT, (HBRUSH)GetStockObject(BLACK_BRUSH));
+        CursorObject->setVisible(TRUE);
     InvalidateRect(DrawWindow, NULL, FALSE);
-    cairo_destroy(Hcr);
-    CursorDrawn = !CursorDrawn;
+    // cairo_destroy(Hcr);
+    // CursorDrawn = !CursorDrawn;
 
     return !kill;
 }
@@ -144,6 +149,7 @@ static void DrawCharsToScreen(HCRDC Hcr, int cx, int cy, const char *str)
     cy -= ScrollYOffset*POS_HEIGHT;
     if(cy < -2) return;
     if(cy*FONT_HEIGHT + Y_PADDING > IoListTop) return;
+    // IoListTop not initialized.
 
     COLORREF prev;
     BOOL firstTime = TRUE;
@@ -213,7 +219,7 @@ static void DrawCharsToScreen(HCRDC Hcr, int cx, int cy, const char *str)
         firstTime = FALSE;
     }
 }
-*/
+
 //-----------------------------------------------------------------------------
 // Total number of columns that we can display in the given amount of 
 // window area. Need to leave some slop on the right for the scrollbar, of
@@ -225,7 +231,7 @@ int ScreenColsAvailable(void)
 
     return (rw - (X_PADDING + X_RIGHT_PADDING)) / (POS_WIDTH*FONT_WIDTH);
 }
-/*
+
 //-----------------------------------------------------------------------------
 // Total number of columns that we can display in the given amount of 
 // window area. Need to leave some slop on the right for the scrollbar, of
@@ -242,29 +248,29 @@ int ScreenRowsAvailable(void)
     }
     return (IoListTop - Y_PADDING - adj) / (POS_HEIGHT*FONT_HEIGHT);
 }
-*/
+
+void PaintWidget::timerEvent(QTimerEvent *event)
+{
+    if (event->timerId() == CursorTimer)
+        BlinkCursor();
+}
+
 //-----------------------------------------------------------------------------
 // Paint the ladder logic program to the screen. Also figure out where the
 // cursor should go and fill in coordinates for BlinkCursor. Not allowed to
 // draw deeper than IoListTop, as we would run in to the I/O listbox.
 //-----------------------------------------------------------------------------
-void PaintWindow()
+void PaintWidget::paintEvent(QPaintEvent *event)
 {
+    QPainter painter(this);
+    painter.setClipping(true);
+    painter.setRenderHint(QPainter::TextAntialiasing);
+    HCRDC Hcr = &painter;
+
     ok();
-    // DrawWindow->setStyleSheet("background-color:black;");
-
-    static QPalette pal = QPalette(InSimulationMode ?
-        SimBgBrush->rgb() : BgBrush->rgb());
-    DrawWindow->setPalette(pal);
-
-    /// now figure out how we should draw the ladder logic
-    ColsAvailable = ProgCountWidestRow();
-    if(ColsAvailable < ScreenColsAvailable()) {
-        ColsAvailable = ScreenColsAvailable();
-    }
    
-    /*int bw =  gtk_widget_get_allocated_width (DrawWindow);// = r.right;
-    int bh = IoListTop;
+    int bw = this->width();// = r.right;
+    int bh = this->height();
     
     /// now figure out how we should draw the ladder logic
     ColsAvailable = ProgCountWidestRow();
@@ -280,6 +286,7 @@ void PaintWindow()
     int i;
     int cy = 0;
     int rowsAvailable = ScreenRowsAvailable();
+
     for(i = 0; i < Prog.numRungs; i++) {
         int thisHeight = POS_HEIGHT*CountHeightOfElement(ELEM_SERIES_SUBCKT,
             Prog.rungs[i]);
@@ -311,7 +318,7 @@ void PaintWindow()
 
             int cx = 0;
             DrawElement(Hcr, ELEM_SERIES_SUBCKT, Prog.rungs[i], &cx, &cy, 
-                Prog.rungPowered[i]); 
+                Prog.rungPowered[i]);
         }
 
         cy += thisHeight;
@@ -322,46 +329,46 @@ void PaintWindow()
     
     if(SelectedGxAfterNextPaint >= 0) {
         MoveCursorNear(SelectedGxAfterNextPaint, SelectedGyAfterNextPaint);
-        InvalidateRect(DrawWindow, NULL, FALSE);
+        // InvalidateRect(DrawWindow, NULL, FALSE);
         SelectedGxAfterNextPaint = -1;
         SelectedGyAfterNextPaint = -1;
     } else if(ScrollSelectedIntoViewAfterNextPaint && Selected) {
         SelectElement(-1, -1, Selected->selectedState);
         ScrollSelectedIntoViewAfterNextPaint = FALSE;
-        InvalidateRect(DrawWindow, NULL, FALSE);
+        // InvalidateRect(DrawWindow, NULL, FALSE);
     } else {
         if(!SelectionActive) {
             if(Prog.numRungs > 0) {
                 if(MoveCursorTopLeft()) {
-                    InvalidateRect(DrawWindow, NULL, FALSE);
+                    // InvalidateRect(DrawWindow, NULL, FALSE);
                 }
             }
         }
     }
 
     /// draw the `buses' at either side of the screen
-    RECT r;
-    r.left = X_PADDING - FONT_WIDTH;
-    r.top = 0;
-    r.right = r.left + 4;
-    r.bottom = IoListTop;
+    QRect r;
+    r.setLeft(X_PADDING - FONT_WIDTH);
+    r.setTop(0);
+    r.setRight(r.left() + 4);
+    r.setBottom(IoListTop);
     FillRect(Hcr, &r, InSimulationMode ? BusLeftBrush : BusBrush);
-    r.left += POS_WIDTH*FONT_WIDTH*ColsAvailable + 2;
-    r.right += POS_WIDTH*FONT_WIDTH*ColsAvailable + 2;
+    r.setLeft(POS_WIDTH*FONT_WIDTH*ColsAvailable + 32);
+    r.setRight(POS_WIDTH*FONT_WIDTH*ColsAvailable + 32);
     FillRect(Hcr, &r, InSimulationMode ? BusRightBus : BusBrush);
-    InvalidateRect(DrawWindow, NULL, FALSE);
+    // InvalidateRect(DrawWindow, NULL, FALSE);
  
-    CursorDrawn = FALSE;
+    // CursorDrawn = FALSE;
 
     // BitBlt(paintDc, 0, 0, bw, bh, BackDc, ScrollXOffset, 0, SRCCOPY);
 
-    if(InSimulationMode) {
+    /*if(InSimulationMode) {
         KillTimer(DrawWindow, TIMER_BLINK_CURSOR);
     } else {
         SetTimer(DrawWindow, TIMER_BLINK_CURSOR, 200, BlinkCursor);
-    }
+    }*/
 
-    ok();*/
+    ok();
 }
 
 //-----------------------------------------------------------------------------
@@ -403,7 +410,7 @@ static void SetSyntaxHighlightingColours(void)
 //-----------------------------------------------------------------------------
 void InitForDrawing(void)
 {
-    DrawWindow = new QWidget;
+    DrawWindow = new PaintWidget();
     SetSyntaxHighlightingColours();
 
     FixedWidthFont = CreateFont(
@@ -442,7 +449,7 @@ void InitForDrawing(void)
 // DrawChars function, for drawing to the export buffer instead of to the
 // screen.
 //-----------------------------------------------------------------------------
-/*static void DrawCharsToExportBuffer(HCRDC Hcr, int cx, int cy, const char *str)
+static void DrawCharsToExportBuffer(HCRDC Hcr, int cx, int cy, const char *str)
 {
     while(*str) {
         if(*str >= 10) {
@@ -609,4 +616,3 @@ void SetUpScrollbars(BOOL *horizShown, SCROLLINFO *horiz, SCROLLINFO *vert)
     if(ScrollYOffset > ScrollYOffsetMax) ScrollYOffset = ScrollYOffsetMax;
     if(ScrollYOffset < 0) ScrollYOffset = 0;
 }
-*/

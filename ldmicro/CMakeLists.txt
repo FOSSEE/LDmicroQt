@@ -104,12 +104,16 @@ IF(UNIX)
     set(CMAKE_INCLUDE_CURRENT_DIR ON)
     find_package(Qt5Widgets CONFIG REQUIRED)
     find_package(Qt5Core CONFIG REQUIRED)
+    find_package(Qt5Gui CONFIG REQUIRED)
     get_target_property(Qt5Widgets_INCLUDES Qt5::Widgets INTERFACE_INCLUDE_DIRECTORIES)
     get_target_property(Qt5Core_INCLUDES Qt5::Core INTERFACE_INCLUDE_DIRECTORIES)
+    get_target_property(Qt5Gui_INCLUDES Qt5::Gui INTERFACE_INCLUDE_DIRECTORIES)
     include_directories(${Qt5Widgets_INCLUDES})
     include_directories(${Qt5Core_INCLUDES})
+    include_directories(${Qt5Gui_INCLUDES})
     add_definitions(${Qt5Widgets_DEFINITIONS})
     add_definitions(${Qt5Core_DEFINITIONS})
+    include_directories(${Qt5Gui_DEFINITIONS})
     set(CMAKE_CXX_FLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
     #get_target_property(CMAKE_CXX_FLAGS Qt5::Core LINK_FLAGS)
     MESSAGE ( STATUS " Qt INCLUDEs: " ${Qt5Core_INCLUDES} )
@@ -142,7 +146,7 @@ endif()
                             #coildialog.cpp
                             #contactsdialog.cpp
                             #commentdialog.cpp
-                            # simulate.cpp
+                            simulate.cpp
                             loadsave.cpp
                             undoredo.cpp
                             circuit.cpp
@@ -166,6 +170,7 @@ endif()
     target_link_libraries (LDMicro FreezeLD)
     target_link_libraries(LDMicro ${Qt5Widgets_LIBRARIES})
     target_link_libraries(LDMicro ${Qt5Core_LIBRARIES})
+    target_link_libraries(LDMicro ${Qt5Gui_LIBRARIES})
 
     ## Add tests
     MESSAGE( STATUS "Adding tests.." )

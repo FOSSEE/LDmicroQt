@@ -48,7 +48,7 @@ BOOL ThisHighlighted;
         if((gx) >= DISPLAY_MATRIX_X_SIZE || (gx) < 0) oops(); \
         if((gy) >= DISPLAY_MATRIX_Y_SIZE || (gy) < 0) oops(); \
     }
-/*
+
 //-----------------------------------------------------------------------------
 // The display code is the only part of the program that knows how wide a
 // rung will be when it's displayed; so this is the only convenient place to
@@ -68,7 +68,7 @@ static BOOL CheckBoundsUndoIfFails(int gx, int gy)
     }
     return FALSE;
 }
-*/
+
 //-----------------------------------------------------------------------------
 // Determine the width, in leaf element units, of a particular subcircuit.
 // The width of a leaf is 1, the width of a series circuit is the sum of
@@ -180,7 +180,7 @@ static int CountWidthOfElement(int which, void *elem, int soFar)
             oops();
     }
 }
-/*
+
 //-----------------------------------------------------------------------------
 // Determine the height, in leaf element units, of a particular subcircuit.
 // The height of a leaf is 1, the height of a parallel circuit is the sum of
@@ -225,7 +225,7 @@ int CountHeightOfElement(int which, void *elem)
             oops();
     }
 }
-*/
+
 //-----------------------------------------------------------------------------
 // Determine the width, in leaf element units, of the widest row of the PLC
 // program (i.e. loop over all the rungs and find the widest).
@@ -250,7 +250,7 @@ int ProgCountWidestRow(void)
 // Draw a vertical wire one leaf element unit high up from (cx, cy), where cx
 // and cy are in charcter units.
 //-----------------------------------------------------------------------------
-/*static void VerticalWire(HCRDC Hcr, int cx, int cy)
+static void VerticalWire(HCRDC Hcr, int cx, int cy)
 {
     int j;
     for(j = 1; j < POS_HEIGHT; j++) {
@@ -881,32 +881,32 @@ cmp:
     }
     switch(leaf->selectedState) {
         case SELECTED_LEFT:
-            Cursor.left = x0 + FONT_WIDTH - 4 - xadj;
-            Cursor.top = y0 - FONT_HEIGHT/2;
-            Cursor.width = 2;
-            Cursor.height = POS_HEIGHT*FONT_HEIGHT;
+            Cursor.setLeft(x0 + FONT_WIDTH - 4 - xadj);
+            Cursor.setTop(y0 - FONT_HEIGHT/2);
+            Cursor.setWidth(2);
+            Cursor.setHeight(POS_HEIGHT*FONT_HEIGHT);
             break;
 
         case SELECTED_RIGHT:
-            Cursor.left = x0 + (POS_WIDTH-1)*FONT_WIDTH - 5;
-            Cursor.top = y0 - FONT_HEIGHT/2;
-            Cursor.width = 2;
-            Cursor.height = POS_HEIGHT*FONT_HEIGHT;
+            Cursor.setLeft(x0 + (POS_WIDTH-1)*FONT_WIDTH - 5);
+            Cursor.setTop(y0 - FONT_HEIGHT/2);
+            Cursor.setWidth(2);
+            Cursor.setHeight(POS_HEIGHT*FONT_HEIGHT);
             break;
 
         case SELECTED_ABOVE:
-            Cursor.left = x0 + FONT_WIDTH/2 - xadj;
-            Cursor.top = y0 - 2;
-            Cursor.width = (POS_WIDTH-2)*FONT_WIDTH + xadj;
-            Cursor.height = 2;
+            Cursor.setLeft(x0 + FONT_WIDTH/2 - xadj);
+            Cursor.setTop(y0 - 2);
+            Cursor.setWidth((POS_WIDTH-2)*FONT_WIDTH + xadj);
+            Cursor.setHeight(2);
             break;
 
         case SELECTED_BELOW:
-            Cursor.left = x0 + FONT_WIDTH/2 - xadj;
-            Cursor.top = y0 + (POS_HEIGHT-1)*FONT_HEIGHT +
-                FONT_HEIGHT/2 - 2;
-            Cursor.width = (POS_WIDTH-2)*(FONT_WIDTH) + xadj;
-            Cursor.height = 2;
+            Cursor.setLeft(x0 + FONT_WIDTH/2 - xadj);
+            Cursor.setTop(y0 + (POS_HEIGHT-1)*FONT_HEIGHT +
+                FONT_HEIGHT/2 - 2);
+            Cursor.setWidth((POS_WIDTH-2)*(FONT_WIDTH) + xadj);
+            Cursor.setHeight(2);
             break;
 
         default:
@@ -915,7 +915,6 @@ cmp:
 
     return poweredAfter;
 }
-
 //-----------------------------------------------------------------------------
 // Draw a particular subcircuit with its top left corner at *cx and *cy (in
 // characters). If it is a leaf element then just print it and return; else
@@ -1067,4 +1066,3 @@ void DrawEndRung(HCRDC Hcr, int cx, int cy)
         DrawChars(Hcr, cx + i, cy + (POS_HEIGHT/2), "-");
     }
 }
-*/
