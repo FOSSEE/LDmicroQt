@@ -55,7 +55,7 @@ static struct {
 // whenever we change it, for undo purposes. Fast enough that we shouldn't
 // need to be smart.
 //-----------------------------------------------------------------------------
-/*static void *DeepCopy(int which, void *any)
+static void *DeepCopy(int which, void *any)
 {
     switch(which) {
         CASE_LEAF {
@@ -93,7 +93,7 @@ static struct {
             break;
     }
 }
-*/
+
 //-----------------------------------------------------------------------------
 // Empty out a ProgramStack data structure, either .undo or .redo: set the
 // count to zero and free all the program copies in it.
@@ -112,7 +112,7 @@ static void EmptyProgramStack(ProgramStack *ps)
         }
     }
 }
-/*
+
 //-----------------------------------------------------------------------------
 // Push the current program onto a program stack. Can either make a deep or
 // a shallow copy of the linked data structures.
@@ -228,7 +228,7 @@ void UndoRedo(void)
     RefreshScrollbars();
     InvalidateRect(MainWindow, NULL, FALSE);
 }
-*/
+
 //-----------------------------------------------------------------------------
 // Empty out our undo history entirely, as when loading a new file.
 //-----------------------------------------------------------------------------
@@ -245,8 +245,8 @@ void UndoFlush(void)
 // notices that easily is the display code, which will respond by undoing
 // the last operation, presumably the one that added the long line.
 //-----------------------------------------------------------------------------
-/*BOOL CanUndo(void)
+BOOL CanUndo(void)
 {
     return (Undo.undo.count > 0);
-}*/
+}
 

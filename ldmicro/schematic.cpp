@@ -52,13 +52,13 @@ ElemLeaf DisplayMatrixFiller;
 // where the cursor should go and calculate the coordinates (in pixels)
 // of the rectangle that describes it; then BlinkCursor just has to XOR
 // the requested rectangle at periodic intervals.
-PlcCursor Cursor;
+QRect Cursor;
 
 //-----------------------------------------------------------------------------
 // Find the address in the DisplayMatrix of the selected leaf element. Set
 // *gx and *gy if we succeed and return TRUE, else return FALSE.
 //-----------------------------------------------------------------------------
-/*BOOL FindSelected(int *gx, int *gy)
+BOOL FindSelected(int *gx, int *gy)
 {
     if(!Selected) return FALSE;
 
@@ -213,7 +213,7 @@ void WhatCanWeDoFromCursorAndTopology(void)
     SetMenusEnabled(canNegate, canNormal, canResetOnly, canSetOnly, canDelete,
         CanInsertEnd, CanInsertOther, canPushDown, canPushUp, CanInsertComment);
 }
-*/
+
 //-----------------------------------------------------------------------------
 // Rub out freed element from the DisplayMatrix, just so we don't confuse
 // ourselves too much (or access freed memory)...
@@ -250,7 +250,7 @@ void ForgetEverything(void)
 // to do so, FALSE if not. The latter occurs given a completely empty
 // program.
 //-----------------------------------------------------------------------------
-/*BOOL MoveCursorTopLeft(void)
+BOOL MoveCursorTopLeft(void)
 {
     int i, j;
     // Let us first try to place it somewhere on-screen, so start at the
@@ -402,7 +402,7 @@ void EditSelectedElement(void)
 {
     if(!Selected || Selected->selectedState == SELECTED_NONE) return;
 
-    switch(SelectedWhich) {
+    /*switch(SelectedWhich) {
         case ELEM_COMMENT:
             ShowCommentDialog(Selected->d.comment.str);
             break;
@@ -493,7 +493,7 @@ void EditSelectedElement(void)
         case ELEM_LOOK_UP_TABLE:
             ShowLookUpTableDialog(Selected);
             break;
-    }
+    }*/
 }
 
 //-----------------------------------------------------------------------------
@@ -514,7 +514,7 @@ void EditElementMouseDoubleclick(int x, int y)
 
     gy += ScrollYOffset;
 
-    if(InSimulationMode) {
+    /*if(InSimulationMode) {
         ElemLeaf *l = DisplayMatrix[gx][gy];
         if(l && DisplayMatrixWhich[gx][gy] == ELEM_CONTACTS) {
             char *name = l->d.contacts.name;
@@ -528,7 +528,7 @@ void EditElementMouseDoubleclick(int x, int y)
         if(DisplayMatrix[gx][gy] == Selected) {
             EditSelectedElement();
         }
-    }
+    }*/
 }
 
 //-----------------------------------------------------------------------------
@@ -726,4 +726,3 @@ void MakeResetOnlySelected(void)
     c->setOnly = FALSE;
     c->negated = FALSE;
 }
-*/

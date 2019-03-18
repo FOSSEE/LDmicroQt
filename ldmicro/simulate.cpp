@@ -693,7 +693,7 @@ void SimulateOneCycle(BOOL forceRefresh)
     // event loop, and there is risk that we would go recursive. So let
     // us fix that. (Note that there are no concurrency issues; we really
     // would get called recursively, not just reentrantly.)
-    static BOOL Simulating = FALSE;
+/*    static BOOL Simulating = FALSE;
 
     if(Simulating) return;
     Simulating = TRUE;
@@ -719,7 +719,7 @@ void SimulateOneCycle(BOOL forceRefresh)
     SimulateRedrawAfterNextCycle = FALSE;
     if(NeedRedraw) SimulateRedrawAfterNextCycle = TRUE;
 
-    Simulating = FALSE;
+    Simulating = FALSE;*/
 }
 
 //-----------------------------------------------------------------------------
@@ -730,14 +730,14 @@ void SimulateOneCycle(BOOL forceRefresh)
 //-----------------------------------------------------------------------------
 void StartSimulationTimer(void)
 {
-    int p = Prog.cycleTime/1000;
+ /*   int p = Prog.cycleTime/1000;
     if(p < 5) {
         SetTimer(MainWindow, TIMER_SIMULATE, 10, PlcCycleTimer);
         CyclesPerTimerTick = 10000 / Prog.cycleTime;
     } else {
         SetTimer(MainWindow, TIMER_SIMULATE, p, PlcCycleTimer);
         CyclesPerTimerTick = 1;
-    }
+    }*/
 }
 
 //-----------------------------------------------------------------------------
@@ -891,7 +891,7 @@ static void UartSimulationTextProc(HWID hwid, UINT umsg, char *text, UINT uszbuf
 // characters that you type go into UART RECV instruction and whatever
 // the program puts into UART SEND shows up as text.
 //-----------------------------------------------------------------------------
-void ShowUartSimulationWindow(void)
+/*void ShowUartSimulationWindow(void)
 {
     DWORD TerminalX = 200, TerminalY = 200, TerminalW = 300, TerminalH = 150;
 
@@ -928,7 +928,7 @@ void ShowUartSimulationWindow(void)
     gtk_window_set_keep_above (GTK_WINDOW(MainWindow), TRUE);
     gtk_window_set_focus_visible (GTK_WINDOW(MainWindow), TRUE);   
     gtk_window_set_keep_above (GTK_WINDOW(MainWindow), FALSE);
-}
+}*/
 
 //-----------------------------------------------------------------------------
 // Get rid of the UART simulation terminal-type window.

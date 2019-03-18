@@ -78,7 +78,7 @@ typedef GtkTreeIter     ITLIST;
 typedef GDRECT*     PGDRECT;
 typedef QMenu*      HMENU;
 typedef ITLIST*     HITLIST;
-typedef QPalette*   HCRDC;
+typedef QPainter*   HCRDC;
 typedef QWidget*    HWID;
 typedef QWidget*    HWND;
 typedef GdkPixbuf*  HICON;

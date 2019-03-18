@@ -236,28 +236,40 @@ BOOL GetOpenFileName(OPENFILENAME *ofn)
 }
 
 
-void EnableMenuItem(HMENU MenuName, HMENU MenuItem, UINT CheckEnabledItem) 
+void EnableMenuItem(HMENU MenuName, QAction* MenuItem, UINT CheckEnabledItem) 
 {
-    /*switch (CheckEnabledItem){
+    switch (CheckEnabledItem){
         case MF_ENABLED :
-           gtk_widget_set_sensitive (MenuItem, true);
+           MenuItem->setEnabled(true);
         break;
         case MF_GRAYED :
-           gtk_widget_set_sensitive (MenuItem, false);
+           MenuItem->setEnabled(false);
         break; 
-    }*/
+    }
 }
 
-void CheckMenuItem(HMENU MenuName, HMENU MenuItem, UINT Check)
+void EnableMenuItem(HMENU MenuName, HMENU MenuItem, UINT CheckEnabledItem) 
 {
-    /*switch (Check){
+    switch (CheckEnabledItem){
+        case MF_ENABLED :
+           MenuItem->setEnabled(true);
+        break;
+        case MF_GRAYED :
+           MenuItem->setEnabled(false);
+        break; 
+    }
+}
+
+void CheckMenuItem(HMENU MenuName, QAction* MenuItem, UINT Check)
+{
+    switch (Check){
         case MF_CHECKED :
-            gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM(MenuItem), true);
+            MenuItem->setChecked(true);
         break;
         case MF_UNCHECKED :
-            gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM(MenuItem), false);
+            MenuItem->setChecked(false);
         break;
-    }*/
+    }
 }
 
 HANDLE GetStockObject(int fnObject)
@@ -284,15 +296,17 @@ HANDLE GetStockObject(int fnObject)
     }
 }
 
-void SelectObject(QPainter* hcr, HFONT hfont)
+void SelectObject(HCRDC hcr, HFONT hfont)
 {
     if (hcr ==NULL)
         return;
-    QFont qtfont(hfont->lpszFace);
-    qtfont.setPointSize(hfont->nHeight);
+    QFont qtfont = hcr->font();
+    qtfont.setFamily(hfont->lpszFace);
+    qtfont.setPixelSize(hfont->nHeight - 3);
+    qtfont.setFixedPitch(TRUE);
     qtfont.setStyle(hfont->fdwItalic ? QFont::StyleItalic : QFont::StyleNormal);
     qtfont.setWeight(hfont->fnWeight == FW_BOLD ? QFont::Bold : QFont::Normal);
-    hcr->setFont();
+    hcr->setFont(qtfont);
 }
 
 HBRUSH CreateBrushIndirect(PLOGBRUSH plb)
@@ -323,21 +337,54 @@ HFONT CreateFont(int nHeight, int nWidth, int nOrientation, int fnWeight,
 
 void SetBkColor(HWID widget, HCRDC hcr, COLORREF bkCol)
 {
-    hcr->setColor(QPalette::Background, bkCol);
-    widget->setPalette(*hcr);
+    QPalette pal = widget->palette();
+    pal.setColor(QPalette::Background, bkCol);
+    widget->setPalette(pal);
 }
 
 void SetTextColor(HCRDC hcr, COLORREF color)
 {
     if (hcr == NULL)
         return;
-    
+    QPen qtpen = hcr->pen();
+    qtpen.setColor(color);
+    hcr->setPen(qtpen);
     HdcCurrentTextColor = color;
     // gdk_cairo_set_source_rgba (hcr, &color);
 }
 
 void TextOut(HWID hWid, HCRDC hcr, int nXStart, int nYStart, LPCTSTR lpString, int cchString)
 {
+    if (hcr == NULL)
+        return;
+    int width = hWid->width();
+    int height = hWid->height();
+    BOOL resize_flag = FALSE;
+    QFont newFont= hcr->font();
+    // newFont
+    /*if(nYStart+(extents.height/2.0) >= height)
+    {
+        height += extents.height + 50;
+        resize_flag = TRUE;
+    }
+    
+    if (nXStart+(extents.width/2.0) >= width)
+    {
+        width += extents.width;
+        resize_flag = TRUE;
+    }*/
+    char* text = (char*)malloc(cchString);
+    strncpy(text, lpString, cchString);
+    text[cchString] = '\0';
+
+    hcr->drawText(nXStart, nYStart, (QString)text);
+    // cairo_move_to(hcr, nXStart, nYStart);
+    // cairo_show_text(hcr, text);
+
+    // cairo_fill (hcr);
+
+    /*if (resize_flag)  // To do later
+        hcr->setWindow();*/
     /*if (hcr == NULL)
         return;
     
@@ -400,13 +447,19 @@ BOOL InvalidateRect(HWID hWid, const RECT *lpRect, BOOL bErase)
     // gtk_widget_queue_draw(hWid);
     gdk_window_invalidate_rect (gtk_widget_get_window (hWid), &Gdrect, FALSE);
     */
+    hWid->repaint();
     return TRUE;
 }
 
-int FillRect(HCRDC hDC, const RECT *lprc, HBRUSH hbr)
+int FillRect(HCRDC hDC, const QRect *lprc, HBRUSH hbr)
 {
     if (hDC == NULL)
         return -1;
+    QBrush curbrush = hDC->brush();
+    curbrush.setColor(*hbr);
+    curbrush.setStyle(Qt::SolidPattern);
+    hDC->setBrush(curbrush);
+    hDC->drawRect(*lprc);
     /*
     GDRECT gdrc;
     RECT_to_GDRECT(lprc, &gdrc);
@@ -419,7 +472,7 @@ int FillRect(HCRDC hDC, const RECT *lprc, HBRUSH hbr)
     return 0;
 }
 
-BOOL PatBlt(HCRDC hdc, int nXLeft, int nYLeft, int nWidth, int nHeight, DWORD dwRop, HBRUSH hbr)
+BOOL PatBlt(HWID hdc, int nXLeft, int nYLeft, int nWidth, int nHeight, DWORD dwRop, HBRUSH hbr)
 {
     if (hdc == NULL)
         return FALSE;
@@ -472,20 +525,37 @@ BOOL GetWindowRect(HWID hWid, PRECT pRect)
 }
 
 
-UINT SetTimer(HWID hWid, UINT  nIDEvent, UINT uElapse, BOOL (*lpTimerFunc)(BOOL) )
+UINT SetTimer(HWID hWid, UINT  nIDEvent, UINT uElapse, UINT TimerID)
 {
-    auto record_it = std::find_if(timerRecords.begin(), timerRecords.end(),  [&nIDEvent](TimerRecord &Record) { return Record.ufID == nIDEvent; });
+    if(TimerID != NULL)
+        return nIDEvent;
+    if(nIDEvent == TIMER_BLINK_CURSOR)
+    {
+        TimerID = hWid->startTimer(uElapse);
+        CursorObject = new QGroupBox(hWid);
+    
+        QPalette pal = CursorObject->palette();
+        pal.setColor(QPalette::Background, Qt::white);
+        CursorObject->setAutoFillBackground(true);
+        CursorObject->setPalette(pal);
+        // CursorObject->setGeometry(100,100,2,20);
+    }
+    // if(hWid!=NULL)
+    //     CursorObject->setVisible(TRUE);
 
-    if (record_it != timerRecords.end())
-        return 0;
+    return TimerID;
+    // auto record_it = std::find_if(timerRecords.begin(), timerRecords.end(),  [&nIDEvent](TimerRecord &Record) { return Record.ufID == nIDEvent; });
 
-    TimerRecord tr;
-    tr.pfun = lpTimerFunc;
-    tr.ufID = nIDEvent;
-    tr.utID = g_timeout_add(uElapse, (GSourceFunc)lpTimerFunc, FALSE);
+    // if (record_it != timerRecords.end())
+    //     return 0;
 
-    timerRecords.push_back(tr);
-    return tr.utID;
+    // TimerRecord tr;
+    // tr.pfun = lpTimerFunc;
+    // tr.ufID = nIDEvent;
+    // tr.utID = g_timeout_add(uElapse, (GSourceFunc)lpTimerFunc, FALSE);
+
+    // timerRecords.push_back(tr);
+    // return tr.utID;
 }
 
 BOOL KillTimer(HWID hWid, UINT uIDEvent)

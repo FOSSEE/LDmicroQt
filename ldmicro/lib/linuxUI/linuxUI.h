@@ -10,6 +10,7 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QPainter>
+#include <QGroupBox>
 // #include <QtGui>
 // #include <QSize>
 // #include "freezeLD.h"
@@ -26,6 +27,10 @@
 /// version control
 #define LDMicro_VERSION_MAJOR 1
 #define LDMicro_VERSION_MINOR 0
+
+// Timer IDs associated with the main window.
+#define TIMER_BLINK_CURSOR      1
+#define TIMER_SIMULATE          2
 
 /// Flags
 /// message box
@@ -129,6 +134,7 @@ extern const UINT MF_UNCHECKED;
 /// Accelerators (keyboard shortcuts)
 extern GtkAccelGroup* AccelGroup;
 extern GClosure* closure;
+extern QGroupBox*       CursorObject;
 
 /// ListStore
 extern HWID view;
@@ -177,18 +183,23 @@ BOOL GetOpenFileName(OPENFILENAME *ofn);
 
 void EnableMenuItem(
     HMENU MenuName, 
+    QAction* MenuItem, 
+    UINT  CheckEnabledItem);
+
+void EnableMenuItem(
+    HMENU MenuName, 
     HMENU MenuItem, 
     UINT  CheckEnabledItem);
 
 void CheckMenuItem(
     HMENU MenuName, 
-    HMENU MenuItem, 
+    QAction* MenuItem, 
     UINT  Check);
 
 HANDLE GetStockObject(int fnObject);
 
 void SelectObject(
-    QPainter* hcr, 
+    HCRDC hcr, 
     HFONT hfont);
 
 HBRUSH CreateBrushIndirect(PLOGBRUSH plb);
@@ -227,11 +238,11 @@ BOOL InvalidateRect(
 
 int FillRect(
     HCRDC        hDC,
-    const RECT   *lprc,
+    const QRect   *lprc,
     HBRUSH       hbr);
 
 BOOL PatBlt(
-    HCRDC  hdc,
+    HWID   hdc,
     int    nXLeft,
     int    nYLeft,
     int    nWidth,
@@ -259,7 +270,7 @@ UINT SetTimer(
     HWID  hWid,
     UINT  nIDEvent,
     UINT  uElapse,
-    BOOL (*lpTimerFunc)(BOOL));
+    UINT TimerID);
 
 BOOL KillTimer(
     HWID hWid,
@@ -275,6 +286,7 @@ public:
  
 protected:
     void paintEvent(QPaintEvent *event);
+    void timerEvent(QTimerEvent *event);
 signals:
  
 public slots:

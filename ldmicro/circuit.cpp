@@ -657,7 +657,7 @@ void FreeEntireProgram(void)
 //-----------------------------------------------------------------------------
 // Returns true if the given subcircuit contains the given leaf.
 //-----------------------------------------------------------------------------
-/*static BOOL ContainsElem(int which, void *any, ElemLeaf *seek)
+static BOOL ContainsElem(int which, void *any, ElemLeaf *seek)
 {
     switch(which) {
         case ELEM_SERIES_SUBCKT: {
@@ -693,12 +693,12 @@ void FreeEntireProgram(void)
             oops();
     }
     return FALSE;
-}*/
+}
 
 //-----------------------------------------------------------------------------
 // Use ContainsElem to find the rung containing the cursor.
 //-----------------------------------------------------------------------------
-/*int RungContainingSelected(void)
+int RungContainingSelected(void)
 {
     int i;
     for(i = 0; i < Prog.numRungs; i++) {
@@ -708,7 +708,7 @@ void FreeEntireProgram(void)
     }
 
     return -1;
-}*/
+}
 
 //-----------------------------------------------------------------------------
 // Delete the rung that contains the cursor.
@@ -829,7 +829,7 @@ void NewProgram(void)
 // position of a series subcircuit that may be in a parallel subcircuit that
 // etc.)
 //-----------------------------------------------------------------------------
-/*static void LastInCircuit(int which, void *any, ElemLeaf *seek,
+static void LastInCircuit(int which, void *any, ElemLeaf *seek,
     BOOL *found, BOOL *andItemAfter)
 {
     switch(which) {
@@ -854,7 +854,7 @@ void NewProgram(void)
             if(any == seek) *found = TRUE;
             break;
     }
-}*/
+}
 
 //-----------------------------------------------------------------------------
 // Is an item the last one in the circuit (i.e. does one of its terminals go
@@ -862,7 +862,7 @@ void NewProgram(void)
 // circumstance in which it is okay to insert a coil, RES, etc. after
 // something
 //-----------------------------------------------------------------------------
-/*BOOL ItemIsLastInCircuit(ElemLeaf *item)
+BOOL ItemIsLastInCircuit(ElemLeaf *item)
 {
     int i = RungContainingSelected();
     if(i < 0) return FALSE;
@@ -875,7 +875,7 @@ void NewProgram(void)
 
     if(found) return !andItemAfter;
     return FALSE;
-}*/
+}
 
 //-----------------------------------------------------------------------------
 // Returns TRUE if the subcircuit contains any of the given instruction

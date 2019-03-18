@@ -146,7 +146,7 @@ endif()
                             #coildialog.cpp
                             #contactsdialog.cpp
                             #commentdialog.cpp
-                            # simulate.cpp
+                            simulate.cpp
                             loadsave.cpp
                             undoredo.cpp
                             circuit.cpp

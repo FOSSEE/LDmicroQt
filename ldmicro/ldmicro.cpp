@@ -44,11 +44,14 @@ QApplication*   LDmicroApp;
 HWID            MainWindow;
 QIcon*          MWIcon;
 QMenuBar*       MainMenu;
+QGroupBox*      CursorObject;
 HWID            DrawWindow;
 // parameters used to capture the mouse when implementing our totally non-
 // general splitter control
 //static HHOOK       MouseHookHandle;
 static int         MouseY;
+int CursorTimer;
+int SimulateTimer;
 
 // For the open/save dialog boxes
 #define LDMICRO_PATTERN "LDmicro Ladder Logic Programs (*.ld)\0*.ld\0" \
@@ -282,7 +285,7 @@ static void OpenDialog(void)
     RefreshScrollbars();
     UpdateMainWindowTitleBar();
 }
-
+*/
 //-----------------------------------------------------------------------------
 // Housekeeping required when the program changes: mark the program as
 // changed so that we ask if user wants to save before exiting, and update
@@ -298,7 +301,7 @@ void ProgramChanged(void)
         UndoRemember(); \
         x; \
         ProgramChanged();\
-    }*/
+    }
 
 //-----------------------------------------------------------------------------
 // Hook that we install when the user starts dragging the `splitter,' in case
@@ -1255,9 +1258,13 @@ int main(int argc, char** argv)
     QSize MwSize(800,600);
 
     // Make main window
-    MainWindow = new QWidget;
+    MainWindow = new QWidget();
     MWIcon = new QIcon(LDMICRO_ICON);
     MainMenu = new QMenuBar(MainWindow);
+    
+    // Initialize cursor and set color
+    CursorObject = new QGroupBox(DrawWindow);
+    // CursorObject->setColor();
 
     // QMenu TopMenu("Top Menu", MainWindow);
     // MainMenu->addMenu(&TopMenu);
@@ -1288,6 +1295,9 @@ int main(int argc, char** argv)
 
     MainWindow->show();
     
+    /// Blink cursor
+    CursorTimer = SetTimer(DrawWindow, TIMER_BLINK_CURSOR, 500, CursorTimer);
+
     GenerateIoListDontLoseSelection(); 
     
     // MakeDialogBoxClass();
