@@ -64,7 +64,7 @@ IF(UNIX)
     add_custom_command( 
         OUTPUT ${OBJDIR}/helptext.cpp
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMAND perl txt2c.pl  > ${OBJDItR}/helptext.cpp
+        COMMAND perl txt2c.pl  > ${OBJDIR}/helptext.cpp
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/manual*.txt")
 
     set(SCRIPT_GENERATED_FILES ${OBJDIR}/helptext.cpp
@@ -98,6 +98,8 @@ IF(UNIX)
         # MESSAGE( STATUS " GTK3_INCLUDE_DIR: " ${GTK3_INCLUDE_DIRS} )
         # MESSAGE( STATUS " GTK3_LIBRARIES: " ${GTK3_LIBRARIES} )
     ENDIF ( GTK3_FOUND )
+
+    set_property(SOURCE ${OBJDIR}/helptext.cpp PROPERTY SKIP_AUTOGEN ON)
 
     set(CMAKE_AUTOMOC ON)
     set(CMAKE_AUTOUIC ON)
