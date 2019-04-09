@@ -107,6 +107,17 @@ int HexDigit(int c)
     }
     return 0;
 }
+
+void ManageLineEnding(char* line)
+{
+    int charlen = strlen(line) - 2;
+        if(line[charlen] == '\r')
+        {
+            line[charlen++] = '\n';
+            line[charlen] = '\0';
+        }
+}
+
 void LoadProgram(char *fileName)
 {
     int pc;
@@ -121,6 +132,7 @@ void LoadProgram(char *fileName)
     }
 
     if(!fgets(line, sizeof(line), f)) BadFormat();
+    ManageLineEnding(line);
     if(strcmp(line, "$$LDcode\n")!=0) BadFormat();
 
     for(pc = 0; ; pc++) {
@@ -128,6 +140,7 @@ void LoadProgram(char *fileName)
         BYTE *b;
 
         if(!fgets(line, sizeof(line), f)) BadFormat();
+        ManageLineEnding(line);
         if(strcmp(line, "$$bits\n")==0) break;
         if(strlen(line) != sizeof(BinOp)*2 + 1) BadFormat();
 
@@ -143,6 +156,7 @@ void LoadProgram(char *fileName)
     SpecialAddrForA = -1;
     SpecialAddrForXosc = -1;
     while(fgets(line, sizeof(line), f)) {
+        ManageLineEnding(line);
         if(memcmp(line, "a,", 2)==0) {
             SpecialAddrForA = atoi(line+2);
         }

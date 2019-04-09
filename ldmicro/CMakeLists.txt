@@ -64,7 +64,7 @@ IF(UNIX)
     add_custom_command( 
         OUTPUT ${OBJDIR}/helptext.cpp
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMAND perl txt2c.pl  > ${OBJDIR}/helptext.cpp
+        COMMAND perl txt2c.pl  > ${OBJDItR}/helptext.cpp
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/manual*.txt")
 
     set(SCRIPT_GENERATED_FILES ${OBJDIR}/helptext.cpp
@@ -153,8 +153,8 @@ endif()
                             draw_outputdev.cpp
                             draw.cpp
                             schematic.cpp
-                            #${OBJDIR}/helptext.cpp
-                            #helpdialog.cpp
+                            helpdialog.cpp
+                            ${OBJDIR}/helptext.cpp
                             maincontrols.cpp
                             ldmicro.cpp)
     

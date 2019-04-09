@@ -121,6 +121,7 @@ BOOL BlinkCursor(BOOL kill = FALSE)
         PREV_y = c.top();
         PREV_w = c.width();
         PREV_h = c.height();
+        // printf("Cursor: x:%d, y:%d\n",c.left(),c.top());
 
         // MainWindowResized();
         // PaintWindow(Hcr);
@@ -157,8 +158,8 @@ static void DrawCharsToScreen(HCRDC Hcr, int cx, int cy, const char *str)
     BOOL inComment = FALSE;
     int inBrace = 0;
     for(; *str; str++, cx++) {
-        int x = cx*FONT_WIDTH + X_PADDING;
-        int y = cy*FONT_HEIGHT + Y_PADDING;
+        int x = cx * FONT_WIDTH + X_PADDING;
+        int y = cy * FONT_HEIGHT + Y_PADDING;
 
         BOOL hiOk = !(InSimulationMode || ThisHighlighted);
 
@@ -358,14 +359,14 @@ void PaintWidget::paintEvent(QPaintEvent *event)
     FillRect(Hcr, &r, InSimulationMode ? BusRightBus : BusBrush);
     // InvalidateRect(DrawWindow, NULL, FALSE);
  
-    // CursorDrawn = FALSE;
+    CursorDrawn = FALSE;
 
     // BitBlt(paintDc, 0, 0, bw, bh, BackDc, ScrollXOffset, 0, SRCCOPY);
 
     /*if(InSimulationMode) {
         KillTimer(DrawWindow, TIMER_BLINK_CURSOR);
     } else {
-        SetTimer(DrawWindow, TIMER_BLINK_CURSOR, 200, BlinkCursor);
+        CursorTimer = SetTimer(DrawWindow, TIMER_BLINK_CURSOR, 500, CursorTimer);
     }*/
 
     ok();

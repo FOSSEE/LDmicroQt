@@ -537,6 +537,7 @@ void MakeMainWindowControls(void)
     PackBoxMenu->setMenuBar(MainMenu);
     IoList = new QTreeWidget();
     IoList->setColumnCount(IO_COLUMN_COUNT);
+    IoList->setSelectionMode(QAbstractItemView::SingleSelection);
     QStringList ColumnNames = {"Name",
             "Type",
             "State",
@@ -552,8 +553,10 @@ void MakeMainWindowControls(void)
     DWSize.setHeight(MainWindow->height() - IoListHeight);
     DWSize.setWidth(MainWindow->width());
     DrawWindow->setMinimumHeight(100);
-    splitter->addWidget(DrawWindow);
     DrawWindow->resize(DWSize);
+    WM_SCROLL scrollbar = new QScrollArea();
+    scrollbar->setWidget(DrawWindow);
+    splitter->addWidget(scrollbar);
     /*QPalette pal = QPalette();
     pal.setColor(QPalette::Background, Qt::black);
     DrawWindow->setAutoFillBackground(true);
@@ -841,7 +844,7 @@ void HscrollProc(int wParam)
     //     InvalidateRect(MainWindow, NULL, FALSE);
     // }
 }
-
+*/
 //-----------------------------------------------------------------------------
 // Set up the title bar text for the main window; indicate whether we are in
 // simulation or editing mode, and indicate the filename.
@@ -864,9 +867,10 @@ void UpdateMainWindowTitleBar(void)
         strcat(line, " - (not yet saved)");
     }
     
-  gtk_window_set_title (GTK_WINDOW (MainWindow), line);
+  // gtk_window_set_title (GTK_WINDOW (MainWindow), line);
+    MainWindow->setWindowTitle(line);
 }
-*/
+
 //-----------------------------------------------------------------------------
 // Set the enabled state of the logic menu items to reflect where we are on
 // the schematic (e.g. can't insert two coils in series).
@@ -1015,58 +1019,37 @@ void ToggleSimulationMode(void)
 //-----------------------------------------------------------------------------
 void RefreshControlsToSettings(void)
 {
-    /*GtkTreeIter iter;
-    BOOL path_not_empty = gtk_tree_model_get_iter_first (GTK_TREE_MODEL(IoList), &iter);
-    // g_print("path e = %i\n", path_not_empty);
-    
-    int * ip;
-    int i = 0;
-
-
+    /*QList<QTreeWidgetItem *> items;
+    // sl.add()
+    QStringList sl;
+    sl.insert(0,"Item1");
+    sl.insert(3,"Item11");
+    items.append(new QTreeWidgetItem(sl));
+    items.append(new QTreeWidgetItem(QStringList(QString("Item2"))));
+    items.append(new QTreeWidgetItem(QStringList(QString("Item3"))));
+    IoList->insertTopLevelItems(0, items);*/
+    QTreeWidgetItem iter;
+    QTreeWidgetItem* selection;
     if(!IoListOutOfSync) {
-        IoListSelectionPoint = -1;
-
-        GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
-        gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);
-        
-        GtkTreeModel *IoModelPtr; 
-        if(gtk_tree_selection_get_selected (selection, &IoModelPtr, &iter))
-        {
-            GtkTreePath *path = gtk_tree_model_get_path ( IoModelPtr, &iter ) ;
-            ip = gtk_tree_path_get_indices ( path ) ;
-            i = ip[0];
-            IoListSelectionPoint = i;
-        }
+        selection = IoList->currentItem();
+        IoListSelectionPoint =IoList->indexOfTopLevelItem(selection);
     }
-
-    gtk_list_store_clear (GTK_LIST_STORE(IoList));
-
-    /// Fill IO List
     NMHDR h;
     h.code = LVN_GETDISPINFO;
     h.hlistFrom = IoList;
-
-    gtk_tree_model_get_iter_first (GTK_TREE_MODEL(IoList), &iter);
-    for(i = 0; i < Prog.io.count; i++) {
-        gtk_list_store_append (GTK_LIST_STORE(IoList), &iter);
+    // printf("ioCount:%d\n",Prog.io.count);
+    IoList->clear();
+    h.hlistIter.clear();
+    for(int i = 0; i < Prog.io.count; i++) {
         h.item.iItem = i;
-        h.hlistIter = &iter;
         IoListProc(&h);
     }
-
-    if(IoListSelectionPoint >= 0) {
-        GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
-        gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);
-
-        gtk_tree_selection_unselect_all (selection);
-        GtkTreePath *path = gtk_tree_path_new_from_indices ( IoListSelectionPoint, -1);
-        gtk_tree_selection_select_path (selection, path);
-
-        // ListView_EnsureVisible(IoList, IoListSelectionPoint, FALSE);
+    IoList->insertTopLevelItems(0, h.hlistIter);
+    if(IoListSelectionPoint >= 0)
+    {
+        IoList->setCurrentItem(IoList->topLevelItem(IoListSelectionPoint));
     }
 
-    IoListOutOfSync = FALSE;
-*/
     if(Prog.mcu) {
         StatusBar[0]->setText(Prog.mcu->mcuName);
     } 
@@ -1087,8 +1070,8 @@ void RefreshControlsToSettings(void)
     }
     StatusBar[2]->setText(buf);
 
-/*
-    for(i = 0; i < NUM_SUPPORTED_MCUS; i++) {
+
+    for(int i = 0; i < NUM_SUPPORTED_MCUS; i++) {
         if(&SupportedMcus[i] == Prog.mcu) {
             CheckMenuItem(ProcessorMenu, ProcessorMenuItems[i], MF_CHECKED);
         }
@@ -1102,7 +1085,7 @@ void RefreshControlsToSettings(void)
     }
     else {
         CheckMenuItem(ProcessorMenu, ProcessorMenuItems[NUM_SUPPORTED_MCUS], MF_UNCHECKED);
-    }*/
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -1111,42 +1094,14 @@ void RefreshControlsToSettings(void)
 //-----------------------------------------------------------------------------
 void GenerateIoListDontLoseSelection(void)
 {
-    /*GtkTreeIter iter;
-    BOOL path_not_empty = gtk_tree_model_get_iter_first (GTK_TREE_MODEL(IoList), &iter);
-    // g_print("path e = %i\n", path_not_empty);
-
-    int * i ;
-    IoListSelectionPoint = -1;
-    
-    // GtkTreeSelection * tsel = gtk_tree_view_get_selection (tv);
-    // GtkTreeModel * tm ;
-    GtkTreePath * path ;
-    GtkTreeModel *IoModelPtr;
-
-    GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
-    gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);
-    if(gtk_tree_selection_get_selected (selection, &IoModelPtr, &iter))
-    {
-        path = gtk_tree_model_get_path ( IoModelPtr , &iter ) ;
-        i = gtk_tree_path_get_indices ( path ) ;
-        IoListSelectionPoint = i[0];
-    }*/
-    // gtk_tree_model_iter_next (GTK_TREE_MODEL(IoList), iter);
-    //     BOOL iter_v = gtk_list_store_iter_is_valid(GTK_LIST_STORE(IoList), iter);
-    //     g_print("iter = %i\n", iter_v);
-
-    
-    // if ( gtk_tree_selection_get_selected ( tsel , &tm , &iter ) )
-    // {
-        
-    //     return i [ 0 ] ;
-    // }
-
-    /*IoListSelectionPoint = GenerateIoList(IoListSelectionPoint);
+    QTreeWidgetItem* selection;
+    selection = IoList->currentItem();
+    IoListSelectionPoint =IoList->indexOfTopLevelItem(selection);
+    IoListSelectionPoint = GenerateIoList(IoListSelectionPoint);
     
     // can't just update the listview index; if I/O has been added then the
     // new selection point might be out of range till we refill it
-    IoListOutOfSync = TRUE;*/
+    IoListOutOfSync = TRUE;
     RefreshControlsToSettings();
 }
 

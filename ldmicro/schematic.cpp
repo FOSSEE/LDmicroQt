@@ -514,7 +514,7 @@ void EditElementMouseDoubleclick(int x, int y)
 
     gy += ScrollYOffset;
 
-    /*if(InSimulationMode) {
+    if(InSimulationMode) {
         ElemLeaf *l = DisplayMatrix[gx][gy];
         if(l && DisplayMatrixWhich[gx][gy] == ELEM_CONTACTS) {
             char *name = l->d.contacts.name;
@@ -522,13 +522,13 @@ void EditElementMouseDoubleclick(int x, int y)
                 SimulationToggleContact(name);
             } 
         } else if(l && DisplayMatrixWhich[gx][gy] == ELEM_READ_ADC) {
-            ShowAnalogSliderPopup(l->d.readAdc.name);
+            // ShowAnalogSliderPopup(l->d.readAdc.name);
         }
     } else {
         if(DisplayMatrix[gx][gy] == Selected) {
             EditSelectedElement();
         }
-    }*/
+    }
 }
 
 //-----------------------------------------------------------------------------

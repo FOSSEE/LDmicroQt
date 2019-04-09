@@ -125,6 +125,7 @@ static void SetSingleBit(char *name, BOOL state)
 {
     int i;
     for(i = 0; i < SingleBitItemsCount; i++) {
+        // printf("%s,%d\n", name, SingleBitOn(name));
         if(strcmp(SingleBitItems[i].name, name)==0) {
             SingleBitItems[i].powered = state;
             return;
@@ -801,6 +802,7 @@ void DescribeForIoList(char *name, char *out)
 void SimulationToggleContact(char *name)
 {
     SetSingleBit(name, !SingleBitOn(name));
+    RefreshControlsToSettings();
     // ListView_RedrawItems(IoList, 0, Prog.io.count - 1);
 }
 

@@ -353,6 +353,7 @@ BOOL LoadIoListFromFile(FILE *f)
     char name[MAX_NAME_LEN];
     int pin;
     while(fgets(line, sizeof(line), f)) {
+        ManageLineEnding(line);
         if(strcmp(line, "END\n")==0) {
             return TRUE;
         }
@@ -778,41 +779,31 @@ cant_use_this_io:;
     g_signal_connect (CancelButton, "clicked", G_CALLBACK (IoDialogCancelProc), GINT_TO_POINTER(item));
     g_signal_connect (OkButton, "clicked", G_CALLBACK (IoDialogOkProc), GINT_TO_POINTER(item));
 }
-
+*/
 //-----------------------------------------------------------------------------
 // Called in response to a notify for the listview. Handles click, text-edit
 // operations etc., but also gets called to find out what text to display
 // where (LPSTR_TEXTCALLBACK); that way we don't have two parallel copies of
 // the I/O list to keep in sync.
-//-----------------------------------------------------------------------------
+//----------------------------------------------------------------  -------------
 void IoListProc(NMHDR *h)
 {
+    QStringList StrL;
+    int         item;
     switch(h->code) {
         case LVN_GETDISPINFO: {
-            int item = h->item.iItem;
+            item = h->item.iItem;
             /// Don't confuse people by displaying bogus pin assignments
             /// for the C target.
-
             char IO_value_holder[60];
+            QString val;
+            /// case LV_IO_NAME:
+            val = QString::fromStdString((const char*)Prog.io.assignment[item].name);
+            StrL.insert(0,val);
 
-            GValue val = G_VALUE_INIT;
-            g_value_init (&val, G_TYPE_STRING);
-
-            /// case LV_IO_PIN:
-            if(Prog.mcu && (Prog.mcu->whichIsa == ISA_ANSIC ||
-                            Prog.mcu->whichIsa == ISA_INTERPRETED) )
-            {
-                strcpy(IO_value_holder, "");
-
-                g_value_set_string(&val, (const char*)&IO_value_holder);
-                gtk_list_store_set_value (GTK_LIST_STORE(h->hlistFrom), h->hlistIter, LV_IO_PIN, &val);
-            }
-            else
-            {
-                PinNumberForIo(IO_value_holder, &(Prog.io.assignment[item]));
-                g_value_set_string(&val, (const char*)&IO_value_holder);                    
-                gtk_list_store_set_value (GTK_LIST_STORE(h->hlistFrom), h->hlistIter, LV_IO_PIN, &val);
-            }
+            /// case LV_IO_TYPE: 
+            val = QString::fromStdString(IoTypeToString(Prog.io.assignment[item].type));
+            StrL.insert(1,val);
 
             /// case LV_IO_STATE: 
             if(InSimulationMode) {
@@ -821,18 +812,21 @@ void IoListProc(NMHDR *h)
             } else {
                 strcpy(IO_value_holder, "");
             }
-            
-            g_value_set_string(&val, (const char*)IO_value_holder);                    
-            gtk_list_store_set_value (GTK_LIST_STORE(h->hlistFrom), h->hlistIter, LV_IO_STATE, &val);
-            /// case LV_IO_TYPE: 
-            char *s = IoTypeToString(Prog.io.assignment[item].type);
+            val = QString::fromStdString(IO_value_holder);
+            StrL.insert(2,val);
 
-            g_value_set_string(&val, (const char*)s);                    
-            gtk_list_store_set_value (GTK_LIST_STORE(h->hlistFrom), h->hlistIter, LV_IO_TYPE, &val);
-
-            /// case LV_IO_NAME:
-            g_value_set_string(&val, (const char*)Prog.io.assignment[item].name);                    
-            gtk_list_store_set_value (GTK_LIST_STORE(h->hlistFrom), h->hlistIter, LV_IO_NAME, &val);
+            /// case LV_IO_PIN:
+            if(Prog.mcu && (Prog.mcu->whichIsa == ISA_ANSIC ||
+                            Prog.mcu->whichIsa == ISA_INTERPRETED) )
+            {
+                strcpy(IO_value_holder, "");
+            }
+            else
+            {
+                PinNumberForIo(IO_value_holder, &(Prog.io.assignment[item]));
+            }
+            val = QString::fromStdString(IO_value_holder);
+            StrL.insert(3,val);
 
             /// case LV_IO_PORT: 
             /// Don't confuse people by displaying bogus pin assignments
@@ -887,12 +881,11 @@ void IoListProc(NMHDR *h)
                 sprintf(IO_value_holder, _("<not an I/O!>"));
             }
 
-            g_value_set_string(&val, (const char*)IO_value_holder);                    
-            gtk_list_store_set_value (GTK_LIST_STORE(h->hlistFrom), h->hlistIter, LV_IO_PORT, &val);
-            
+            val = QString::fromStdString(IO_value_holder);
+            StrL.insert(4,val);
             break;
         }
-        case LVN_ITEMACTIVATE: {
+        /*case LVN_ITEMACTIVATE: {
             if(InSimulationMode) {
                 char *name = Prog.io.assignment[h->item.iItem].name;
                 if(name[0] == 'X') {
@@ -907,7 +900,7 @@ void IoListProc(NMHDR *h)
                 InvalidateRect(MainWindow, NULL, FALSE);
             }
             break;
-        }
+        }*/
     }
+    h->hlistIter.insert(item,new QTreeWidgetItem(StrL));
 }
-*/

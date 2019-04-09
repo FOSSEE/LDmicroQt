@@ -295,10 +295,6 @@ extern HWID PinList;
 #define MAX_COMMENT_LEN             384
 #define MAX_LOOK_UP_TABLE_LEN        60
 
-// Timer IDs associated with the main window.
-extern int CursorTimer;
-extern int SimulateTimer;
-
 typedef struct ElemSubckParallelTag ElemSubcktParallel;
 
 typedef struct ElemCommentTag {
@@ -608,6 +604,14 @@ extern McuIoInfo        SupportedMcus[NUM_SUPPORTED_MCUS];
 void CheckHeap(char *file, int line);
 #define ok() CheckHeap(__FILE__, __LINE__)
 
+class MyWidget : public QWidget
+{
+    public:
+        void keyPressEvent(QKeyEvent* event);
+        void mouseReleaseEvent(QMouseEvent* event);
+        void mouseDoubleClickEvent(QMouseEvent* event);
+};
+
 // maincontrols.cpp
 void MakeMainWindowControls(void);
 HMENU MakeMainWindowMenus(void);
@@ -732,6 +736,7 @@ BOOL CanUndo(void);
 // loadsave.cpp
 BOOL LoadProjectFromFile(char *filename);
 BOOL SaveProjectToFile(char *filename);
+void ManageLineEnding(char* line);
 
 // iolist.cpp
 int  GenerateIoList(int prevSel);

@@ -74,14 +74,15 @@ typedef GtkApplication*     HAPP;
 typedef GtkTreeViewColumn*  HTVC;
 typedef GdkRectangle*   GDRECT;
 typedef QTreeWidget*    HLIST;
-typedef GtkTreeIter     ITLIST;
+typedef QList<QTreeWidgetItem *>     ITLIST;
 typedef GDRECT*     PGDRECT;
 typedef QMenu*      HMENU;
-typedef ITLIST*     HITLIST;
+typedef ITLIST      HITLIST;
 typedef QPainter*   HCRDC;
 typedef QWidget*    HWID;
 typedef QWidget*    HWND;
 typedef GdkPixbuf*  HICON;
+typedef QScrollArea* WM_SCROLL;
 
 
 /// Check if system is x64 or x86

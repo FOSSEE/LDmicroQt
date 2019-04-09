@@ -47,7 +47,7 @@ ElemSubcktParallel *AllocSubcktParallel(void)
 {
     return (ElemSubcktParallel *)CheckMalloc(sizeof(ElemSubcktParallel));
 }
-/*
+
 //-----------------------------------------------------------------------------
 // Routine that does the actual work of adding a leaf element to the left/
 // right of or above/below the selected element. If we are adding left/right
@@ -596,7 +596,7 @@ void DeleteSelectedFromProgram(void)
         return;
     }
 }
-*/
+
 //-----------------------------------------------------------------------------
 // Free a circuit and all of its subcircuits. Calls self recursively to do
 // so.
@@ -713,7 +713,7 @@ int RungContainingSelected(void)
 //-----------------------------------------------------------------------------
 // Delete the rung that contains the cursor.
 //-----------------------------------------------------------------------------
-/*void DeleteSelectedRung(void)
+void DeleteSelectedRung(void)
 {
     if(Prog.numRungs == 1) {
         Error(_("Cannot delete rung; program must have at least one rung."));
@@ -735,7 +735,7 @@ int RungContainingSelected(void)
     if(foundCursor) MoveCursorNear(gx, gy);
 
     WhatCanWeDoFromCursorAndTopology();
-}*/
+}
 
 //-----------------------------------------------------------------------------
 // Allocate a new `empty' rung, with only a single relay coil at the end. All
@@ -756,7 +756,7 @@ static ElemSubcktSeries *AllocEmptyRung(void)
 //-----------------------------------------------------------------------------
 // Insert a rung either before or after the rung that contains the cursor.
 //-----------------------------------------------------------------------------
-/*void InsertRung(BOOL afterCursor)
+void InsertRung(BOOL afterCursor)
 {
     if(Prog.numRungs >= (MAX_RUNGS - 1)) {
         Error(_("Too many rungs!"));
@@ -773,13 +773,13 @@ static ElemSubcktSeries *AllocEmptyRung(void)
     (Prog.numRungs)++;
 
     WhatCanWeDoFromCursorAndTopology();
-}*/
+}
 
 //-----------------------------------------------------------------------------
 // Swap the row containing the selected element with the one under it, or do
 // nothing if the rung is the last in the program.
 //-----------------------------------------------------------------------------
-/*void PushRungDown(void)
+void PushRungDown(void)
 {
     int i = RungContainingSelected();
     if(i == (Prog.numRungs-1)) return;
@@ -790,13 +790,13 @@ static ElemSubcktSeries *AllocEmptyRung(void)
 
     WhatCanWeDoFromCursorAndTopology();
     ScrollSelectedIntoViewAfterNextPaint = TRUE;
-}*/
+}
 
 //-----------------------------------------------------------------------------
 // Swap the row containing the selected element with the one above it, or do
 // nothing if the rung is the last in the program.
 //-----------------------------------------------------------------------------
-/*void PushRungUp(void)
+void PushRungUp(void)
 {
     int i = RungContainingSelected();
     if(i == 0) return;
@@ -807,7 +807,7 @@ static ElemSubcktSeries *AllocEmptyRung(void)
 
     WhatCanWeDoFromCursorAndTopology();
     ScrollSelectedIntoViewAfterNextPaint = TRUE;
-}*/
+}
 
 //-----------------------------------------------------------------------------
 // Start a new project. Give them one rung, with a coil (that they can

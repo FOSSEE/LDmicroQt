@@ -49,56 +49,10 @@ COLORREF RGB(int red, int green, int blue)
     return col;
 }
 
-int MessageBox(HWID pWindow, char* message, char* title, UINT mFlags)
+int MessageBox(HWID pWindow, char* message, char* title, UINT mFlags, UINT iFlags)
  {
-/*    GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
-    GtkMessageType mType;
-    
-    if ((mFlags & MB_ICONERROR) == MB_ICONERROR)
-        mType = GTK_MESSAGE_ERROR;
-    else if ((mFlags & MB_ICONQUESTION) == MB_ICONQUESTION)
-        mType = GTK_MESSAGE_QUESTION;
-    else if ((mFlags & MB_ICONWARNING) == MB_ICONWARNING)
-        mType = GTK_MESSAGE_WARNING;
-    else if ((mFlags & MB_ICONINFORMATION) == MB_ICONINFORMATION)
-        mType = GTK_MESSAGE_INFO;
-    else
-        mType = GTK_MESSAGE_OTHER;
-
-    mType = GTK_MESSAGE_ERROR;
-    HWID dialog = gtk_message_dialog_new (GTK_WINDOW(pWindow),
-                                    flags,
-                                    mType,
-                                    GTK_BUTTONS_NONE,
-                                    message);
-
-    if ((mFlags & MB_OKCANCEL) == MB_OKCANCEL)
-    {
-        gtk_dialog_add_button(GTK_DIALOG(dialog), "_OK", IDOK);
-        gtk_dialog_add_button(GTK_DIALOG(dialog), "_CANCEL", IDCANCEL);
-    }
-    else if ((mFlags & MB_YESNO) == MB_YESNO)
-    {
-        gtk_dialog_add_button(GTK_DIALOG(dialog), "_YES", IDYES);
-        gtk_dialog_add_button(GTK_DIALOG(dialog), "_NO", IDNO);
-    }
-    else if ((mFlags & MB_YESNOCANCEL) == MB_YESNOCANCEL)
-    {
-        gtk_dialog_add_button(GTK_DIALOG(dialog), "_YES", IDYES);
-        gtk_dialog_add_button(GTK_DIALOG(dialog), "_NO", IDNO);
-        gtk_dialog_add_button(GTK_DIALOG(dialog), "_CANCEL", IDCANCEL);
-    }
-    else
-        gtk_dialog_add_button(GTK_DIALOG(dialog), "OK", IDOK);
-    
-    gtk_message_dialog_set_markup (GTK_MESSAGE_DIALOG(dialog),
-                               title);
-    gtk_message_dialog_format_secondary_markup(GTK_MESSAGE_DIALOG(dialog), message);
-    int result = gtk_dialog_run (GTK_DIALOG (dialog));
-    gtk_widget_destroy (dialog);
-*/
-    // return result;
-    return TRUE;
+    QMessageBox msg((QMessageBox::Icon)iFlags, title, message, (QMessageBox::StandardButton)mFlags, pWindow);
+    return msg.exec();
  }
 
 
@@ -175,63 +129,39 @@ BOOL GetSaveFileName(OPENFILENAME *ofn)
 
 BOOL GetOpenFileName(OPENFILENAME *ofn)
 {
-/*    GtkWidget *dialog;
-    GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
-
-    dialog = gtk_file_chooser_dialog_new (ofn->lpstrTitle,
-                                        GTK_WINDOW(ofn->parentWindow),
-                                        action,
-                                        "_Cancel",
-                                        GTK_RESPONSE_CANCEL,
-                                        "_Open",
-                                        GTK_RESPONSE_ACCEPT,
-                                        NULL);
-    
-    GtkFileFilter *filter = gtk_file_filter_new ();
-    char* strFilter = new char[strlen(ofn->lpstrFilter)];
+    std::string strFilter;
     DWORD strFilterLen = 0;
     BOOL filterResetFlag = FALSE;
-    
-    for (int i = 0; !(ofn->lpstrFilter[i] == '\0' && ofn->lpstrFilter[i-1] == '\0'); ++i)   
+    while(!((ofn->lpstrFilter[strFilterLen] == '\0') &&
+        (ofn->lpstrFilter[strFilterLen + 1] == '\0')))
     {
-        memcpy (strFilter + strFilterLen, &ofn->lpstrFilter[i], 1 );
-        ++strFilterLen;
-        if (ofn->lpstrFilter[i] == '\0')
-            if (filterResetFlag)
-            {
-                gtk_file_filter_add_pattern (GTK_FILE_FILTER(filter), strFilter);
-                gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(dialog), filter);
-                filter = gtk_file_filter_new ();
-                strFilterLen = 0;
-                filterResetFlag = FALSE;
-            }
-            else
-            {
-                gtk_file_filter_set_name (GTK_FILE_FILTER(filter), strFilter);
-                strFilterLen = 0;
-                filterResetFlag = TRUE;
-            }
+        if(filterResetFlag)
+        {
+            strFilter = strFilter + "(";
+            strFilter.append(&ofn->lpstrFilter[strFilterLen]);
+            strFilter = strFilter + ");;";
+            filterResetFlag = FALSE;
+        }
+        else
+        {
+            strFilter.append(&ofn->lpstrFilter[strFilterLen]);
+            filterResetFlag = TRUE;
+        }
+        strFilterLen = strFilterLen + strlen(&ofn->lpstrFilter[strFilterLen]) +1;
+    }
+    // printf("patterns:%s\n",strFilter.c_str() );
+    QString filename = QFileDialog::getOpenFileName(ofn->parentWindow, ofn->lpstrTitle,
+        QStandardPaths::locate(QStandardPaths::HomeLocation,".",
+            QStandardPaths::LocateDirectory),
+        strFilter.c_str());
+    if(filename == NULL)
+    {
+        return FALSE;
     }
     
-    sprintf(strFilter, "*.%s", ofn->lpstrDefExt);
-    gtk_file_filter_add_pattern (GTK_FILE_FILTER(filter), strFilter);
-    //gtk_file_filter_set_name (filter, "int files");
-    gtk_file_chooser_set_filter (GTK_FILE_CHOOSER(dialog), filter);
-    
-    delete strFilter;
+        strcpy(ofn->lpstrFile,filename.toStdString().c_str());
+        // printf("FileName:%s",ofn->lpstrFile);
 
-    BOOL exitStatus = gtk_dialog_run (GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT;
-    if (exitStatus)
-    {
-        char* str;
-        str = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER(dialog));
-        strcpy(ofn->lpstrFile, str);
-        g_free(str);
-    }
-    
-    gtk_widget_destroy (dialog);
-
-    return exitStatus;*/
     return TRUE;
 }
 
@@ -538,7 +468,7 @@ UINT SetTimer(HWID hWid, UINT  nIDEvent, UINT uElapse, UINT TimerID)
         pal.setColor(QPalette::Background, Qt::white);
         CursorObject->setAutoFillBackground(true);
         CursorObject->setPalette(pal);
-        // CursorObject->setGeometry(100,100,2,20);
+        CursorObject->setGeometry(0,0,2,20);
     }
     // if(hWid!=NULL)
     //     CursorObject->setVisible(TRUE);
@@ -560,14 +490,18 @@ UINT SetTimer(HWID hWid, UINT  nIDEvent, UINT uElapse, UINT TimerID)
 
 BOOL KillTimer(HWID hWid, UINT uIDEvent)
 {
-    auto record_it = std::find_if(timerRecords.begin(), timerRecords.end(),  [&uIDEvent](TimerRecord &Record) { return Record.ufID == uIDEvent; });
+    /*auto record_it = std::find_if(timerRecords.begin(), timerRecords.end(),  [&uIDEvent](TimerRecord &Record) { return Record.ufID == uIDEvent; });
 
     if (record_it == timerRecords.end())
         return FALSE;
     
     record_it->pfun(TRUE);
     g_source_remove (record_it->utID);
-    timerRecords.erase(record_it);
+    timerRecords.erase(record_it);*/
+    if(uIDEvent == TIMER_BLINK_CURSOR)
+    {
+        hWid->killTimer(CursorTimer);
+    }
 
     return TRUE;
 }

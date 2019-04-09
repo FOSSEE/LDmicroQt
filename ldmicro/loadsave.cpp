@@ -235,6 +235,7 @@ static ElemSubcktParallel *LoadParallelFromFile(FILE *f)
     
     for(;;) {
         if(!fgets(line, sizeof(line), f)) return NULL;
+        ManageLineEnding(line);
         char *s = line;
         while(isspace(*s)) s++;
 
@@ -275,6 +276,7 @@ static ElemSubcktSeries *LoadSeriesFromFile(FILE *f)
     for(;;) {
 
         if(!fgets(line, sizeof(line), f)) return NULL;
+        ManageLineEnding(line);
 
         char *s = line;
         
@@ -305,6 +307,16 @@ static ElemSubcktSeries *LoadSeriesFromFile(FILE *f)
     }
 }
 
+void ManageLineEnding(char* line)
+{
+    int charlen = strlen(line) - 2;
+        if(line[charlen] == '\r')
+        {
+            line[charlen++] = '\n';
+            line[charlen] = '\0';
+        }
+}
+
 //-----------------------------------------------------------------------------
 // Load a project from a saved project description files. This describes the
 // program, the target processor, plus certain configuration settings (cycle
@@ -323,6 +335,7 @@ BOOL LoadProjectFromFile(char *filename)
     int crystal, cycle, baud;
 
     while(fgets(line, sizeof(line), f)) {
+        ManageLineEnding(line);
         if(strcmp(line, "IO LIST\n")==0) {
             if(!LoadIoListFromFile(f)) {
                 fclose(f);
@@ -359,6 +372,7 @@ BOOL LoadProjectFromFile(char *filename)
     int rung;
     for(rung = 0;;) {
         if(!fgets(line, sizeof(line), f)) break;
+        ManageLineEnding(line);
 
         if(strcmp(line, "RUNG\n")!=0) goto failed;
 

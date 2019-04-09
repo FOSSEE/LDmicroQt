@@ -53,6 +53,8 @@ static int         MouseY;
 int CursorTimer;
 int SimulateTimer;
 
+ProgramSlots MenuHandle;
+
 // For the open/save dialog boxes
 #define LDMICRO_PATTERN "LDmicro Ladder Logic Programs (*.ld)\0*.ld\0" \
                      "All files\0*\0\0"
@@ -161,7 +163,7 @@ static void CompileProgram(BOOL compileAs)
 
         memset(&ofn, 0, sizeof(ofn));
         ofn.lStructSize = sizeof(ofn);
-        ofn.parentWindow = &MainWindow;
+        ofn.parentWindow = MainWindow;
         ofn.lpstrTitle = _("Compile To");
         if(Prog.mcu && Prog.mcu->whichIsa == ISA_ANSIC) {
             ofn.lpstrFilter = C_PATTERN;
@@ -219,7 +221,7 @@ static void CompileProgram(BOOL compileAs)
 // or to cancel the operation they are performing. Return TRUE if they want
 // to cancel.
 //-----------------------------------------------------------------------------
-/*BOOL CheckSaveUserCancels(void)
+BOOL CheckSaveUserCancels(void)
 {
     if(!ProgramChangedNotSaved) {
         // no problem
@@ -229,13 +231,13 @@ static void CompileProgram(BOOL compileAs)
     int r = MessageBox(MainWindow, 
         _("The program has changed since it was last saved.\r\n\r\n"
         "Do you want to save the changes?"), "LDmicro",
-        MB_YESNOCANCEL | MB_ICONWARNING);
+        MB_YESNOCANCEL , MB_ICONWARNING);
     switch(r) {
         case IDYES:
-            if(SaveProgram())
+            // if(SaveProgram())
                 return FALSE;
-            else
-                return TRUE;
+            // else
+            //     return TRUE;
 
         case IDNO:
             return FALSE;
@@ -280,12 +282,13 @@ static void OpenDialog(void)
         strcpy(CurrentSaveFile, tempSaveFile);
         UndoFlush();
     }
+    DrawWindow->repaint();
 
     GenerateIoListDontLoseSelection();
     RefreshScrollbars();
     UpdateMainWindowTitleBar();
 }
-*/
+
 //-----------------------------------------------------------------------------
 // Housekeeping required when the program changes: mark the program as
 // changed so that we ask if user wants to save before exiting, and update
@@ -340,271 +343,371 @@ void ProgramChanged(void)
 //-----------------------------------------------------------------------------
 // Handle a selection from the menu bar of the main window.
 //-----------------------------------------------------------------------------
-// static void ProcessMenu(int code)
-// {
-//     if(code >= MNU_PROCESSOR_0 && code < MNU_PROCESSOR_0+NUM_SUPPORTED_MCUS) {
-//         strcpy(CurrentCompileFile, "");
-//         Prog.mcu = &SupportedMcus[code - MNU_PROCESSOR_0];
-//         RefreshControlsToSettings();
-//         return;
-//     }
-//     if(code == MNU_PROCESSOR_0+NUM_SUPPORTED_MCUS) {
-//         Prog.mcu = NULL;
-//         strcpy(CurrentCompileFile, "");
-//         RefreshControlsToSettings();
-//         return;
-//     }
+static void ProcessMenu(int code)
+{
+    if(code >= MNU_PROCESSOR_0 && code < MNU_PROCESSOR_0+NUM_SUPPORTED_MCUS) {
+        strcpy(CurrentCompileFile, "");
+        Prog.mcu = &SupportedMcus[code - MNU_PROCESSOR_0];
+        RefreshControlsToSettings();
+        return;
+    }
+    if(code == MNU_PROCESSOR_0+NUM_SUPPORTED_MCUS) {
+        Prog.mcu = NULL;
+        strcpy(CurrentCompileFile, "");
+        RefreshControlsToSettings();
+        return;
+    }
 
-//     switch(code) {
-//         case MNU_NEW:
-//             if(CheckSaveUserCancels()) break;
-//             NewProgram();
-//             strcpy(CurrentSaveFile, "");
-//             strcpy(CurrentCompileFile, "");
-//             GenerateIoListDontLoseSelection();
-//             RefreshScrollbars();
-//             UpdateMainWindowTitleBar();
-//             break;
+    switch(code) {
+        /*case MNU_NEW:
+            if(CheckSaveUserCancels()) break;
+            NewProgram();
+            strcpy(CurrentSaveFile, "");
+            strcpy(CurrentCompileFile, "");
+            GenerateIoListDontLoseSelection();
+            RefreshScrollbars();
+            UpdateMainWindowTitleBar();
+            break;*/
 
-//         case MNU_OPEN:
-//             if(CheckSaveUserCancels()) break;
-//             OpenDialog();
-//             break;
+        case MNU_OPEN:
+            if(CheckSaveUserCancels()) break;
+            OpenDialog();
+            break;
 
-//         case MNU_SAVE:
-//             SaveProgram();
-//             UpdateMainWindowTitleBar();
-//             break;
+        /*case MNU_SAVE:
+            SaveProgram();
+            UpdateMainWindowTitleBar();
+            break;
 
-//         case MNU_SAVE_AS:
-//             SaveAsDialog();
-//             UpdateMainWindowTitleBar();
-//             break;
+        case MNU_SAVE_AS:
+            SaveAsDialog();
+            UpdateMainWindowTitleBar();
+            break;
 
-//         case MNU_EXPORT:
-//             ExportDialog();
-//             break;
+        case MNU_EXPORT:
+            ExportDialog();
+            break;
 
-//         case MNU_EXIT:
-//             if(CheckSaveUserCancels()) break;
-//             LD_WM_Close_call(NULL, NULL, NULL);
-//             // PostQuitMessage(0);
-//             break;
+        case MNU_EXIT:
+            if(CheckSaveUserCancels()) break;
+            LD_WM_Close_call(NULL, NULL, NULL);
+            // PostQuitMessage(0);
+            break;
+*/
+        case MNU_INSERT_COMMENT:
+            CHANGING_PROGRAM(AddComment(_("--add comment here--")));
+            break;
 
-//         case MNU_INSERT_COMMENT:
-//             CHANGING_PROGRAM(AddComment(_("--add comment here--")));
-//             break;
+        case MNU_INSERT_CONTACTS:
+            CHANGING_PROGRAM(AddContact());
+            break;
 
-//         case MNU_INSERT_CONTACTS:
-//             CHANGING_PROGRAM(AddContact());
-//             break;
+        case MNU_INSERT_COIL:
+            CHANGING_PROGRAM(AddCoil());
+            break;
 
-//         case MNU_INSERT_COIL:
-//             CHANGING_PROGRAM(AddCoil());
-//             break;
+        case MNU_INSERT_TON:
+            CHANGING_PROGRAM(AddTimer(ELEM_TON));
+            break;
 
-//         case MNU_INSERT_TON:
-//             CHANGING_PROGRAM(AddTimer(ELEM_TON));
-//             break;
+        case MNU_INSERT_TOF:
+            CHANGING_PROGRAM(AddTimer(ELEM_TOF));
+            break;
 
-//         case MNU_INSERT_TOF:
-//             CHANGING_PROGRAM(AddTimer(ELEM_TOF));
-//             break;
+        case MNU_INSERT_RTO:
+            CHANGING_PROGRAM(AddTimer(ELEM_RTO));
+            break;
 
-//         case MNU_INSERT_RTO:
-//             CHANGING_PROGRAM(AddTimer(ELEM_RTO));
-//             break;
+        case MNU_INSERT_CTU:
+            CHANGING_PROGRAM(AddCounter(ELEM_CTU));
+            break;
 
-//         case MNU_INSERT_CTU:
-//             CHANGING_PROGRAM(AddCounter(ELEM_CTU));
-//             break;
+        case MNU_INSERT_CTD:
+            CHANGING_PROGRAM(AddCounter(ELEM_CTD));
+            break;
 
-//         case MNU_INSERT_CTD:
-//             CHANGING_PROGRAM(AddCounter(ELEM_CTD));
-//             break;
+        case MNU_INSERT_CTC:
+            CHANGING_PROGRAM(AddCounter(ELEM_CTC));
+            break;
 
-//         case MNU_INSERT_CTC:
-//             CHANGING_PROGRAM(AddCounter(ELEM_CTC));
-//             break;
+        case MNU_INSERT_RES:
+            CHANGING_PROGRAM(AddReset());
+            break;
 
-//         case MNU_INSERT_RES:
-//             CHANGING_PROGRAM(AddReset());
-//             break;
+        case MNU_INSERT_OPEN:
+            CHANGING_PROGRAM(AddEmpty(ELEM_OPEN));
+            break;
 
-//         case MNU_INSERT_OPEN:
-//             CHANGING_PROGRAM(AddEmpty(ELEM_OPEN));
-//             break;
+        case MNU_INSERT_SHORT:
+            CHANGING_PROGRAM(AddEmpty(ELEM_SHORT));
+            break;
 
-//         case MNU_INSERT_SHORT:
-//             CHANGING_PROGRAM(AddEmpty(ELEM_SHORT));
-//             break;
+        case MNU_INSERT_MASTER_RLY:
+            CHANGING_PROGRAM(AddMasterRelay());
+            break;
 
-//         case MNU_INSERT_MASTER_RLY:
-//             CHANGING_PROGRAM(AddMasterRelay());
-//             break;
+        case MNU_INSERT_SHIFT_REG:
+            CHANGING_PROGRAM(AddShiftRegister());
+            break;
 
-//         case MNU_INSERT_SHIFT_REG:
-//             CHANGING_PROGRAM(AddShiftRegister());
-//             break;
-
-//         case MNU_INSERT_LUT:
-//             CHANGING_PROGRAM(AddLookUpTable());
-//             break;
+        case MNU_INSERT_LUT:
+            CHANGING_PROGRAM(AddLookUpTable());
+            break;
         
-//         case MNU_INSERT_PWL:
-//             CHANGING_PROGRAM(AddPiecewiseLinear());
-//             break;
+        case MNU_INSERT_PWL:
+            CHANGING_PROGRAM(AddPiecewiseLinear());
+            break;
         
-//         case MNU_INSERT_FMTD_STR:
-//             CHANGING_PROGRAM(AddFormattedString());
-//             break;
+        case MNU_INSERT_FMTD_STR:
+            CHANGING_PROGRAM(AddFormattedString());
+            break;
 
-//         case MNU_INSERT_OSR:
-//             CHANGING_PROGRAM(AddEmpty(ELEM_ONE_SHOT_RISING));
-//             break;
+        case MNU_INSERT_OSR:
+            CHANGING_PROGRAM(AddEmpty(ELEM_ONE_SHOT_RISING));
+            break;
 
-//         case MNU_INSERT_OSF:
-//             CHANGING_PROGRAM(AddEmpty(ELEM_ONE_SHOT_FALLING));
-//             break;
+        case MNU_INSERT_OSF:
+            CHANGING_PROGRAM(AddEmpty(ELEM_ONE_SHOT_FALLING));
+            break;
 
-//         case MNU_INSERT_MOV:
-//             CHANGING_PROGRAM(AddMove());
-//             break;
+        case MNU_INSERT_MOV:
+            CHANGING_PROGRAM(AddMove());
+            break;
 
-//         case MNU_INSERT_SET_PWM:
-//             CHANGING_PROGRAM(AddSetPwm());
-//             break;
+        case MNU_INSERT_SET_PWM:
+            CHANGING_PROGRAM(AddSetPwm());
+            break;
 
-//         case MNU_INSERT_READ_ADC:
-//             CHANGING_PROGRAM(AddReadAdc());
-//             break;
+        case MNU_INSERT_READ_ADC:
+            CHANGING_PROGRAM(AddReadAdc());
+            break;
 
-//         case MNU_INSERT_UART_SEND:
-//             CHANGING_PROGRAM(AddUart(ELEM_UART_SEND));
-//             break;
+        case MNU_INSERT_UART_SEND:
+            CHANGING_PROGRAM(AddUart(ELEM_UART_SEND));
+            break;
 
-//         case MNU_INSERT_UART_RECV:
-//             CHANGING_PROGRAM(AddUart(ELEM_UART_RECV));
-//             break;
+        case MNU_INSERT_UART_RECV:
+            CHANGING_PROGRAM(AddUart(ELEM_UART_RECV));
+            break;
 
-//         case MNU_INSERT_PERSIST:
-//             CHANGING_PROGRAM(AddPersist());
-//             break;
+        case MNU_INSERT_PERSIST:
+            CHANGING_PROGRAM(AddPersist());
+            break;
 
-//         {
-//             int elem;
-//             case MNU_INSERT_ADD: elem = ELEM_ADD; goto math;
-//             case MNU_INSERT_SUB: elem = ELEM_SUB; goto math;
-//             case MNU_INSERT_MUL: elem = ELEM_MUL; goto math;
-//             case MNU_INSERT_DIV: elem = ELEM_DIV; goto math;
-// math:
-//                 CHANGING_PROGRAM(AddMath(elem));
-//                 break;
-//         }
+        {
+            int elem;
+            case MNU_INSERT_ADD: elem = ELEM_ADD; goto math;
+            case MNU_INSERT_SUB: elem = ELEM_SUB; goto math;
+            case MNU_INSERT_MUL: elem = ELEM_MUL; goto math;
+            case MNU_INSERT_DIV: elem = ELEM_DIV; goto math;
+math:
+                CHANGING_PROGRAM(AddMath(elem));
+                break;
+        }
 
-//         {
-//             int elem;
-//             case MNU_INSERT_EQU: elem = ELEM_EQU; goto cmp;
-//             case MNU_INSERT_NEQ: elem = ELEM_NEQ; goto cmp;
-//             case MNU_INSERT_GRT: elem = ELEM_GRT; goto cmp;
-//             case MNU_INSERT_GEQ: elem = ELEM_GEQ; goto cmp;
-//             case MNU_INSERT_LES: elem = ELEM_LES; goto cmp;
-//             case MNU_INSERT_LEQ: elem = ELEM_LEQ; goto cmp;
-// cmp:    
-//                 CHANGING_PROGRAM(AddCmp(elem));
-//                 break;
-//         } 
+        {
+            int elem;
+            case MNU_INSERT_EQU: elem = ELEM_EQU; goto cmp;
+            case MNU_INSERT_NEQ: elem = ELEM_NEQ; goto cmp;
+            case MNU_INSERT_GRT: elem = ELEM_GRT; goto cmp;
+            case MNU_INSERT_GEQ: elem = ELEM_GEQ; goto cmp;
+            case MNU_INSERT_LES: elem = ELEM_LES; goto cmp;
+            case MNU_INSERT_LEQ: elem = ELEM_LEQ; goto cmp;
+cmp:    
+                CHANGING_PROGRAM(AddCmp(elem));
+                break;
+        } 
 
-//         case MNU_MAKE_NORMAL:
-//             CHANGING_PROGRAM(MakeNormalSelected());
-//             break;
+        case MNU_MAKE_NORMAL:
+            CHANGING_PROGRAM(MakeNormalSelected());
+            break;
 
-//         case MNU_NEGATE:
-//             CHANGING_PROGRAM(NegateSelected());
-//             break;
+        case MNU_NEGATE:
+            CHANGING_PROGRAM(NegateSelected());
+            break;
 
-//         case MNU_MAKE_SET_ONLY:
-//             CHANGING_PROGRAM(MakeSetOnlySelected());
-//             break;
+        case MNU_MAKE_SET_ONLY:
+            CHANGING_PROGRAM(MakeSetOnlySelected());
+            break;
 
-//         case MNU_MAKE_RESET_ONLY:
-//             CHANGING_PROGRAM(MakeResetOnlySelected());
-//             break;
+        case MNU_MAKE_RESET_ONLY:
+            CHANGING_PROGRAM(MakeResetOnlySelected());
+            break;
 
-//         case MNU_UNDO:
-//             UndoUndo();
-//             break;
+        case MNU_UNDO:
+            UndoUndo();
+            break;
 
-//         case MNU_REDO:
-//             UndoRedo();
-//             break;
+        case MNU_REDO:
+            UndoRedo();
+            break;
 
-//         case MNU_INSERT_RUNG_BEFORE:
-//             CHANGING_PROGRAM(InsertRung(FALSE));
-//             break;
+        case MNU_INSERT_RUNG_BEFORE:
+            CHANGING_PROGRAM(InsertRung(FALSE));
+            break;
 
-//         case MNU_INSERT_RUNG_AFTER:
-//             CHANGING_PROGRAM(InsertRung(TRUE));
-//             break;
+        case MNU_INSERT_RUNG_AFTER:
+            CHANGING_PROGRAM(InsertRung(TRUE));
+            break;
 
-//         case MNU_DELETE_RUNG:
-//             CHANGING_PROGRAM(DeleteSelectedRung());
-//             break;
+        case MNU_DELETE_RUNG:
+            CHANGING_PROGRAM(DeleteSelectedRung());
+            break;
 
-//         case MNU_PUSH_RUNG_UP:
-//             CHANGING_PROGRAM(PushRungUp());
-//             break;
+        case MNU_PUSH_RUNG_UP:
+            CHANGING_PROGRAM(PushRungUp());
+            break;
 
-//         case MNU_PUSH_RUNG_DOWN:
-//             CHANGING_PROGRAM(PushRungDown());
-//             break;
+        case MNU_PUSH_RUNG_DOWN:
+            CHANGING_PROGRAM(PushRungDown());
+            break;
 
-//         case MNU_DELETE_ELEMENT:
-//             CHANGING_PROGRAM(DeleteSelectedFromProgram());
-//             break;
+        case MNU_DELETE_ELEMENT:
+            CHANGING_PROGRAM(DeleteSelectedFromProgram());
+            break;
 
-//         case MNU_MCU_SETTINGS:
-//             CHANGING_PROGRAM(ShowConfDialog());
-//             break;
+        /*case MNU_MCU_SETTINGS:
+            CHANGING_PROGRAM(ShowConfDialog());
+            break;*/
 
-//         case MNU_SIMULATION_MODE:
-//             ToggleSimulationMode();
-//             break;
+        case MNU_SIMULATION_MODE:
+            ToggleSimulationMode();
+            break;
 
-//         case MNU_START_SIMULATION:
-//             StartSimulation();
-//             break;
+        case MNU_START_SIMULATION:
+            StartSimulation();
+            break;
 
-//         case MNU_STOP_SIMULATION:
-//             StopSimulation();
-//             break;
+        case MNU_STOP_SIMULATION:
+            StopSimulation();
+            break;
 
-//         case MNU_SINGLE_CYCLE:
-//             SimulateOneCycle(TRUE);
-//             break;
+        case MNU_SINGLE_CYCLE:
+            SimulateOneCycle(TRUE);
+            break;
 
-//         case MNU_COMPILE:
-//             CompileProgram(FALSE);
-//             break;
+        case MNU_COMPILE:
+            CompileProgram(FALSE);
+            break;
 
-//         case MNU_COMPILE_AS:
-//             CompileProgram(TRUE);
-//             break;
+        case MNU_COMPILE_AS:
+            CompileProgram(TRUE);
+            break;
 
-//         case MNU_MANUAL:
-//             ShowHelpDialog(FALSE);
-//             break;
+        case MNU_MANUAL:
+            ShowHelpDialog(FALSE);
+            break;
 
-//         case MNU_ABOUT:
-//             ShowHelpDialog(TRUE);
-//             break;
-//     }
-//     gtk_widget_queue_draw(DrawWindow);
-// }
+        case MNU_ABOUT:
+            ShowHelpDialog(TRUE);
+            break;
+    }
+    // gtk_widget_queue_draw(DrawWindow);
+    DrawWindow->repaint();
+}
 
 // //-----------------------------------------------------------------------------
 // // WndProc functions for MainWindow.
 // //-----------------------------------------------------------------------------
+
+void MyWidget::keyPressEvent(QKeyEvent* event)
+{
+    // if(event->key() == )
+        int wParam = event->key();
+
+    /*if(wParam == VK_TAB) {
+        // SetFocus(IoList);
+        gtk_window_set_focus (GTK_WINDOW(MainWindow), view);
+        // BlinkCursor(0, 0, 0, 0);
+        
+    }*/
+
+    if(InSimulationMode) 
+    {
+        switch(wParam) 
+        {
+            case VK_DOWN:
+                if(ScrollYOffset < ScrollYOffsetMax)
+                    ScrollYOffset++;
+                RefreshScrollbars();
+                DrawWindow->repaint();
+                break;
+
+            case VK_UP:
+                if(ScrollYOffset > 0)
+                    ScrollYOffset--;
+                RefreshScrollbars();
+                DrawWindow->repaint();
+                break;
+
+            case VK_LEFT:
+                ScrollXOffset -= FONT_WIDTH;
+                if(ScrollXOffset < 0) 
+                    ScrollXOffset = 0;
+                RefreshScrollbars();
+                DrawWindow->repaint();
+                break;
+
+            case VK_RIGHT:
+                ScrollXOffset += FONT_WIDTH;
+                if(ScrollXOffset >= ScrollXOffsetMax)
+                    ScrollXOffset = ScrollXOffsetMax;
+                RefreshScrollbars();
+                DrawWindow->repaint();
+                break;
+
+            case VK_RETURN:
+            case VK_ESCAPE:
+                ToggleSimulationMode();
+                break;
+        }
+    }
+
+    switch(wParam) 
+    {
+        case VK_UP:
+            if(event->modifiers() & Qt::ShiftModifier)
+            {
+                CHANGING_PROGRAM(PushRungUp());
+            }
+            else
+            {
+                MoveCursorKeyboard(wParam);
+            }
+
+            DrawWindow->repaint();
+            break;
+
+        case VK_DOWN:
+            if(event->modifiers() & Qt::ShiftModifier)
+            {
+                CHANGING_PROGRAM(PushRungDown());
+            }
+            else
+            {
+                MoveCursorKeyboard(wParam);
+            }
+
+            DrawWindow->repaint();
+            break;
+
+        case VK_RIGHT:
+        case VK_LEFT:
+            MoveCursorKeyboard(wParam);
+            DrawWindow->repaint();
+            break;
+
+        case VK_RETURN:
+            CHANGING_PROGRAM(EditSelectedElement());
+            DrawWindow->repaint();
+            break;
+
+        default:
+            break;
+    }
+
+    return;
+}
 // gboolean LD_WM_KeyDown_call(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 // {   
 //     /* Handles:
@@ -783,6 +886,73 @@ void ProgramChanged(void)
 //     return FALSE;
 // }
 
+void MyWidget :: mouseReleaseEvent(QMouseEvent* event)
+{
+    /* Handles:
+    * WM_LBUTTONDBLCLK, WM_LBUTTONDOWN
+    */
+
+    QRect Rect;
+    Rect = DrawWindow->rect();
+    QPoint wy = DrawWindow->mapFrom(MainWindow, event->pos());
+    // printf("mouseReleaseEvent: x:%d,y:%d",wy.x(),wy.y());
+
+    if((wy.x() <= 0) || (wy.y() <= 0))
+        return;
+
+    //No need to identify if mouse is outside the scope as the function is not called
+
+    // GtkAdjustment *adjustment = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(ScrollWindow));
+
+    switch(event->button())
+    {
+        case Qt::LeftButton:
+
+                GLOBAL_mouse_last_clicked_x = event->x();
+                GLOBAL_mouse_last_clicked_y = event->y();
+
+                /*int x = event->button.x;
+                int y = event->button.y - 30 + gtk_adjustment_get_value(adjustment);*/
+
+                if(!InSimulationMode) MoveCursorMouseClick(wy.x(), wy.y());
+
+                // gtk_widget_queue_draw(DrawWindow);
+                DrawWindow->repaint();
+
+            break;
+    // return FALSE;
+}
+}
+void MyWidget :: mouseDoubleClickEvent(QMouseEvent* event)
+{
+    QRect Rect;
+    Rect = DrawWindow->rect();
+    QPoint wy = DrawWindow->mapFrom(MainWindow, event->pos());
+
+    if((wy.x() <= 0) || (wy.y() <= 0))
+        return;
+    switch (event->button())
+    {
+        case Qt::LeftButton:
+                GLOBAL_mouse_last_clicked_x = event->x();
+                GLOBAL_mouse_last_clicked_y = event->y();
+                
+                /*int x = event->button.x;
+                int y = event->button.y - 30 + gtk_adjustment_get_value(adjustment);*/
+
+                if(InSimulationMode) {
+                    EditElementMouseDoubleclick(wy.x(), wy.y());
+                } else {
+                    CHANGING_PROGRAM(EditElementMouseDoubleclick(wy.x(), wy.y()));
+                }
+                // gtk_widget_queue_draw(DrawWindow);
+                DrawWindow->repaint();
+            break;
+
+    }
+
+}
+
 // gboolean LD_GTK_mouse_scroll_hook(GtkWidget *widget, GdkEvent *event, gpointer user_data)
 // {
 //     /* Handles:
@@ -914,22 +1084,10 @@ void ProgramChanged(void)
 //     return FALSE;
 // }
 
-// gboolean LD_WM_Command_call(GtkMenuItem* men, gpointer gpcode)
-// {
-//     int tempcode = GPOINTER_TO_INT(gpcode);
-//     ProcessMenu (tempcode);
-
-//     return FALSE;
-// }
-
-// void ProcessorCall(GtkCheckMenuItem* men, gpointer gpcode)
-// {
-//     int tempcode = GPOINTER_TO_INT(gpcode);
-//     if(gtk_check_menu_item_get_active(men))
-//     {
-//         ProcessMenu (tempcode);
-//     }
-// }
+void ProgramSlots :: LD_WM_Command_call(int CommandCode)
+{
+    ProcessMenu(CommandCode);
+}
 
 // gboolean LD_WM_SetFocus_call(GtkWidget *widget, GdkEvent *event, gpointer user_data)
 // {
@@ -994,7 +1152,203 @@ void ProgramChanged(void)
 
 inline void MenuHandler ()
 {
-    QObject::connect(ExitMenu, SIGNAL(triggered()), LDmicroApp, SLOT(quit()));
+    QSignalMapper* CommandMapper = new QSignalMapper (&MenuHandle);
+
+    //Create mappings for each menu item
+    CommandMapper->setMapping(NewMenu, MNU_NEW);
+    CommandMapper->setMapping(OpenMenu, MNU_OPEN);
+    CommandMapper->setMapping(SaveMenu, MNU_SAVE);
+    CommandMapper->setMapping(SaveAsMenu, MNU_SAVE_AS);
+    CommandMapper->setMapping(ExportMenu, MNU_EXPORT);
+    CommandMapper->setMapping(ExitMenu, MNU_EXIT);
+    CommandMapper->setMapping(InsertCommentMenu, MNU_INSERT_COMMENT);
+    CommandMapper->setMapping(InsertContactsMenu, MNU_INSERT_CONTACTS);
+    CommandMapper->setMapping(InsertCoilMenu, MNU_INSERT_COIL);
+    CommandMapper->setMapping(InsertTonMenu, MNU_INSERT_TON);
+    CommandMapper->setMapping(InsertTofMenu, MNU_INSERT_TOF);
+    CommandMapper->setMapping(InsertRtoMenu, MNU_INSERT_RTO);
+    CommandMapper->setMapping(InsertCtuMenu, MNU_INSERT_CTU);
+    CommandMapper->setMapping(InsertCtdMenu, MNU_INSERT_CTD);
+    CommandMapper->setMapping(InsertCtcMenu, MNU_INSERT_CTC);
+    CommandMapper->setMapping(InsertResMenu, MNU_INSERT_RES);
+    CommandMapper->setMapping(InsertOpenMenu, MNU_INSERT_OPEN);
+    CommandMapper->setMapping(InsertShortMenu, MNU_INSERT_SHORT);
+    CommandMapper->setMapping(InsertMasterRlyMenu, MNU_INSERT_MASTER_RLY);
+    CommandMapper->setMapping(InsertShiftRegMenu, MNU_INSERT_SHIFT_REG);
+    CommandMapper->setMapping(InsertLutMenu, MNU_INSERT_LUT);
+    CommandMapper->setMapping(InsertPwlMenu, MNU_INSERT_PWL);
+    CommandMapper->setMapping(InsertFmtdStrMenu, MNU_INSERT_FMTD_STR);
+    CommandMapper->setMapping(InsertOsrMenu, MNU_INSERT_OSR);
+    CommandMapper->setMapping(InsertOsfMenu, MNU_INSERT_OSF);
+    CommandMapper->setMapping(InsertMovMenu, MNU_INSERT_MOV);
+    CommandMapper->setMapping(InsertSetPwmMenu, MNU_INSERT_SET_PWM);
+    CommandMapper->setMapping(InsertReadAdcMenu, MNU_INSERT_READ_ADC);
+    CommandMapper->setMapping(InsertUartSendMenu, MNU_INSERT_UART_SEND);
+    CommandMapper->setMapping(InsertUartRecvMenu, MNU_INSERT_UART_RECV);
+    CommandMapper->setMapping(InsertPersistMenu,  MNU_INSERT_PERSIST);
+    CommandMapper->setMapping(InsertAddMenu, MNU_INSERT_ADD);
+    CommandMapper->setMapping(InsertSubMenu, MNU_INSERT_SUB);
+    CommandMapper->setMapping(InsertMulMenu, MNU_INSERT_MUL);
+    CommandMapper->setMapping(InsertDivMenu, MNU_INSERT_DIV);
+    CommandMapper->setMapping(InsertEquMenu, MNU_INSERT_EQU);
+    CommandMapper->setMapping(InsertNeqMenu, MNU_INSERT_NEQ);
+    CommandMapper->setMapping(InsertGrtMenu, MNU_INSERT_GRT);
+    CommandMapper->setMapping(InsertGeqMenu, MNU_INSERT_GEQ);
+    CommandMapper->setMapping(InsertLesMenu, MNU_INSERT_LES);
+    CommandMapper->setMapping(InsertLeqMenu, MNU_INSERT_LEQ);
+    CommandMapper->setMapping(MakeNormalMenu, MNU_MAKE_NORMAL);
+    CommandMapper->setMapping(NegateMenu, MNU_NEGATE);
+    CommandMapper->setMapping(MakeSetOnlyMenu, MNU_MAKE_SET_ONLY);
+    CommandMapper->setMapping(MakeResetOnlyMenu, MNU_MAKE_RESET_ONLY);
+    CommandMapper->setMapping(UndoMenu, MNU_UNDO);
+    CommandMapper->setMapping(RedoMenu, MNU_REDO);
+    CommandMapper->setMapping(InsertRungBeforeMenu, MNU_INSERT_RUNG_BEFORE);
+    CommandMapper->setMapping(InsertRungAfterMenu, MNU_INSERT_RUNG_AFTER);
+    CommandMapper->setMapping(DeleteRungMenu, MNU_DELETE_RUNG);
+    CommandMapper->setMapping(PushRungUpMenu, MNU_PUSH_RUNG_UP);
+    CommandMapper->setMapping(PushRungDownMenu, MNU_PUSH_RUNG_DOWN);
+    CommandMapper->setMapping(DeleteElementMenu, MNU_DELETE_ELEMENT);
+    CommandMapper->setMapping(McuSettingsMenu, MNU_MCU_SETTINGS);
+    CommandMapper->setMapping(SimulationModeMenu, MNU_SIMULATION_MODE);
+    CommandMapper->setMapping(StartSimulationMenu, MNU_START_SIMULATION);
+    CommandMapper->setMapping(StopSimulationMenu, MNU_STOP_SIMULATION);
+    CommandMapper->setMapping(SingleCycleMenu, MNU_SINGLE_CYCLE);
+    CommandMapper->setMapping(CompileMenu, MNU_COMPILE);
+    CommandMapper->setMapping(CompileAsMenu, MNU_COMPILE_AS);
+    CommandMapper->setMapping(ManualMenu, MNU_MANUAL);
+    CommandMapper->setMapping(AboutMenu, MNU_ABOUT);
+
+    QObject::connect(NewMenu, SIGNAL(triggered()), CommandMapper, SLOT(map()));
+    QObject::connect(OpenMenu, SIGNAL(triggered()), CommandMapper, SLOT(map()));
+    QObject::connect(SaveMenu, SIGNAL(triggered()), CommandMapper, SLOT(map()));
+    QObject::connect(SaveAsMenu, SIGNAL(triggered()), CommandMapper, SLOT(map()));
+    QObject::connect(ExportMenu, SIGNAL(triggered()), CommandMapper, SLOT(map()));
+    QObject::connect(ExitMenu, SIGNAL(triggered()), CommandMapper, SLOT(map()));
+
+    // QObject::connect(ExitMenu, SIGNAL(triggered()), LDmicroApp, SLOT(quit()));
+    QObject::connect(InsertCommentMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertContactsMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertCoilMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertTonMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertTofMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertRtoMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertCtuMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertCtdMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertCtcMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertResMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertOpenMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertShortMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertMasterRlyMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertShiftRegMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertLutMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertPwlMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertFmtdStrMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertOsrMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertOsfMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertMovMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertSetPwmMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertReadAdcMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertUartSendMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertUartRecvMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertPersistMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertAddMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertSubMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertMulMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertDivMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertEquMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertNeqMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertGrtMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertGeqMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertLesMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertLeqMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(MakeNormalMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(NegateMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(MakeSetOnlyMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(MakeResetOnlyMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(UndoMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(RedoMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertRungBeforeMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(InsertRungAfterMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(DeleteRungMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(PushRungUpMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(PushRungDownMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(DeleteElementMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(McuSettingsMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(SimulationModeMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(StartSimulationMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(StopSimulationMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(SingleCycleMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(CompileMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(CompileAsMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(ManualMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    QObject::connect(AboutMenu, SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+
+    // Connect microcontroller signals automatically
+    for(int i = 0; i < NUM_SUPPORTED_MCUS; i++)
+    {
+        CommandMapper->setMapping(ProcessorMenuItems[i], (MNU_PROCESSOR_0 + i));
+        QObject::connect(ProcessorMenuItems[i], SIGNAL(triggered()),
+        CommandMapper, SLOT(map()));
+    } 
+
+    //Connect map to combined function call
+    QObject::connect (CommandMapper, SIGNAL(mapped(int)), &MenuHandle, SLOT(LD_WM_Command_call(int))) ;
     // QObject::connect(ExitMenu, SIGNAL(changed()), LDmicroApp, SLOT(aboutQt()));
 //     g_signal_connect(G_OBJECT(NewMenu), "activate",
 //         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_NEW));
@@ -1014,173 +1368,6 @@ inline void MenuHandler ()
 //     g_signal_connect(G_OBJECT(ExitMenu), "activate",
 //         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_EXIT));
 
-//     g_signal_connect(G_OBJECT(InsertCommentMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_COMMENT));
-
-//     g_signal_connect(G_OBJECT(InsertContactsMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_CONTACTS));
-
-//     g_signal_connect(G_OBJECT(InsertCoilMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_COIL));
-
-//     g_signal_connect(G_OBJECT(InsertTonMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_TON));
-
-//     g_signal_connect(G_OBJECT(InsertTofMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_TOF));
-
-//     g_signal_connect(G_OBJECT(InsertRtoMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_RTO));
-
-//     g_signal_connect(G_OBJECT(InsertCtuMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_CTU));
-
-//     g_signal_connect(G_OBJECT(InsertCtdMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_CTD));
-
-//     g_signal_connect(G_OBJECT(InsertCtcMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_CTC));
-
-//     g_signal_connect(G_OBJECT(InsertResMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_RES));
-
-//     g_signal_connect(G_OBJECT(InsertOpenMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_OPEN));
-
-//     g_signal_connect(G_OBJECT(InsertShortMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_SHORT));    
-
-//     g_signal_connect(G_OBJECT(InsertMasterRlyMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_MASTER_RLY));
-
-//     g_signal_connect(G_OBJECT(InsertShiftRegMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_SHIFT_REG));
-
-//     g_signal_connect(G_OBJECT(InsertLutMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_LUT));
-
-//     g_signal_connect(G_OBJECT(InsertPwlMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_PWL));
-
-//     g_signal_connect(G_OBJECT(InsertFmtdStrMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_FMTD_STR));
-
-//     g_signal_connect(G_OBJECT(InsertOsrMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_OSR));
-
-//     g_signal_connect(G_OBJECT(InsertOsfMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_OSF));
-
-//     g_signal_connect(G_OBJECT(InsertMovMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_MOV));
-
-//     g_signal_connect(G_OBJECT(InsertSetPwmMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_SET_PWM));
-
-//     g_signal_connect(G_OBJECT(InsertReadAdcMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_READ_ADC));
-
-//     g_signal_connect(G_OBJECT(InsertUartSendMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_UART_SEND));
-
-//     g_signal_connect(G_OBJECT(InsertUartRecvMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_UART_RECV)); 
-
-//     g_signal_connect(G_OBJECT(InsertPersistMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_PERSIST)); 
-
-//     g_signal_connect(G_OBJECT(InsertAddMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_ADD)); 
-
-//     g_signal_connect(G_OBJECT(InsertSubMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_SUB)); 
-
-//     g_signal_connect(G_OBJECT(InsertMulMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_MUL)); 
-
-//     g_signal_connect(G_OBJECT(InsertDivMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_DIV)); 
-
-//     g_signal_connect(G_OBJECT(InsertEquMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_EQU)); 
-
-//     g_signal_connect(G_OBJECT(InsertNeqMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_NEQ)); 
-
-//     g_signal_connect(G_OBJECT(InsertGrtMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_GRT)); 
-
-//     g_signal_connect(G_OBJECT(InsertGeqMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_GEQ)); 
-
-//     g_signal_connect(G_OBJECT(InsertLesMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_LES)); 
-
-//     g_signal_connect(G_OBJECT(InsertLeqMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_LEQ)); 
-
-//     g_signal_connect(G_OBJECT(MakeNormalMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_MAKE_NORMAL)); 
-
-//     g_signal_connect(G_OBJECT(NegateMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_NEGATE)); 
-
-//     g_signal_connect(G_OBJECT(MakeSetOnlyMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_MAKE_SET_ONLY)); 
-
-//     g_signal_connect(G_OBJECT(MakeResetOnlyMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_MAKE_RESET_ONLY)); 
-
-//     g_signal_connect(G_OBJECT(UndoMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_UNDO)); 
-
-//     g_signal_connect(G_OBJECT(RedoMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_REDO)); 
-
-//     g_signal_connect(G_OBJECT(InsertRungBeforeMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_RUNG_BEFORE)); 
-
-//     g_signal_connect(G_OBJECT(InsertRungAfterMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_INSERT_RUNG_AFTER)); 
-
-//     g_signal_connect(G_OBJECT(DeleteRungMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_DELETE_RUNG)); 
-
-//     g_signal_connect(G_OBJECT(PushRungUpMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_PUSH_RUNG_UP)); 
-
-//     g_signal_connect(G_OBJECT(PushRungDownMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_PUSH_RUNG_DOWN)); 
-
-//     g_signal_connect(G_OBJECT(DeleteElementMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_DELETE_ELEMENT)); 
-
-//     g_signal_connect(G_OBJECT(McuSettingsMenu), "activate", 
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_MCU_SETTINGS));
-
-//     g_signal_connect(G_OBJECT(SimulationModeMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_SIMULATION_MODE)); 
-
-//     g_signal_connect(G_OBJECT(StartSimulationMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_START_SIMULATION)); 
-
-//     g_signal_connect(G_OBJECT(StopSimulationMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_STOP_SIMULATION)); 
-
-//     g_signal_connect(G_OBJECT(SingleCycleMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_SINGLE_CYCLE)); 
-
-//     g_signal_connect(G_OBJECT(CompileMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_COMPILE)); 
-
-//     g_signal_connect(G_OBJECT(CompileAsMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_COMPILE_AS)); 
-
-//     g_signal_connect(G_OBJECT(ManualMenu), "activate",  
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_MANUAL));
- 
-//     g_signal_connect(G_OBJECT(AboutMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_ABOUT));
 //     // Connect microcontroller signals automatically
 //     for(int i = 0; i < NUM_SUPPORTED_MCUS; i++)
 //     {
@@ -1258,7 +1445,7 @@ int main(int argc, char** argv)
     QSize MwSize(800,600);
 
     // Make main window
-    MainWindow = new QWidget();
+    MainWindow = new MyWidget();
     MWIcon = new QIcon(LDMICRO_ICON);
     MainMenu = new QMenuBar(MainWindow);
     
@@ -1299,6 +1486,9 @@ int main(int argc, char** argv)
     CursorTimer = SetTimer(DrawWindow, TIMER_BLINK_CURSOR, 500, CursorTimer);
 
     GenerateIoListDontLoseSelection(); 
+
+    // RefreshScrollbars();
+    UpdateMainWindowTitleBar();
     
     // MakeDialogBoxClass();
 

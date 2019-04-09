@@ -94,7 +94,7 @@ static char **Text[] = {
 };
 
 static HWID HelpDialog[2];
-static HWID RichEdit[2];
+static QPlainTextEdit* RichEdit[2];
 
 static BOOL HelpWindowOpen[2];
 
@@ -155,33 +155,51 @@ static void MakeControls(int a)
     // HMODULE re = LoadLibrary("RichEd20.dll");
     // if(!re) oops();
 
-    RichEdit[a] = gtk_scrolled_window_new (NULL, NULL);
-    TextView = gtk_text_view_new ();
+    RichEdit[a] = new QPlainTextEdit();
+    RichEdit[a]->setReadOnly(TRUE);
+    QPalette pal = RichEdit[a]->palette();
+    pal.setColor(QPalette::Base, (*(HBRUSH)GetStockObject(BLACK_BRUSH)));
+    RichEdit[a]->setPalette(pal);
+    /*TextView = gtk_text_view_new ();
     TextBuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (TextView));
-    gtk_text_view_set_editable (GTK_TEXT_VIEW (TextView), FALSE);
-    SizeRichEdit(a);
-    gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (TextView), GTK_WRAP_WORD);
-    gtk_text_buffer_get_start_iter (TextBuffer, TextIter);
+    gtk_text_view_set_editable (GTK_TEXT_VIEW (TextView), FALSE);*/
+    // SizeRichEdit(a);
+    // gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (TextView), GTK_WRAP_WORD);
+    // gtk_text_buffer_get_start_iter (TextBuffer, TextIter);
     // COLORREF color;
     // gtk_text_buffer_create_tag (TextBuffer, "ForegroundColor1",
     //                         "foreground", "blue");
 
     int i;
     BOOL nextSubHead = FALSE;
+    QTextCharFormat cf;
+    QFont qtfont = cf.font();
+    qtfont.setFamily(FixedWidthFont->lpszFace);
+    qtfont.setPixelSize(FixedWidthFont->nHeight - 3);
+    qtfont.setFixedPitch(TRUE);
+    qtfont.setStyle(FixedWidthFont->fdwItalic ? QFont::StyleItalic : QFont::StyleNormal);
+    qtfont.setWeight(FixedWidthFont->fnWeight == FW_BOLD ? QFont::Bold : QFont::Normal);
+    // hcr->setFont(qtfont);
     for(i = 0; Text[a][i]; i++) {
         char *s = Text[a][i];
-        gtk_text_buffer_get_iter_at_offset (TextBuffer, TextIter, -1);
+        // f.setBold(TRUE);
+        cf.setFontWeight(cf.fontWeight()* 2);
 
+        cf.setFont(qtfont);
+        /*RichEdit[a]->appendPlainText("Welcome");
+        RichEdit[a]->setCurrentCharFormat(cf);
+        RichEdit[a]->appendPlainText("Thank you");*/
         if((s[0] == '=') ||
            (Text[a][i+1] && Text[a][i+1][0] == '='))
         {
             COLORREF color = RGB(255, 255, 110);
-            // gtk_widget_override_color (TextView, GTK_STATE_FLAG_NORMAL, &color);
-            
+            cf.setForeground(QBrush(color));
+            RichEdit[a]->setCurrentCharFormat(cf);
         }
         else if(s[3] == '|' && s[4] == '|') {
-            // COLORREF color = RGB(255, 110, 255);
-            // gtk_widget_override_color (TextView, GTK_STATE_FLAG_NORMAL, &color);
+            COLORREF color = RGB(255, 110, 255);
+            cf.setForeground(QBrush(color));
+            RichEdit[a]->setCurrentCharFormat(cf);
         }
         else if(s[0] == '>' || nextSubHead) {
             // Need to make a copy because the strings we are passed aren't
@@ -198,10 +216,9 @@ static void MakeControls(int a)
             BOOL justHeading = (copy[j] == '\0');
             copy[j] = '\0';
             COLORREF color = RGB(110, 255, 110);
-            // gtk_widget_override_color (TextView, GTK_STATE_FLAG_NORMAL, &color);
-            gtk_text_buffer_insert (TextBuffer, TextIter, copy, -1);
-            gtk_text_buffer_get_iter_at_offset (TextBuffer, TextIter, -1);
-            
+            cf.setForeground(QBrush(color));
+            RichEdit[a]->appendPlainText(QString::fromStdString((const char*)copy));
+            RichEdit[a]->setCurrentCharFormat(cf);
             // Special case if there's nothing except title on the line
             if(!justHeading) {
                 copy[j] = ' ';
@@ -213,20 +230,24 @@ static void MakeControls(int a)
         }
         else {
             COLORREF color = RGB(255, 255, 255);
-            gtk_widget_override_color (TextView, GTK_STATE_FLAG_NORMAL, &color);
+            cf.setForeground(QBrush(color));
+            RichEdit[a]->setCurrentCharFormat(cf);
+            // gtk_widget_override_color (TextView, GTK_STATE_FLAG_NORMAL, &color);
         }
 
     // gtk_text_buffer_insert_with_tags_by_name (TextBuffer, TextIter,
     //                             s, -1, "ForegroundColor1", NULL);
-    gtk_text_buffer_insert (TextBuffer, TextIter, s, -1);
+    // gtk_text_buffer_insert (TextBuffer, TextIter, s, -1);
+        RichEdit[a]->appendPlainText(QString::fromStdString((const char*)s));
 
         if(Text[a][i+1]) {
-            gtk_text_buffer_insert (TextBuffer, TextIter, "\n", -1);
+            // gtk_text_buffer_insert (TextBuffer, TextIter, "\n", -1);
+            // RichEdit[a]->appendPlainText("\n");
         }
     }
-    gtk_widget_override_background_color (TextView, GTK_STATE_FLAG_NORMAL,
+    /*gtk_widget_override_background_color (TextView, GTK_STATE_FLAG_NORMAL,
                         ((HBRUSH)GetStockObject(BLACK_BRUSH)));
-    gtk_container_add (GTK_CONTAINER(RichEdit[a]), TextView);
+    gtk_container_add (GTK_CONTAINER(RichEdit[a]), TextView);*/
 
 }
 
@@ -292,26 +313,27 @@ void ShowHelpDialog(BOOL about)
 {
     int a = about ? 1 : 0;
     
-    MakeClass();
+    // MakeClass();
 
     const char *s = about ? "About LDmicro" : "LDmicro Help";
 
     MakeControls(a);
 
-    PackBoxHelp = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-    gtk_box_pack_start(GTK_BOX(PackBoxHelp), RichEdit[a], FALSE, TRUE, 0);
-
-    HelpDialog[a] = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_default_size(GTK_WINDOW(HelpDialog[a]), 650, 300+10*FONT_HEIGHT);
-    gtk_window_set_title(GTK_WINDOW(HelpDialog[a]), s);
-    gtk_container_add(GTK_CONTAINER(HelpDialog[a]), PackBoxHelp);
+    // PackBoxHelp = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    // gtk_box_pack_start(GTK_BOX(PackBoxHelp), RichEdit[a], FALSE, TRUE, 0);
+    QVBoxLayout* PackBoxHelp = new QVBoxLayout;
+    PackBoxHelp->addWidget(RichEdit[a]);
+    HelpDialog[a] = new QDialog(MainWindow);
+    HelpDialog[a]->resize(650, (300+10*FONT_HEIGHT));
+    HelpDialog[a]->setWindowTitle(s);
+    HelpDialog[a]->setLayout(PackBoxHelp);
    
-    gtk_widget_show_all (HelpDialog[a]);
-    gtk_widget_grab_focus (RichEdit[a]);
+    HelpDialog[a]->show();
 
-    if(HelpWindowOpen[a]) {
+    /*if(HelpWindowOpen[a]) {
         gtk_widget_grab_focus (HelpDialog[a]);
         return;
-    }
+    }*/
     HelpWindowOpen[a] = TRUE;
+    RichEdit[a]->verticalScrollBar()->setValue(RichEdit[a]->verticalScrollBar()->minimum());
 }
