@@ -610,6 +610,7 @@ class MyWidget : public QWidget
         void keyPressEvent(QKeyEvent* event);
         void mouseReleaseEvent(QMouseEvent* event);
         void mouseDoubleClickEvent(QMouseEvent* event);
+        void closeEvent(QCloseEvent* event);
 };
 
 // maincontrols.cpp

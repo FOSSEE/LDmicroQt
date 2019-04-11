@@ -58,73 +58,45 @@ int MessageBox(HWID pWindow, char* message, char* title, UINT mFlags, UINT iFlag
 
 BOOL GetSaveFileName(OPENFILENAME *ofn)
 {
-    /*GtkWidget *dialog;
-    GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_SAVE;
-
-    dialog = gtk_file_chooser_dialog_new (ofn->lpstrTitle,
-                                        GTK_WINDOW(ofn->parentWindow),
-                                        action,
-                                        "_Cancel",
-                                        GTK_RESPONSE_CANCEL,
-                                        "_Save",
-                                        GTK_RESPONSE_ACCEPT,
-                                        NULL);
+    std::string strFilter;
+    DWORD strFilterLen = 0;
+    BOOL filterResetFlag = FALSE;
     char filename[15] = "Untitled";
 
     if (ofn->lpstrDefExt != NULL)
         sprintf(filename, "Untitled.%s", ofn->lpstrDefExt);
     
-    gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER(dialog), filename);
-
-    if (ofn->Flags & OFN_OVERWRITEPROMPT)
-        gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(dialog), TRUE);
-    
-    GtkFileFilter *filter = gtk_file_filter_new ();
-    char* strFilter = new char[strlen(ofn->lpstrFilter)];
-    DWORD strFilterLen = 0;
-    BOOL filterResetFlag = FALSE;
-    
-    for (int i = 0; !(ofn->lpstrFilter[i] == '\0' && ofn->lpstrFilter[i-1] == '\0'); ++i)   
+    while(!((ofn->lpstrFilter[strFilterLen] == '\0') &&
+        (ofn->lpstrFilter[strFilterLen + 1] == '\0')))
     {
-        memcpy (strFilter + strFilterLen, &ofn->lpstrFilter[i], 1 );
-        ++strFilterLen;
-        if (ofn->lpstrFilter[i] == '\0')
-            if (filterResetFlag)
-            {
-                gtk_file_filter_add_pattern (GTK_FILE_FILTER(filter), strFilter);
-                gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(dialog), filter);
-                filter = gtk_file_filter_new ();
-                strFilterLen = 0;
-                filterResetFlag = FALSE;
-            }
-            else
-            {
-                gtk_file_filter_set_name (GTK_FILE_FILTER(filter), strFilter);
-                strFilterLen = 0;
-                filterResetFlag = TRUE;
-            }
+        if(filterResetFlag)
+        {
+            strFilter = strFilter + "(";
+            strFilter.append(&ofn->lpstrFilter[strFilterLen]);
+            strFilter = strFilter + ");;";
+            filterResetFlag = FALSE;
+        }
+        else
+        {
+            strFilter.append(&ofn->lpstrFilter[strFilterLen]);
+            filterResetFlag = TRUE;
+        }
+        strFilterLen = strFilterLen + strlen(&ofn->lpstrFilter[strFilterLen]) +1;
     }
     
-    sprintf(strFilter, "*.%s", ofn->lpstrDefExt);
-    gtk_file_filter_add_pattern (GTK_FILE_FILTER(filter), strFilter);
-    gtk_file_chooser_set_filter (GTK_FILE_CHOOSER(dialog), filter);
-    
-    delete strFilter;
+    QString file = QFileDialog::getSaveFileName(ofn->parentWindow, ofn->lpstrTitle,
+        QStandardPaths::locate(QStandardPaths::HomeLocation,"",
+            QStandardPaths::LocateDirectory)+ filename,
+        strFilter.c_str());
+    BOOL exitStatus;
+    file.isEmpty() ? exitStatus = FALSE : exitStatus = TRUE;
 
-    BOOL exitStatus = gtk_dialog_run (GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT;
     if (exitStatus)
     {
-        char* str;
-        str = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER(dialog));
-        
-        strcpy(ofn->lpstrFile, str);
-        g_free(str);
+        strcpy(ofn->lpstrFile, file.toStdString().c_str());
     }
-    
-    gtk_widget_destroy (dialog);
 
-    return exitStatus;*/
-    return TRUE;
+    return exitStatus;
 }
 
 BOOL GetOpenFileName(OPENFILENAME *ofn)
@@ -171,21 +143,49 @@ void EnableMenuItem(HMENU MenuName, QAction* MenuItem, UINT CheckEnabledItem)
     switch (CheckEnabledItem){
         case MF_ENABLED :
            MenuItem->setEnabled(true);
+           // MenuItem->blockSignals(false);
         break;
         case MF_GRAYED :
            MenuItem->setEnabled(false);
+           // MenuItem->blockSignals(true);
         break; 
     }
 }
 
 void EnableMenuItem(HMENU MenuName, HMENU MenuItem, UINT CheckEnabledItem) 
 {
+    /*Blocks only the top menu signals. Does not block submenu signals.
+    Signals still executed through keyboard shortcuts
+    Reqd: 
+        QList<QAction *> actions()
+        action->blockSignals(bool)*/
+    QList<QAction *> MenuList = MenuItem->actions();
+    QList<QAction *>::iterator item = MenuList.begin();
+    // printf("MenuListCount%d\n", MenuList.count());
     switch (CheckEnabledItem){
         case MF_ENABLED :
+            while((item != MenuList.end()))/* || !(MenuList->isEmpty))*/
+            {
+                (*item)->setEnabled(true);
+                (*item)->blockSignals(false);
+                item++;
+                // printf("Indexof%d\n", MenuList.indexOf(*item, 0));
+            }
            MenuItem->setEnabled(true);
+           MenuItem->blockSignals(false);
         break;
         case MF_GRAYED :
+            while((item != MenuList.end()))/* || !(MenuList->isEmpty))*/
+            {
+                (*item)->setEnabled(false);
+                (*item)->blockSignals(true);
+                /*if(*item == InsertContactsMenu)
+                    printf("InsertContactsMenu\n");*/
+                item++;
+                // printf("Indexof%d\n", MenuList.indexOf(*item, 0));
+            }
            MenuItem->setEnabled(false);
+           MenuItem->blockSignals(true);
         break; 
     }
 }
@@ -459,16 +459,25 @@ UINT SetTimer(HWID hWid, UINT  nIDEvent, UINT uElapse, UINT TimerID)
 {
     if(TimerID != NULL)
         return nIDEvent;
-    if(nIDEvent == TIMER_BLINK_CURSOR)
+    switch(nIDEvent)
     {
-        TimerID = hWid->startTimer(uElapse);
-        CursorObject = new QGroupBox(hWid);
-    
-        QPalette pal = CursorObject->palette();
-        pal.setColor(QPalette::Background, Qt::white);
-        CursorObject->setAutoFillBackground(true);
-        CursorObject->setPalette(pal);
-        CursorObject->setGeometry(0,0,2,20);
+        case TIMER_BLINK_CURSOR:
+        {
+            TimerID = hWid->startTimer(uElapse);
+            CursorObject = new QGroupBox(hWid);
+            QPalette pal = CursorObject->palette();
+            pal.setColor(QPalette::Background, Qt::white);
+            CursorObject->setAutoFillBackground(true);
+            CursorObject->setPalette(pal);
+            CursorObject->setGeometry(0,0,2,20);
+        }
+        break;
+        
+        case TIMER_SIMULATE:
+        {
+            TimerID = hWid->startTimer(uElapse);
+        }
+        break;
     }
     // if(hWid!=NULL)
     //     CursorObject->setVisible(TRUE);
@@ -498,9 +507,19 @@ BOOL KillTimer(HWID hWid, UINT uIDEvent)
     record_it->pfun(TRUE);
     g_source_remove (record_it->utID);
     timerRecords.erase(record_it);*/
-    if(uIDEvent == TIMER_BLINK_CURSOR)
+    // printf("KillTimer\n");
+    switch(uIDEvent)
     {
-        hWid->killTimer(CursorTimer);
+        case TIMER_BLINK_CURSOR:
+            hWid->killTimer(CursorTimer);
+            CursorTimer = NULL;
+            CursorObject->setVisible(FALSE);
+        break;
+
+        case TIMER_SIMULATE:
+            hWid->killTimer(SimulateTimer);
+            SimulateTimer = NULL;
+        break;
     }
 
     return TRUE;

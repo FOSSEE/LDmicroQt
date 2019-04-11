@@ -549,14 +549,20 @@ void MakeMainWindowControls(void)
     IoList->insertTopLevelItems(0, items);*/
     DrawWindow->setAutoFillBackground(true);
     QSize DWSize;
-
+    WM_SCROLL scrollbar = new QScrollArea();
+    scrollbar->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    scrollbar->setFocusPolicy(Qt::NoFocus);
     DWSize.setHeight(MainWindow->height() - IoListHeight);
     DWSize.setWidth(MainWindow->width());
     DrawWindow->setMinimumHeight(100);
-    DrawWindow->resize(DWSize);
-    WM_SCROLL scrollbar = new QScrollArea();
+    // scrollbar->setWidgetResizable(TRUE);
+    scrollbar->resize(DWSize);
+    // DrawWindow->resize(scrollbar->viewportSizeHint());
     scrollbar->setWidget(DrawWindow);
     splitter->addWidget(scrollbar);
+    DWSize.setWidth(MainWindow->width() - 
+        (scrollbar->sizeHint().width()+ MainWindow->sizeHint().width()));
+    DrawWindow->resize(DWSize);
     /*QPalette pal = QPalette();
     pal.setColor(QPalette::Background, Qt::black);
     DrawWindow->setAutoFillBackground(true);
@@ -958,6 +964,7 @@ void ToggleSimulationMode(void)
 {
     InSimulationMode = !InSimulationMode;
     if(InSimulationMode) {
+        KillTimer(DrawWindow, TIMER_BLINK_CURSOR);
         EnableMenuItem(SimulateMenu, StartSimulationMenu, MF_ENABLED);
         EnableMenuItem(SimulateMenu, SingleCycleMenu, MF_ENABLED);
 
@@ -983,8 +990,8 @@ void ToggleSimulationMode(void)
     }
     else {
         RealTimeSimulationRunning = FALSE;
-        // KillTimer(MainWindow, TIMER_SIMULATE);
-
+        KillTimer(DrawWindow, TIMER_SIMULATE);
+        CursorTimer = SetTimer(DrawWindow, TIMER_BLINK_CURSOR, 500, CursorTimer);
         EnableMenuItem(SimulateMenu, StartSimulationMenu, MF_GRAYED);
         EnableMenuItem(SimulateMenu, StopSimulationMenu, MF_GRAYED);
         EnableMenuItem(SimulateMenu, SingleCycleMenu, MF_GRAYED);
@@ -1028,6 +1035,7 @@ void RefreshControlsToSettings(void)
     items.append(new QTreeWidgetItem(QStringList(QString("Item2"))));
     items.append(new QTreeWidgetItem(QStringList(QString("Item3"))));
     IoList->insertTopLevelItems(0, items);*/
+    DrawWindow->repaint();
     QTreeWidgetItem iter;
     QTreeWidgetItem* selection;
     if(!IoListOutOfSync) {
@@ -1167,7 +1175,7 @@ void StopSimulation(void)
 
     EnableMenuItem(SimulateMenu, StartSimulationMenu, MF_ENABLED);
     EnableMenuItem(SimulateMenu, StopSimulationMenu, MF_GRAYED);
-    // KillTimer(MainWindow, TIMER_SIMULATE);
+    KillTimer(DrawWindow, TIMER_SIMULATE);
     
     // UpdateMainWindowTitleBar();
 }

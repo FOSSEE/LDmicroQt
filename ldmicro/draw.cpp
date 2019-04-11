@@ -396,7 +396,8 @@ static BOOL DrawEndOfLine(HCRDC Hcr, int which, ElemLeaf *leaf, int *cx, int *cy
         int gx = *cx/POS_WIDTH;
         int gy = *cy/POS_HEIGHT;
 
-        if(CheckBoundsUndoIfFails(gx, gy)) return FALSE;
+        if(CheckBoundsUndoIfFails(gx, gy))
+            return FALSE;
 
         if(gx >= DISPLAY_MATRIX_X_SIZE) oops();
         DM_BOUNDS(gx, gy);

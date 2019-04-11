@@ -329,11 +329,12 @@ void ShowHelpDialog(BOOL about)
     HelpDialog[a]->setLayout(PackBoxHelp);
    
     HelpDialog[a]->show();
+    RichEdit[a]->verticalScrollBar()->setValue(
+        RichEdit[a]->verticalScrollBar()->minimum());
 
     /*if(HelpWindowOpen[a]) {
         gtk_widget_grab_focus (HelpDialog[a]);
         return;
     }*/
     HelpWindowOpen[a] = TRUE;
-    RichEdit[a]->verticalScrollBar()->setValue(RichEdit[a]->verticalScrollBar()->minimum());
 }

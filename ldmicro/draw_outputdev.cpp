@@ -86,7 +86,11 @@ BOOL BlinkCursor(BOOL kill = FALSE)
 {
     // if(GetFocus(MainWindow) != !CursorDrawn) return TRUE;
     
-    if(Cursor.left() == 0) return TRUE;
+    if(Cursor.left() == 0)
+    {
+        CursorObject->setVisible(FALSE);
+        return TRUE;
+    }
 
     QRect c;
     memcpy(&c, &Cursor, sizeof(c));
@@ -252,8 +256,16 @@ int ScreenRowsAvailable(void)
 
 void PaintWidget::timerEvent(QTimerEvent *event)
 {
-    if (event->timerId() == CursorTimer)
+    
+    if(event->timerId() == CursorTimer)
+    {
         BlinkCursor();
+        // printf("CursorTimer\n");
+    }
+    if(event->timerId() == SimulateTimer)
+    {
+        PlcCycleTimer(FALSE);
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -325,6 +337,15 @@ void PaintWidget::paintEvent(QPaintEvent *event)
         cy += thisHeight;
         cy += POS_HEIGHT;
     }
+    // printf("Endrung:%d\n", cy);
+    QSize DWSize = this->size();
+    int newHeight = ((cy + (POS_HEIGHT/2)) * FONT_HEIGHT + Y_PADDING + 50);
+    if(DWSize.height() < newHeight)
+    {
+        DWSize.setHeight(newHeight);
+    }
+    DrawWindow->resize(DWSize);
+
     cy -= 2;
     DrawEndRung(Hcr, 0, cy);
     
@@ -352,7 +373,7 @@ void PaintWidget::paintEvent(QPaintEvent *event)
     r.setLeft(X_PADDING - FONT_WIDTH);
     r.setTop(0);
     r.setRight(r.left() + 4);
-    r.setBottom(IoListTop);
+    r.setBottom(this->height());
     FillRect(Hcr, &r, InSimulationMode ? BusLeftBrush : BusBrush);
     r.setLeft(POS_WIDTH*FONT_WIDTH*ColsAvailable + 32);
     r.setRight(POS_WIDTH*FONT_WIDTH*ColsAvailable + 32);

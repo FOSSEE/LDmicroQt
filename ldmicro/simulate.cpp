@@ -731,14 +731,14 @@ void SimulateOneCycle(BOOL forceRefresh)
 //-----------------------------------------------------------------------------
 void StartSimulationTimer(void)
 {
- /*   int p = Prog.cycleTime/1000;
+    int p = Prog.cycleTime/1000;
     if(p < 5) {
-        SetTimer(MainWindow, TIMER_SIMULATE, 10, PlcCycleTimer);
+        SimulateTimer = SetTimer(DrawWindow, TIMER_SIMULATE, 10, SimulateTimer);
         CyclesPerTimerTick = 10000 / Prog.cycleTime;
     } else {
-        SetTimer(MainWindow, TIMER_SIMULATE, p, PlcCycleTimer);
+        SimulateTimer = SetTimer(DrawWindow, TIMER_SIMULATE, p, SimulateTimer);
         CyclesPerTimerTick = 1;
-    }*/
+    }
 }
 
 //-----------------------------------------------------------------------------

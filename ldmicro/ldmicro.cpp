@@ -81,7 +81,7 @@ gboolean LD_WM_Close_call(GtkWidget *widget, GdkEvent *event, gpointer user_data
 // Get a filename with a common dialog box and then save the program to that
 // file and then set our default filename to that.
 //-----------------------------------------------------------------------------
-/*static BOOL SaveAsDialog(void)
+static BOOL SaveAsDialog(void)
 {
     OPENFILENAME ofn;
 
@@ -105,7 +105,7 @@ gboolean LD_WM_Close_call(GtkWidget *widget, GdkEvent *event, gpointer user_data
         return TRUE;
     }
 }
-
+/*
 //-----------------------------------------------------------------------------
 // Get a filename with a common dialog box and then export the program as
 // an ASCII art drawing.
@@ -131,7 +131,7 @@ static void ExportDialog(void)
         return;
 
     ExportDrawingAsText(exportFile);
-}
+}*/
 
 //-----------------------------------------------------------------------------
 // If we already have a filename, save the program to that. Otherwise same
@@ -150,7 +150,7 @@ static BOOL SaveProgram(void)
     } else {
         return SaveAsDialog();
     }
-}*/
+}
 
 //-----------------------------------------------------------------------------
 // Compile the program to a hex file for the target micro. Get the output
@@ -234,10 +234,10 @@ BOOL CheckSaveUserCancels(void)
         MB_YESNOCANCEL , MB_ICONWARNING);
     switch(r) {
         case IDYES:
-            // if(SaveProgram())
+            if(SaveProgram())
                 return FALSE;
-            // else
-            //     return TRUE;
+            else
+                return TRUE;
 
         case IDNO:
             return FALSE;
@@ -359,7 +359,7 @@ static void ProcessMenu(int code)
     }
 
     switch(code) {
-        /*case MNU_NEW:
+        case MNU_NEW:
             if(CheckSaveUserCancels()) break;
             NewProgram();
             strcpy(CurrentSaveFile, "");
@@ -367,14 +367,14 @@ static void ProcessMenu(int code)
             GenerateIoListDontLoseSelection();
             RefreshScrollbars();
             UpdateMainWindowTitleBar();
-            break;*/
+            break;
 
         case MNU_OPEN:
             if(CheckSaveUserCancels()) break;
             OpenDialog();
             break;
 
-        /*case MNU_SAVE:
+        case MNU_SAVE:
             SaveProgram();
             UpdateMainWindowTitleBar();
             break;
@@ -383,7 +383,7 @@ static void ProcessMenu(int code)
             SaveAsDialog();
             UpdateMainWindowTitleBar();
             break;
-
+/*
         case MNU_EXPORT:
             ExportDialog();
             break;
@@ -707,6 +707,20 @@ void MyWidget::keyPressEvent(QKeyEvent* event)
     }
 
     return;
+}
+
+void MyWidget::closeEvent(QCloseEvent* event)
+{
+    if(CheckSaveUserCancels())
+        event->ignore();
+    else
+        event->accept();
+
+    /*GdkRectangle allocation;
+    gtk_widget_get_allocation(GTK_WIDGET(view), &allocation); 
+    IoListHeight = allocation.height;
+    FreezeWindowPos(MainWindow);
+    FreezeDWORD(IoListHeight);*/
 }
 // gboolean LD_WM_KeyDown_call(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 // {   
