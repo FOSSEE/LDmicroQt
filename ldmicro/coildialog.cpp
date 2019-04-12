@@ -29,19 +29,19 @@
 
 static HWID CoilDialog;
 
-static HWID SourceInternalRelayRadio;
-static HWID SourceMcuPinRadio;
-static HWID NegatedRadio;
-static HWID NormalRadio;
-static HWID SetOnlyRadio;
-static HWID ResetOnlyRadio;
-static HWID NameTextbox;
+static QRadioButton* SourceInternalRelayRadio;
+static QRadioButton* SourceMcuPinRadio;
+static QRadioButton* NegatedRadio;
+static QRadioButton* NormalRadio;
+static QRadioButton* SetOnlyRadio;
+static QRadioButton* ResetOnlyRadio;
+static QLineEdit*    NameTextbox;
 static HWID OkButton;
 static HWID CancelButton;
 
 static LONG_PTR PrevNameProc;
 
-static HWID CoilGrid;
+static QGridLayout* CoilGrid;
 static HWID CoilPackingBox;
 static bool* tmpnegated;
 static bool* tmpsetOnly ;
@@ -51,7 +51,7 @@ static bool* tmpresetOnly;
 // Don't allow any characters other than A-Za-z0-9_ in the name.
 //-----------------------------------------------------------------------------
 
-void CoilDialogMyNameProc (GtkEditable *editable, gchar *NewText, gint length, 
+/*void CoilDialogMyNameProc (GtkEditable *editable, gchar *NewText, gint length, 
     gint *position, gpointer data){
     for (int i = 0; i < length; i++){
         if (!(isalpha (NewText[i]) || NewText[i] == '_' || isdigit (NewText[i])
@@ -61,21 +61,47 @@ void CoilDialogMyNameProc (GtkEditable *editable, gchar *NewText, gint length,
         }
     }
 }
-
+*/
 static void MakeControls(void)
 {
-    NormalRadio = gtk_radio_button_new_with_label (NULL, "( ) Normal");
-    NegatedRadio = gtk_radio_button_new_with_label_from_widget
-                        (GTK_RADIO_BUTTON (NormalRadio), "(/) Negated");
-    SetOnlyRadio = gtk_radio_button_new_with_label_from_widget
-                        (GTK_RADIO_BUTTON (NormalRadio), "(S) Set-Only");
-    ResetOnlyRadio = gtk_radio_button_new_with_label_from_widget
-                        (GTK_RADIO_BUTTON (NormalRadio), "(R) Reset-Only");
+    QGroupBox* grouper = new QGroupBox(_("Type"));
+    QGroupBox* grouper2 = new QGroupBox(_("Source"));
+    QGridLayout *TypeGrid = new QGridLayout();
+    QGridLayout *SourceGrid = new QGridLayout();
+    QGridLayout *NameGrid = new QGridLayout();
+    NormalRadio = new QRadioButton(_("( ) Normal"), CoilDialog);
+    NegatedRadio = new QRadioButton(_("(/) Negated"), CoilDialog);
+    SetOnlyRadio = new QRadioButton(_("(S) Set-Only"), CoilDialog);
+    ResetOnlyRadio = new QRadioButton(_("(R) Reset-Only"), CoilDialog);
+    /*NormalRadio->setAutoExclusive(FALSE);
+    NegatedRadio->setAutoExclusive(FALSE);*/
+    TypeGrid->addWidget(NormalRadio,0,0);
+    TypeGrid->addWidget(NegatedRadio,1,0);
+    TypeGrid->addWidget(SetOnlyRadio,2,0);
+    TypeGrid->addWidget(ResetOnlyRadio,3,0);
+    SourceInternalRelayRadio = new QRadioButton(_("Internal Relay"), CoilDialog);
+    SourceMcuPinRadio = new QRadioButton(_("Pin on MCU"), CoilDialog);
+    SourceGrid->addWidget(SourceInternalRelayRadio,0,0);
+    SourceGrid->addWidget(SourceMcuPinRadio,1,0);
+    QLabel* textLabel = new QLabel(_("Name:"));
+    NameTextbox = new QLineEdit();
+    NameTextbox->setFixedWidth(155);
+    NameGrid->addWidget(textLabel,0,0);
+    NameGrid->addWidget(NameTextbox,0,1);
+    SourceGrid->addLayout(NameGrid,2,0);
+    grouper->setLayout(TypeGrid);
+    grouper2->setLayout(SourceGrid);
+    CoilGrid->addWidget(grouper,0,0);
+    CoilGrid->addWidget(grouper2,0,1);
+    // CoilGrid->addWidget(NormalRadio,0,0);
+    // CoilGrid->addWidget(NegatedRadio,1,0);
+    // CoilGrid->addWidget(SetOnlyRadio,2,0);
+    // CoilGrid->addWidget(ResetOnlyRadio,3,0);
+    /*
     
     SourceInternalRelayRadio = gtk_radio_button_new_with_label (NULL, "Internal Relay");
     SourceMcuPinRadio = gtk_radio_button_new_with_label_from_widget
                         (GTK_RADIO_BUTTON (SourceInternalRelayRadio), "Pin on MCU");
-    
     HWID textLabel = gtk_label_new ("Name:");
     
     NameTextbox = gtk_entry_new();
@@ -99,9 +125,9 @@ static void MakeControls(void)
     gtk_box_pack_start(GTK_BOX(CoilPackingBox), CoilGrid, TRUE, TRUE, 0);
 
     g_signal_connect (G_OBJECT (NameTextbox), "insert-text",
-                    G_CALLBACK (CoilDialogMyNameProc), NULL);
+                    G_CALLBACK (CoilDialogMyNameProc), NULL);*/
 }
-
+/*
 void CoilDialogGetData (char* name){
 
     bool* negated = tmpnegated;
@@ -170,24 +196,25 @@ void CoilCallDestroyWindow (HWID widget, gpointer data){
     DestroyWindow (CoilDialog);
     ProgramChanged();
     gtk_widget_set_sensitive (MainWindow, TRUE);
-}
+}*/
 
 void ShowCoilDialog(BOOL *negated, BOOL *setOnly, BOOL *resetOnly, char *name)
 {
-    CoilGrid = gtk_grid_new();
-    CoilPackingBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-
-    CoilDialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW(CoilDialog), "Coil");
-    gtk_window_set_default_size(GTK_WINDOW(CoilDialog), 100, 50);
-    gtk_window_set_resizable (GTK_WINDOW (CoilDialog), FALSE);
-    gtk_container_add(GTK_CONTAINER(CoilDialog), CoilPackingBox);
-    gtk_widget_add_events (CoilDialog, GDK_KEY_PRESS_MASK);
-    gtk_widget_add_events (CoilDialog, GDK_BUTTON_PRESS_MASK);
+    // CoilPackingBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    CoilDialog = CreateWindowClient(_("Coil"),
+        100, 100, 359, 115, MainWindow);
+    CoilGrid = new QGridLayout(CoilDialog);
+    CoilDialog->setWindowTitle("Coil");
+    // CoilDialog->resize(100, 50);
+    // CoilDialog->setFixedSize(359,115);
+    CoilDialog->show();
+    // gtk_container_add(GTK_CONTAINER(CoilDialog), CoilPackingBox);
+    // gtk_widget_add_events (CoilDialog, GDK_KEY_PRESS_MASK);
+    // gtk_widget_add_events (CoilDialog, GDK_BUTTON_PRESS_MASK);
 
     MakeControls();
    
-    if(name[0] == 'R') {
+    /*if(name[0] == 'R') {
         gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (SourceInternalRelayRadio), TRUE);
     }
     else {
@@ -221,6 +248,6 @@ void ShowCoilDialog(BOOL *negated, BOOL *setOnly, BOOL *resetOnly, char *name)
                     G_CALLBACK(CoilDialogMouseClick), (gpointer)name);
     g_signal_connect (G_OBJECT (CancelButton), "clicked",
                     G_CALLBACK(CoilCallDestroyWindow), NULL);
-
+*/
     return;
 }

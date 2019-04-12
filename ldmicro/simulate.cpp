@@ -694,7 +694,7 @@ void SimulateOneCycle(BOOL forceRefresh)
     // event loop, and there is risk that we would go recursive. So let
     // us fix that. (Note that there are no concurrency issues; we really
     // would get called recursively, not just reentrantly.)
-/*    static BOOL Simulating = FALSE;
+    static BOOL Simulating = FALSE;
 
     if(Simulating) return;
     Simulating = TRUE;
@@ -713,14 +713,14 @@ void SimulateOneCycle(BOOL forceRefresh)
     if(NeedRedraw || SimulateRedrawAfterNextCycle || forceRefresh) {
         InvalidateRect(DrawWindow, NULL, FALSE);
         RefreshControlsToSettings();
-        gtk_widget_queue_draw(DrawWindow);
+        // gtk_widget_queue_draw(DrawWindow);
         // ListView_RedrawItems(IoList, 0, Prog.io.count - 1);
     }
 
     SimulateRedrawAfterNextCycle = FALSE;
     if(NeedRedraw) SimulateRedrawAfterNextCycle = TRUE;
 
-    Simulating = FALSE;*/
+    Simulating = FALSE;
 }
 
 //-----------------------------------------------------------------------------

@@ -152,16 +152,13 @@ void EnableMenuItem(HMENU MenuName, QAction* MenuItem, UINT CheckEnabledItem)
     }
 }
 
+// Special function designed for qt, since disabling top-level menu
+// Does not disable its child menus. They can still be accessed via
+// keyboard shortcuts
 void EnableMenuItem(HMENU MenuName, HMENU MenuItem, UINT CheckEnabledItem) 
 {
-    /*Blocks only the top menu signals. Does not block submenu signals.
-    Signals still executed through keyboard shortcuts
-    Reqd: 
-        QList<QAction *> actions()
-        action->blockSignals(bool)*/
     QList<QAction *> MenuList = MenuItem->actions();
     QList<QAction *>::iterator item = MenuList.begin();
-    // printf("MenuListCount%d\n", MenuList.count());
     switch (CheckEnabledItem){
         case MF_ENABLED :
             while((item != MenuList.end()))/* || !(MenuList->isEmpty))*/
@@ -169,7 +166,6 @@ void EnableMenuItem(HMENU MenuName, HMENU MenuItem, UINT CheckEnabledItem)
                 (*item)->setEnabled(true);
                 (*item)->blockSignals(false);
                 item++;
-                // printf("Indexof%d\n", MenuList.indexOf(*item, 0));
             }
            MenuItem->setEnabled(true);
            MenuItem->blockSignals(false);
@@ -179,10 +175,7 @@ void EnableMenuItem(HMENU MenuName, HMENU MenuItem, UINT CheckEnabledItem)
             {
                 (*item)->setEnabled(false);
                 (*item)->blockSignals(true);
-                /*if(*item == InsertContactsMenu)
-                    printf("InsertContactsMenu\n");*/
                 item++;
-                // printf("Indexof%d\n", MenuList.indexOf(*item, 0));
             }
            MenuItem->setEnabled(false);
            MenuItem->blockSignals(true);

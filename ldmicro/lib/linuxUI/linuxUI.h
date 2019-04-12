@@ -19,6 +19,9 @@
 #include <QFileDialog>
 #include <QStandardPaths>
 #include <QPlainTextEdit>
+#include <QRadioButton>
+#include <QButtonGroup>
+#include <QLineEdit>
 // #include <QtGui>
 // #include <QSize>
 // #include "freezeLD.h"

@@ -402,22 +402,22 @@ void EditSelectedElement(void)
 {
     if(!Selected || Selected->selectedState == SELECTED_NONE) return;
 
-    /*switch(SelectedWhich) {
-        case ELEM_COMMENT:
+    switch(SelectedWhich) {
+        /*case ELEM_COMMENT:
             ShowCommentDialog(Selected->d.comment.str);
             break;
 
         case ELEM_CONTACTS:
             ShowContactsDialog(&(Selected->d.contacts.negated),
                 Selected->d.contacts.name);
-            break;
+            break;*/
 
         case ELEM_COIL:
             ShowCoilDialog(&(Selected->d.coil.negated),
                 &(Selected->d.coil.setOnly), &(Selected->d.coil.resetOnly),
                 Selected->d.coil.name);
             break;
-
+/*
         case ELEM_TON:
         case ELEM_TOF:
         case ELEM_RTO:
@@ -492,8 +492,8 @@ void EditSelectedElement(void)
 
         case ELEM_LOOK_UP_TABLE:
             ShowLookUpTableDialog(Selected);
-            break;
-    }*/
+            break;*/
+    }
 }
 
 //-----------------------------------------------------------------------------

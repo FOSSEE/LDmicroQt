@@ -1035,7 +1035,7 @@ void RefreshControlsToSettings(void)
     items.append(new QTreeWidgetItem(QStringList(QString("Item2"))));
     items.append(new QTreeWidgetItem(QStringList(QString("Item3"))));
     IoList->insertTopLevelItems(0, items);*/
-    DrawWindow->repaint();
+    // DrawWindow->repaint();
     QTreeWidgetItem iter;
     QTreeWidgetItem* selection;
     if(!IoListOutOfSync) {

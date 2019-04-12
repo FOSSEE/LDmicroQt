@@ -144,8 +144,8 @@ endif()
                             #confdialog.cpp
                             #lutdialog.cpp
                             #resetdialog.cpp
-                            #simpledialog.cpp
-                            #coildialog.cpp
+                            # simpledialog.cpp
+                            coildialog.cpp
                             #contactsdialog.cpp
                             #commentdialog.cpp
                             simulate.cpp

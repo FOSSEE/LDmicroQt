@@ -204,15 +204,12 @@ void FinishIhex(FILE *f)
 //-----------------------------------------------------------------------------
 // Create a window with a given client area.
 //-----------------------------------------------------------------------------
-/*HWID CreateWindowClient(GtkWindowType wType, GdkWindowTypeHint wthint, char *windowName,
+HWID CreateWindowClient(char *windowName,
     int x, int y, int width, int height, HWND parent)
 {
-    HWID h = gtk_window_new(wType);
-    gtk_window_set_title(GTK_WINDOW(h),  windowName);
-    gtk_window_resize (GTK_WINDOW(h), width, height);
-    gtk_window_move(GTK_WINDOW(h), x, y);
-    gtk_window_set_type_hint (GTK_WINDOW(h), wthint);
-
+    HWID h = new QDialog(parent);
+    h->resize(width,height);
+    h->setWindowTitle(windowName);
     // HWND h = CreateWindowEx(exStyle, className, windowName, style, x, y,
     //     width, height, parent, menu, instance, param);
 
@@ -224,7 +221,7 @@ void FinishIhex(FILE *f)
     // SetWindowPos(h, HWND_TOP, x, y, width, height, 0);
 
     return h;
-}*/
+}
 
 //-----------------------------------------------------------------------------
 // Window proc for the dialog boxes. This Ok/Cancel stuff is common to a lot

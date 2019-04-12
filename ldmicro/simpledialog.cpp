@@ -59,7 +59,7 @@ static SimpleDialogData SDdata;
 #define SD_SHIFT_REGISTER   0x0000009
 #define SD_FORMATTED_STRING 0x0000010
 #define SD_PERSIST          0x0000011
-
+/*
 //-----------------------------------------------------------------------------
 // Don't allow any characters other than -A-Za-z0-9_ in the box.
 //-----------------------------------------------------------------------------
@@ -328,7 +328,7 @@ static gboolean SimpleDialogKeyPressProc(HWID widget, GdkEventKey* event, gpoint
     }
 
     return FALSE;
-}
+}*/
 
 void ShowSimpleDialog(char *title, int boxes, char **labels, DWORD numOnlyMask,
     DWORD alnumOnlyMask, DWORD fixedFontMask, char **dests)
@@ -343,13 +343,14 @@ void ShowSimpleDialog(char *title, int boxes, char **labels, DWORD numOnlyMask,
     if(boxes > MAX_BOXES) oops();
 
     SimpleDialog = CreateWindowClient(GTK_WINDOW_TOPLEVEL, GDK_WINDOW_TYPE_HINT_NORMAL, 
-        title, 100, 100, 304, 15 + 30*(boxes < 2 ? 2 : boxes), GTK_WINDOW(MainWindow) );
+        title, 100, 100, 304, 15 + 30*(boxes < 2 ? 2 : boxes), MainWindow);
+    SimpleDialog->show();
     // CreateWindowClient(0, "LDmicroDialog", title, 
     //     WS_OVERLAPPED | WS_SYSMENU,
     //     100, 100, 304, 15 + 30*(boxes < 2 ? 2 : boxes), NULL, NULL,
     //     Instance, NULL);
 
-    MakeControls(boxes, labels, fixedFontMask);
+/*    MakeControls(boxes, labels, fixedFontMask);
   
     int i;
     for(i = 0; i < boxes; i++) 
@@ -379,7 +380,7 @@ void ShowSimpleDialog(char *title, int boxes, char **labels, DWORD numOnlyMask,
     // EnableWindow(MainWindow, FALSE);
     // ShowWindow(SimpleDialog, TRUE);
     gtk_widget_show_all(SimpleDialog);
-    // SetFocus(Textboxes[0]);
+*/    // SetFocus(Textboxes[0]);
     // SendMessage(Textboxes[0], EM_SETSEL, 0, -1);
 
     // MSG msg;
@@ -413,7 +414,7 @@ void ShowSimpleDialog(char *title, int boxes, char **labels, DWORD numOnlyMask,
     // return !didCancel;
 }
 
-void ShowTimerDialog(int which, int *delay, char *name)
+/*void ShowTimerDialog(int which, int *delay, char *name)
 {
     char *s;
     switch(which) { 
@@ -698,3 +699,4 @@ void ShowPersistDialog(char *var)
 
     ShowSimpleDialog(_("Make Persistent"), 1, labels, 0, 1, 1, dests);
 }
+*/
