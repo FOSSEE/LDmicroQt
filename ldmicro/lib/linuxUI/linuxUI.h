@@ -22,6 +22,9 @@
 #include <QRadioButton>
 #include <QButtonGroup>
 #include <QLineEdit>
+#include <QPushButton>
+#include <QDialogButtonBox>
+#include <QRegExpValidator>
 // #include <QtGui>
 // #include <QSize>
 // #include "freezeLD.h"

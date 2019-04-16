@@ -204,10 +204,10 @@ void FinishIhex(FILE *f)
 //-----------------------------------------------------------------------------
 // Create a window with a given client area.
 //-----------------------------------------------------------------------------
-HWID CreateWindowClient(char *windowName,
+QDialog* CreateWindowClient(char *windowName,
     int x, int y, int width, int height, HWND parent)
 {
-    HWID h = new QDialog(parent);
+    QDialog* h = new QDialog(parent);
     h->resize(width,height);
     h->setWindowTitle(windowName);
     // HWND h = CreateWindowEx(exStyle, className, windowName, style, x, y,
@@ -263,20 +263,15 @@ HWID CreateWindowClient(char *windowName,
 //-----------------------------------------------------------------------------
 // Set the font of a control to a pretty proportional font (typ. Tahoma).
 //-----------------------------------------------------------------------------
-/*void NiceFont(HWID h)
+void NiceFont(HWID h)
 {
-    GtkCssProvider *provider = gtk_css_provider_new ();
-    
-    char *cssdata = new char[strlen(MyNiceFont->lpszFace) + 26];
-    int fontSize = 10;
-    sprintf(cssdata, "textview { font: %ipx %s; }", fontSize, MyNiceFont->lpszFace);
-    
-    gtk_css_provider_load_from_data (provider, cssdata, -1, NULL);
-    
-    delete cssdata;
-
-    gtk_style_context_add_provider (gtk_widget_get_style_context(h), 
-        GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
+    QFont qtfont = h->font();
+    qtfont.setFamily(MyNiceFont->lpszFace);
+    qtfont.setPixelSize(MyNiceFont->nHeight - 3);
+    qtfont.setFixedPitch(TRUE);
+    qtfont.setStyle(MyNiceFont->fdwItalic ? QFont::StyleItalic : QFont::StyleNormal);
+    qtfont.setWeight(MyNiceFont->fnWeight == FW_BOLD ? QFont::Bold : QFont::Normal);
+    h->setFont(qtfont);
 
 //    SendMessage(h, WM_SETFONT, (WPARAM)MyNiceFont, TRUE);
 }
@@ -287,22 +282,16 @@ HWID CreateWindowClient(char *windowName,
 //-----------------------------------------------------------------------------
 void FixedFont(HWID h)
 {
-    GtkCssProvider *provider = gtk_css_provider_new ();
-    
-    char *cssdata = new char[strlen(MyFixedFont->lpszFace) + 26];
-    int fontSize = 10;
-    sprintf(cssdata, "textview { font: %ipx %s; }", fontSize, MyFixedFont->lpszFace);
-    
-    gtk_css_provider_load_from_data (provider, cssdata, -1, NULL);
-    
-    delete cssdata;
-
-    gtk_style_context_add_provider (gtk_widget_get_style_context(h), 
-        GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
-
+    QFont qtfont = h->font();
+    qtfont.setFamily(MyFixedFont->lpszFace);
+    qtfont.setPixelSize(MyFixedFont->nHeight - 3);
+    qtfont.setFixedPitch(TRUE);
+    qtfont.setStyle(MyFixedFont->fdwItalic ? QFont::StyleItalic : QFont::StyleNormal);
+    qtfont.setWeight(MyFixedFont->fnWeight == FW_BOLD ? QFont::Bold : QFont::Normal);
+    h->setFont(qtfont);
   //  SendMessage(h, WM_SETFONT, (WPARAM)MyFixedFont, TRUE);
 }
-*/
+
 //-----------------------------------------------------------------------------
 // Create our dialog box class, used for most of the popup dialogs.
 //-----------------------------------------------------------------------------
