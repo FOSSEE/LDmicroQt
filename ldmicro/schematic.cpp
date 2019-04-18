@@ -403,14 +403,14 @@ void EditSelectedElement(void)
     if(!Selected || Selected->selectedState == SELECTED_NONE) return;
 
     switch(SelectedWhich) {
-        /*case ELEM_COMMENT:
+        case ELEM_COMMENT:
             ShowCommentDialog(Selected->d.comment.str);
             break;
 
         case ELEM_CONTACTS:
             ShowContactsDialog(&(Selected->d.contacts.negated),
                 Selected->d.contacts.name);
-            break;*/
+            break;
 
         case ELEM_COIL:
             ShowCoilDialog(&(Selected->d.coil.negated),
@@ -449,11 +449,11 @@ void EditSelectedElement(void)
             ShowMathDialog(SelectedWhich, Selected->d.math.dest, 
                 Selected->d.math.op1, Selected->d.math.op2); 
             break;
-
+*/
         case ELEM_RES:
             ShowResetDialog(Selected->d.reset.name);
             break;
-
+/*
         case ELEM_MOVE:
             ShowMoveDialog(Selected->d.move.dest, Selected->d.move.src);
             break;

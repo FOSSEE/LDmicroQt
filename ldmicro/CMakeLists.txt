@@ -143,11 +143,11 @@ endif()
                             iolist.cpp
                             #confdialog.cpp
                             #lutdialog.cpp
-                            #resetdialog.cpp
+                            resetdialog.cpp
                             # simpledialog.cpp
                             coildialog.cpp
-                            #contactsdialog.cpp
-                            #commentdialog.cpp
+                            contactsdialog.cpp
+                            commentdialog.cpp
                             simulate.cpp
                             loadsave.cpp
                             undoredo.cpp

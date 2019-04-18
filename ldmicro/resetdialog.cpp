@@ -29,103 +29,98 @@
 
 using namespace std;
 
-static HWID ResetDialog;
+static QDialog* ResetDialog;
 
-static HWID TypeTimerRadio;
-static HWID TypeCounterRadio;
-static HWID NameTextbox;
-static HWID OkButton;
-static HWID CancelButton;
+static QRadioButton* TypeTimerRadio;
+static QRadioButton* TypeCounterRadio;
+static QLineEdit*    NameTextbox;
+static QDialogButtonBox* ButtonBox;
 
-static LONG_PTR PrevNameProc;
-static HWID ResetGrid;
-static HWID ResetPackingBox;
-
-//-----------------------------------------------------------------------------
-// Don't allow any characters other than A-Za-z0-9_ in the name.
-//-----------------------------------------------------------------------------
-
-void ResetDialogMyNameProc (GtkEditable *editable, gchar *NewText, gint length, 
-    gint *position, gpointer data){
-    // gtk_widget_set_sensitive (MainWindow, TRUE);
-    for (int i = 0; i < length; i++){
-        if (!(isalpha (NewText[i]) || NewText[i] == '_' || isdigit (NewText[i])
-                                     || NewText[i] == '\b' )){
-            g_signal_stop_emission_by_name (G_OBJECT (editable), "insert-text");
-            return;
-        }
-    }
-}
+// static LONG_PTR PrevNameProc;
+static QGridLayout* ResetGrid;
+// static HWID ResetPackingBox;
 
 static void MakeControls(void)
 {
-    TypeTimerRadio = gtk_radio_button_new_with_label (NULL, "Timer");
+    QGroupBox* grouper = new QGroupBox(_("Type"));
+    QGridLayout *TypeGrid = new QGridLayout();
+    QGridLayout *NameGrid = new QGridLayout();
+    ButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok
+        | QDialogButtonBox::Cancel, Qt::Vertical,
+        ResetDialog);
+    NiceFont(ResetDialog);
 
-    TypeCounterRadio = gtk_radio_button_new_with_label_from_widget
-                        (GTK_RADIO_BUTTON (TypeTimerRadio), "Counter");
-    
-    HWID textLabel = gtk_label_new ("Name");
-    
-    NameTextbox = gtk_entry_new();
-    gtk_entry_set_max_length (GTK_ENTRY (NameTextbox), 0);
+    ResetGrid->setSpacing(3);
+    TypeGrid->setSpacing(3);
 
-    OkButton = gtk_button_new_with_label ("OK");
-    CancelButton = gtk_button_new_with_label ("Cancel");
-
-    gtk_grid_attach (GTK_GRID (ResetGrid), TypeTimerRadio, 1, 2, 1, 1);
-    gtk_grid_attach (GTK_GRID (ResetGrid), TypeCounterRadio, 1, 3, 1, 1);
-    gtk_grid_attach (GTK_GRID (ResetGrid), textLabel, 2, 2, 1, 1);
-    gtk_grid_attach (GTK_GRID (ResetGrid), NameTextbox, 3, 2, 1, 1);
-    gtk_grid_attach (GTK_GRID (ResetGrid), OkButton, 4, 2, 1, 1);
-    gtk_grid_attach (GTK_GRID (ResetGrid), CancelButton, 4, 3, 1, 1);
-
-    gtk_grid_set_column_spacing (GTK_GRID (ResetGrid), 1);
-    gtk_box_pack_start(GTK_BOX(ResetPackingBox), ResetGrid, TRUE, TRUE, 0);
-
-    g_signal_connect (G_OBJECT(NameTextbox), "insert-text",
-		     G_CALLBACK(ResetDialogMyNameProc), NULL);
+    TypeTimerRadio = new QRadioButton(_("Timer"), ResetDialog);
+    TypeCounterRadio = new QRadioButton(_("Counter"), ResetDialog);
+    TypeGrid->addWidget(TypeTimerRadio,0,0);
+    TypeGrid->addWidget(TypeCounterRadio,1,0);
+    /*SourceGrid->addItem(
+        new QSpacerItem(SetOnlyRadio->width(),
+            SetOnlyRadio->height()), 2, 0);*/
+    QLabel* textLabel = new QLabel(_("Name:"));
+    NameTextbox = new QLineEdit();
+    FixedFont(NameTextbox);
+    NameTextbox->setFixedWidth(155);
+    NameGrid->addWidget(textLabel,0,0);
+    NameGrid->addWidget(NameTextbox,0,1);
+    grouper->setLayout(TypeGrid);
+    ResetGrid->addWidget(grouper,0,0);
+    ResetGrid->addLayout(NameGrid,0,1);
+    ResetGrid->addWidget(ButtonBox,0,2);
+    QObject::connect(ButtonBox, SIGNAL(accepted()), ResetDialog, SLOT(accept()));
+    QObject::connect(ButtonBox, SIGNAL(rejected()), ResetDialog, SLOT(reject()));
 }
 
-void ResetDialogGetData (char* name){
-    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (TypeTimerRadio))){
-        name[0] = 'T';
-    }
-    else {
-        name[0] = 'C';
-    }
-    strcpy (name+1, gtk_entry_get_text (GTK_ENTRY (NameTextbox)));
-    gtk_widget_set_sensitive (MainWindow, TRUE);
-    DestroyWindow (ResetDialog);
+inline void DestroyWindow (){
+    delete TypeTimerRadio;
+    delete TypeCounterRadio;
+    delete NameTextbox;
+    delete ButtonBox;
+    delete ResetGrid;
+    delete ResetDialog;
     ProgramChanged();
-}
-
-// Mouse click callback
-void ResetDialogMouseClick (HWID widget, gpointer data){
-    ResetDialogGetData((char*)data);
-}
-
-// Checks for the required key press
-gboolean ResetDialogKeyPress (HWID widget, GdkEventKey* event, gpointer data){
-    if (event -> keyval == GDK_KEY_Return){
-        ResetDialogGetData((char*)data);
-    }
-    else if (event -> keyval == GDK_KEY_Escape){
-        DestroyWindow (ResetDialog);
-        ProgramChanged();
-        gtk_widget_set_sensitive (MainWindow, TRUE);
-    }
-    return FALSE;
-}
-
-void ResetCallDestroyWindow (HWID widget, gpointer data){
-    DestroyWindow (ResetDialog);
-    ProgramChanged();
-    gtk_widget_set_sensitive (MainWindow, TRUE);
 }
 
 void ShowResetDialog(char *name)
 {
-    ResetGrid = gtk_grid_new();
+    ResetDialog = CreateWindowClient(_("Reset"),
+        100, 100, 359, 115, MainWindow);
+    ResetGrid = new QGridLayout(ResetDialog);
+    ResetDialog->setWindowTitle("Reset");
+    // CoilDialog->setFixedSize(359,115);
+    MakeControls();
+    NameTextbox->setValidator(
+        new QRegExpValidator(QRegExp("[a-zA-Z0-9_]+")));
+
+    if(name[0] == 'T') {
+        TypeTimerRadio->setChecked(TRUE);
+    } else{
+        TypeCounterRadio->setChecked(TRUE);
+    }
+    NameTextbox->setText(name + 1);
+
+    int ret = ResetDialog->exec();
+    switch(ret)
+    {
+        case QDialog::Accepted:
+        {
+            if(TypeTimerRadio->isChecked())
+            {
+                name[0] = 'T';
+            }else {
+                name[0] = 'C';
+            }
+            strncpy(name +1, NameTextbox->text().toStdString().c_str(),16);
+        }
+        break;
+        case QDialog::Rejected:
+        break;
+    }
+    DestroyWindow();
+    /*ResetGrid = gtk_grid_new();
     ResetPackingBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
     ResetDialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -155,5 +150,5 @@ void ShowResetDialog(char *name)
     g_signal_connect (G_OBJECT (OkButton), "clicked",
                     G_CALLBACK(ResetDialogMouseClick), (gpointer)name);
     g_signal_connect (G_OBJECT (CancelButton), "clicked",
-                    G_CALLBACK(ResetCallDestroyWindow), NULL);
+                    G_CALLBACK(ResetCallDestroyWindow), NULL);*/
 }

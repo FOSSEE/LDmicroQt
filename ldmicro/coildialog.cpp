@@ -36,8 +36,6 @@ static QRadioButton* NormalRadio;
 static QRadioButton* SetOnlyRadio;
 static QRadioButton* ResetOnlyRadio;
 static QLineEdit*    NameTextbox;
-static QPushButton*  OkButton;
-static QPushButton*  CancelButton;
 
 static LONG_PTR PrevNameProc;
 
@@ -100,9 +98,8 @@ inline void DestroyWindow()
     delete SetOnlyRadio;
     delete ResetOnlyRadio;
     delete NameTextbox;
-    delete OkButton;
-    delete CancelButton;
     delete CoilGrid;
+    ProgramChanged();
 }
 
 void ShowCoilDialog(BOOL *negated, BOOL *setOnly, BOOL *resetOnly, char *name)

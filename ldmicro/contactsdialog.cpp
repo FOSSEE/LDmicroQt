@@ -27,177 +27,117 @@
 
 #include "ldmicro.h"
 
-static HWID ContactsDialog;
+static QDialog* ContactsDialog;
 
-static HWID NegatedCheckbox;
-static HWID SourceInternalRelayRadio;
-static HWID SourceInputPinRadio;
-static HWID SourceOutputPinRadio;
-static HWID NameTextbox;
-static HWID OkButton;
-static HWID CancelButton;
+static QCheckBox* NegatedCheckbox;
+static QRadioButton* SourceInternalRelayRadio;
+static QRadioButton* SourceInputPinRadio;
+static QRadioButton* SourceOutputPinRadio;
+static QLineEdit*    NameTextbox;
 
 static LONG_PTR PrevNameProc;
-static HWID ContactsGrid;
-static HWID ContactsPackingBox;
+static QGridLayout* ContactsGrid;
 char* tmpname;
 BOOL* tmpnegated;
-//-----------------------------------------------------------------------------
-// Don't allow any characters other than A-Za-z0-9_ in the name.
-//-----------------------------------------------------------------------------
-// static LRESULT CALLBACK MyNameProc(HWND hwnd, UINT msg, WPARAM wParam,
-//     LPARAM lParam)
-// {
-//     if(msg == WM_CHAR) {
-//         if(!(isalpha(wParam) || isdigit(wParam) || wParam == '_' ||
-//             wParam == '\b'))
-//         {
-//             return 0;
-//         }
-//     }
-
-//     return CallWindowProc((WNDPROC)PrevNameProc, hwnd, msg, wParam, lParam);
-// }
-
-void ContactsDialogMyNameProc (GtkEditable *editable, gchar *NewText, gint length, 
-    gint *position, gpointer data){
-    // gtk_widget_set_sensitive (MainWindow, TRUE);
-    for (int i = 0; i < length; i++){
-        if (!(isalpha (NewText[i]) || NewText[i] == '_' || isdigit (NewText[i])
-                                     || NewText[i] == '\b' )){
-            g_signal_stop_emission_by_name (G_OBJECT (editable), "insert-text");
-            return;
-        }
-    }
-}
 
 static void MakeControls(void)
 {
-    SourceInternalRelayRadio = gtk_radio_button_new_with_label (NULL, "Internal Relay");
+    QGroupBox* grouper = new QGroupBox(_("Source"));
+    QGridLayout *SourceGrid = new QGridLayout();
+    QGridLayout *NameGrid = new QGridLayout();
+    QDialogButtonBox *ButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok
+        | QDialogButtonBox::Cancel, Qt::Vertical,
+        ContactsDialog);
+    NiceFont(ContactsDialog);
 
-    SourceInputPinRadio = gtk_radio_button_new_with_label_from_widget
-                        (GTK_RADIO_BUTTON (SourceInternalRelayRadio), "Input pin");
-    
-    SourceOutputPinRadio = gtk_radio_button_new_with_label_from_widget
-                        (GTK_RADIO_BUTTON (SourceInternalRelayRadio), "Output pin");
-    
-    HWID textLabel = gtk_label_new ("Name:");
-    
-    NameTextbox = gtk_entry_new();
-    gtk_entry_set_max_length (GTK_ENTRY (NameTextbox), 0);
-    
-    NegatedCheckbox = gtk_check_button_new_with_label ("|/| Negated");
+    ContactsGrid->setSpacing(3);
+    SourceGrid->setSpacing(3);
 
-    OkButton = gtk_button_new_with_label ("OK");
-    CancelButton = gtk_button_new_with_label ("Cancel");
-
-    gtk_grid_attach (GTK_GRID (ContactsGrid), SourceInternalRelayRadio, 1, 2, 1, 1);
-    gtk_grid_attach (GTK_GRID (ContactsGrid), SourceInputPinRadio, 1, 3, 1, 1);
-    gtk_grid_attach (GTK_GRID (ContactsGrid), SourceOutputPinRadio, 1, 4, 1, 1);
-    gtk_grid_attach (GTK_GRID (ContactsGrid), textLabel, 2, 2, 1, 1);
-    gtk_grid_attach (GTK_GRID (ContactsGrid), NegatedCheckbox, 2, 3, 1, 1);
-    gtk_grid_attach (GTK_GRID (ContactsGrid), NameTextbox, 3, 2, 1, 1);
-    gtk_grid_attach (GTK_GRID (ContactsGrid), OkButton, 4, 2, 1, 1);
-    gtk_grid_attach (GTK_GRID (ContactsGrid), CancelButton, 4, 3, 1, 1);
-
-    gtk_grid_set_column_spacing (GTK_GRID (ContactsGrid), 1);
-    gtk_box_pack_start(GTK_BOX(ContactsPackingBox), ContactsGrid, TRUE, TRUE, 0);
-
-//     PrevNameProc = SetWindowLongPtr(NameTextbox, GWLP_WNDPROC, 
-//         (LONG_PTR)MyNameProc);
+    SourceInternalRelayRadio = new QRadioButton(_("Internal Relay"), ContactsDialog);
+    SourceInputPinRadio = new QRadioButton(_("Input pin"), ContactsDialog);
+    SourceOutputPinRadio = new QRadioButton(_("Output pin"), ContactsDialog);
+    SourceGrid->addWidget(SourceInternalRelayRadio,0,0);
+    SourceGrid->addWidget(SourceInputPinRadio,1,0);
+    SourceGrid->addWidget(SourceOutputPinRadio,2,0);
+    /*SourceGrid->addItem(
+        new QSpacerItem(SetOnlyRadio->width(),
+            SetOnlyRadio->height()), 2, 0);*/
+    QLabel* textLabel = new QLabel(_("Name:"));
+    NameTextbox = new QLineEdit();
+    NegatedCheckbox = new QCheckBox(_("|/| Negated"), ContactsDialog);
+    FixedFont(NameTextbox);
+    NameTextbox->setFixedWidth(155);
+    NameGrid->addWidget(textLabel,0,0);
+    NameGrid->addWidget(NameTextbox,0,1);
+    NameGrid->addWidget(NegatedCheckbox, 1,0);
+    grouper->setLayout(SourceGrid);
+    ContactsGrid->addWidget(grouper,0,0);
+    ContactsGrid->addLayout(NameGrid,0,1);
+    ContactsGrid->addWidget(ButtonBox,0,2);
+    QObject::connect(ButtonBox, SIGNAL(accepted()), ContactsDialog, SLOT(accept()));
+    QObject::connect(ButtonBox, SIGNAL(rejected()), ContactsDialog, SLOT(reject()));
 }
 
-void ContactsDialogGetData (BOOL* negated, char* name){
-    if(gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (NegatedCheckbox))) {
-            *negated = TRUE;
-        }
-        else {
-            *negated = FALSE;
-        }
-        if(gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON
-                (SourceInternalRelayRadio))) {
-            name[0] = 'R';
-        }
-        else if(gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON
-                (SourceInputPinRadio))) {
-            name[0] = 'X';
-        }
-        else {
-            name[0] = 'Y';
-        }
-        strcpy (name+1, gtk_entry_get_text (GTK_ENTRY (NameTextbox)));
-
-    DestroyWindow (ContactsDialog);
+inline void DestroyWindow (){
+    delete NegatedCheckbox;
+    delete SourceInternalRelayRadio;
+    delete SourceInputPinRadio;
+    delete SourceOutputPinRadio;
+    delete NameTextbox;
+    delete ContactsDialog;
     ProgramChanged();
-    gtk_widget_set_sensitive (MainWindow, TRUE);
-}
-
-// Mouse click callback
-void ContactsDialogMouseClick(HWID widget, gpointer data){
-    ContactsDialogGetData(tmpnegated, tmpname);
-}
-
-// Checks for the required key press
-gboolean ContactsDialogKeyPress (HWID widget, GdkEventKey* event, gpointer data){
-    if (event -> keyval == GDK_KEY_Return){
-        ContactsDialogGetData(tmpnegated, tmpname);
-    }
-    else if (event -> keyval == GDK_KEY_Escape){
-        DestroyWindow (ContactsDialog);
-        ProgramChanged();
-        gtk_widget_set_sensitive (MainWindow, TRUE);
-    }
-    return FALSE;
-}
-
-void ContactsCallDestroyWindow (HWID widget, gpointer data){
-    DestroyWindow (ContactsDialog);
-    ProgramChanged();
-    gtk_widget_set_sensitive (MainWindow, TRUE);
 }
 
 void ShowContactsDialog(BOOL *negated, char *name)
 {
-    ContactsGrid = gtk_grid_new();
-    ContactsPackingBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-
-    ContactsDialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW(ContactsDialog), "Contacts");
-    gtk_window_set_default_size(GTK_WINDOW(ContactsDialog), 100, 50);
-    gtk_window_set_resizable (GTK_WINDOW (ContactsDialog), FALSE);
-    gtk_container_add(GTK_CONTAINER(ContactsDialog), ContactsPackingBox);
-    gtk_widget_add_events (ContactsDialog, GDK_KEY_PRESS_MASK);
-    gtk_widget_add_events (ContactsDialog, GDK_BUTTON_PRESS_MASK);
-
+    ContactsDialog = CreateWindowClient(_("Contacts"),
+        100, 100, 359, 115, MainWindow);
+    ContactsGrid = new QGridLayout(ContactsDialog);
+    ContactsDialog->setWindowTitle("Contacts");
+    // CoilDialog->setFixedSize(359,115);
     MakeControls();
-   
+    NameTextbox->setValidator(
+        new QRegExpValidator(QRegExp("[a-zA-Z0-9_]+")));
+
     if(name[0] == 'R') {
-        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (SourceInternalRelayRadio), TRUE);
+        SourceInternalRelayRadio->setChecked(TRUE);
+    } else if (name[0] == 'Y'){
+        SourceOutputPinRadio->setChecked(TRUE);
     }
-    else if(name[0] == 'Y') {
-        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (SourceOutputPinRadio), TRUE);
+    else
+    {
+        SourceInputPinRadio->setChecked(TRUE);
     }
-    else {
-        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (SourceInputPinRadio), TRUE);
-    }
+    NameTextbox->setText(name + 1);
     if(*negated) {
-        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (NegatedCheckbox), TRUE);
+        NegatedCheckbox->setChecked(TRUE);
+    } else{
+        NegatedCheckbox->setChecked(FALSE);
     }
-    gtk_entry_set_text (GTK_ENTRY (NameTextbox), name + 1);
 
-    gtk_widget_set_sensitive (MainWindow, FALSE);
-    gtk_widget_show_all (ContactsDialog);
-    gtk_widget_grab_focus (NameTextbox);
-    tmpname = name;
-    tmpnegated = negated;
-
-    g_signal_connect (G_OBJECT(NameTextbox), "insert-text",
-		     G_CALLBACK(ContactsDialogMyNameProc), NULL);
-    g_signal_connect (G_OBJECT (ContactsDialog), "key-press-event",
-                    G_CALLBACK(ContactsDialogKeyPress), NULL);
-    g_signal_connect (G_OBJECT (OkButton), "clicked",
-                    G_CALLBACK(ContactsDialogMouseClick), NULL);
-    g_signal_connect (G_OBJECT (CancelButton), "clicked",
-                    G_CALLBACK(ContactsCallDestroyWindow), NULL);
-
+    int ret = ContactsDialog->exec();
+    switch(ret)
+    {
+        case QDialog::Accepted:
+        {
+            if(SourceInternalRelayRadio->isChecked())
+            {
+                name[0] = 'R';
+            }else if(SourceInputPinRadio->isChecked()){
+                name[0] = 'X';
+            } else {
+                name[0] = 'Y';
+            }
+            strncpy(name +1, NameTextbox->text().toStdString().c_str(),16);
+            if(NegatedCheckbox->isChecked()) {
+                *negated = TRUE;
+            } else {
+                *negated = FALSE;
+            }
+        }
+        break;
+        case QDialog::Rejected:
+        break;
+    }
+    DestroyWindow();
 }

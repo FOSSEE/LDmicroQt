@@ -27,90 +27,52 @@
 
 #include "ldmicro.h"
 
-static HWID CommentDialog;
+static QDialog* CommentDialog;
 
-static HWID CommentTextbox;
+static QLineEdit* CommentTextbox;
 
-static HWID CommentGrid;
-static HWID CommentPackingBox;
-static HWID OkButton;
-static HWID CancelButton;
+static QGridLayout* CommentGrid;
 
 static void MakeControls(void)
 {
-    CommentTextbox = gtk_entry_new();
-    gtk_entry_set_max_length (GTK_ENTRY (CommentTextbox), 0);
-    gtk_widget_set_hexpand (CommentTextbox, TRUE);
-    gtk_widget_set_vexpand (CommentTextbox, TRUE);
-
-    OkButton = gtk_button_new_with_label ("OK");
-    CancelButton = gtk_button_new_with_label ("Cancel");
-
-    gtk_grid_attach (GTK_GRID (CommentGrid), CommentTextbox, 1, 2, 1, 1);
-    gtk_grid_attach (GTK_GRID (CommentGrid), OkButton, 5, 2, 1, 1);
-    gtk_grid_attach (GTK_GRID (CommentGrid), CancelButton, 5, 3, 1, 1);
-
-    gtk_grid_set_column_spacing (GTK_GRID (CommentGrid), 1);
-    gtk_box_pack_start(GTK_BOX(CommentPackingBox), CommentGrid, TRUE, TRUE, 0);
+    NiceFont(CommentDialog);
+    QDialogButtonBox *ButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok
+        | QDialogButtonBox::Cancel, Qt::Vertical,
+        CommentDialog);
+    CommentTextbox = new QLineEdit();
+    CommentGrid->addWidget(CommentTextbox, 0, 0);
+    CommentGrid->addWidget(ButtonBox, 0, 1);
+    QObject::connect(ButtonBox, SIGNAL(accepted()), CommentDialog, SLOT(accept()));
+    QObject::connect(ButtonBox, SIGNAL(rejected()), CommentDialog, SLOT(reject()));
+    FixedFont(CommentTextbox);
 }
 
-void CommentDialogGetData (char* comment){
-    strncpy (comment, gtk_entry_get_text (GTK_ENTRY (CommentTextbox)),
-            MAX_COMMENT_LEN-1);
-    gtk_widget_set_sensitive (MainWindow, TRUE);
-    DestroyWindow (CommentDialog);
+inline void DestroyWindow(){
+    delete CommentDialog;
+    delete CommentTextbox;
+    delete CommentGrid;
     ProgramChanged();
-}
-
-// Mouse click callback
-void CommentDialogMouseClick (HWID widget, gpointer data){
-    CommentDialogGetData((char*)data);
-}
-
-// Checks for the required key press
-gboolean CommentDialogKeyPress (HWID widget, GdkEventKey* event, gpointer data){
-    if (event -> keyval == GDK_KEY_Return){
-        CommentDialogGetData((char*)data);
-    }
-    else if (event -> keyval == GDK_KEY_Escape){
-        DestroyWindow (CommentDialog);
-        gtk_widget_set_sensitive (MainWindow, TRUE);
-        ProgramChanged();
-    }
-    return FALSE;
-}
-
-void CommentCallDestroyWindow (HWID widget, gpointer data){
-    DestroyWindow (CommentDialog);
-    ProgramChanged();
-    gtk_widget_set_sensitive (MainWindow, TRUE);
 }
 
 void ShowCommentDialog(char *comment)
 {    
-    CommentGrid = gtk_grid_new();
-    CommentPackingBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-
-    CommentDialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW(CommentDialog), "Comment");
-    gtk_window_set_default_size(GTK_WINDOW(CommentDialog), 700, 50);
-    gtk_window_set_resizable (GTK_WINDOW (CommentDialog), FALSE);
-    gtk_widget_add_events (CommentDialog, GDK_KEY_PRESS_MASK);
-    gtk_widget_add_events (CommentDialog, GDK_BUTTON_PRESS_MASK);
-
+    CommentDialog = CreateWindowClient(_("Comment"),
+        100, 100, 359, 115, MainWindow);
+    CommentGrid = new QGridLayout(CommentDialog);
     MakeControls();
-    gtk_entry_set_text (GTK_ENTRY (CommentTextbox), comment);
-    gtk_container_add(GTK_CONTAINER(CommentDialog), CommentPackingBox);
-    gtk_widget_set_sensitive (MainWindow, FALSE);
-    gtk_widget_show_all (CommentDialog);
-    gtk_widget_grab_focus (CommentTextbox);
-
-    g_signal_connect (G_OBJECT (CommentDialog), "key-press-event",
-                    G_CALLBACK(CommentDialogKeyPress), (gpointer)comment);
-    g_signal_connect (G_OBJECT (OkButton), "clicked",
-                    G_CALLBACK(CommentDialogMouseClick), (gpointer)comment);
-    g_signal_connect (G_OBJECT (CancelButton), "clicked",
-                    G_CALLBACK(CommentCallDestroyWindow), NULL);
-
-    return;
+    CommentTextbox->setText(comment);
+    int ret = CommentDialog->exec();
+    switch(ret)
+    {
+        case QDialog::Accepted:
+        {
+            strncpy(comment, CommentTextbox->text().toStdString().c_str(),
+                MAX_COMMENT_LEN -1);
+            
+        }
+        break;
+        case QDialog::Rejected:
+        break;
+    }
+    DestroyWindow();
 }
