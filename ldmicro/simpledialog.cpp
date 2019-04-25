@@ -29,23 +29,23 @@
 
 #include "ldmicro.h"
 
-static HWID SimpleDialog;
-static HWID OkButton;
-static HWID CancelButton;
+static QDialog*     SimpleDialog;
 
 #define MAX_BOXES 5
 
-static HWID Textboxes[MAX_BOXES];
-static HWID Labels[MAX_BOXES];
+static QLineEdit*   Textboxes[MAX_BOXES];
+static QLabel*      Labels[MAX_BOXES];
 
-static LONG_PTR PrevAlnumOnlyProc[MAX_BOXES];
-static LONG_PTR PrevNumOnlyProc[MAX_BOXES];
+static QGridLayout* SimpleGrid;
+
+/*static LONG_PTR PrevAlnumOnlyProc[MAX_BOXES];
+static LONG_PTR PrevNumOnlyProc[MAX_BOXES];*/
 
 static BOOL NoCheckingOnBox[MAX_BOXES];
 
-static BOOL SIMPLE_DIALOG_ACTIVE = FALSE;
+/*static BOOL SIMPLE_DIALOG_ACTIVE = FALSE;*/
 
-static SimpleDialogData SDdata;
+/*static SimpleDialogData SDdata;*/
 
 /// Simple dialog data flags
 #define SD_TIMER            0x0000001
@@ -124,6 +124,16 @@ static void MyNumOnlyProc (GtkEditable *editable, gchar *NewText, gint length,
     //     }
     // }
     // oops();
+}*/
+
+inline void DestroyWindow (int boxes){
+    for(int i = 0; i < boxes; i++) {
+        delete Labels[i];
+        delete Textboxes[i];
+    }
+    delete SimpleGrid;
+    delete SimpleDialog;
+    ProgramChanged();
 }
 
 static void MakeControls(int boxes, char **labels, DWORD fixedFontMask)
@@ -146,51 +156,34 @@ static void MakeControls(int boxes, char **labels, DWORD fixedFontMask)
     // } else {
     //     adj = 0;
     // }
-    HWID grid = gtk_grid_new();
+    QGridLayout* grid = new QGridLayout();
+    QDialogButtonBox *ButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok
+        | QDialogButtonBox::Cancel, Qt::Vertical,
+        SimpleDialog);
+    NiceFont(SimpleDialog);
     
     for(i = 0; i < boxes; i++) {
         // GetTextExtentPoint32(hdc, labels[i], strlen(labels[i]), &si);
 
-        Labels[i] = gtk_label_new (labels[i]);
-        // CreateWindowEx(0, WC_STATIC, labels[i],
-        //     WS_CHILD | WS_CLIPSIBLINGS | WS_VISIBLE,
-        //     (80 + adj) - si.cx - 4, 13 + i*30, si.cx, 21,
-        //     SimpleDialog, NULL, Instance, NULL);
+        Labels[i] = new QLabel(labels[i]);
         NiceFont(Labels[i]);
-        gtk_grid_attach (GTK_GRID (grid), Labels[i], 0, i, 1, 1);
+        grid->addWidget(Labels[i],i,0);
 
-        Textboxes[i] = gtk_entry_new ();
-        // CreateWindowEx(WS_EX_CLIENTEDGE, WC_EDIT, "",
-        //     WS_CHILD | ES_AUTOHSCROLL | WS_TABSTOP | WS_CLIPSIBLINGS |
-        //     WS_VISIBLE,
-        //     80 + adj, 12 + 30*i, 120 - adj, 21,
-        //     SimpleDialog, NULL, Instance, NULL);
+        Textboxes[i] = new QLineEdit();
 
         if(fixedFontMask & (1 << i)) {
             FixedFont(Textboxes[i]);
         } else {
             NiceFont(Textboxes[i]);
         }
-        gtk_grid_attach (GTK_GRID (grid), Textboxes[i], 1, i, 1, 1);
+        grid->addWidget(Textboxes[i],i,1);
     }
-    // ReleaseDC(SimpleDialog, hdc);
-
-    OkButton = gtk_button_new_with_label (_("OK"));
-    // CreateWindowEx(0, WC_BUTTON, _("OK"),
-    //     WS_CHILD | WS_TABSTOP | WS_CLIPSIBLINGS | WS_VISIBLE | BS_DEFPUSHBUTTON,
-    //     218, 11, 70, 23, SimpleDialog, NULL, Instance, NULL); 
-    NiceFont(OkButton);
-    gtk_grid_attach (GTK_GRID (grid), OkButton, 2, 0, 1, 1);
-
-    CancelButton = gtk_button_new_with_label(_("Cancel"));
-    // CreateWindowEx(0, WC_BUTTON, _("Cancel"),
-    //     WS_CHILD | WS_TABSTOP | WS_CLIPSIBLINGS | WS_VISIBLE,
-    //     218, 41, 70, 23, SimpleDialog, NULL, Instance, NULL); 
-    NiceFont(CancelButton);
-    gtk_grid_attach (GTK_GRID (grid), CancelButton, 2, 1, 1, 1);
-    gtk_container_add(GTK_CONTAINER(SimpleDialog), grid);
+    SimpleGrid->addLayout(grid, 0,0);
+    SimpleGrid->addWidget(ButtonBox, 0, 1);
+    QObject::connect(ButtonBox, SIGNAL(accepted()), SimpleDialog, SLOT(accept()));
+    QObject::connect(ButtonBox, SIGNAL(rejected()), SimpleDialog, SLOT(reject()));
 }
-
+/*
 void SimpleDialogWrapUp()
 {
     // if(!didCancel)
@@ -330,91 +323,79 @@ static gboolean SimpleDialogKeyPressProc(HWID widget, GdkEventKey* event, gpoint
     return FALSE;
 }*/
 
-void ShowSimpleDialog(char *title, int boxes, char **labels, DWORD numOnlyMask,
+BOOL ShowSimpleDialog(char *title, int boxes, char **labels, DWORD numOnlyMask,
     DWORD alnumOnlyMask, DWORD fixedFontMask, char **dests)
 {
-    if(SIMPLE_DIALOG_ACTIVE)
+    /*if(SIMPLE_DIALOG_ACTIVE)
         return;
     
     SIMPLE_DIALOG_ACTIVE = TRUE;
 
-    BOOL didCancel = FALSE;
+    BOOL didCancel = FALSE;*/
+    BOOL RetVal = FALSE;
 
     if(boxes > MAX_BOXES) oops();
 
-    SimpleDialog = CreateWindowClient(GTK_WINDOW_TOPLEVEL, GDK_WINDOW_TYPE_HINT_NORMAL, 
-        title, 100, 100, 304, 15 + 30*(boxes < 2 ? 2 : boxes), MainWindow);
-    SimpleDialog->show();
-    // CreateWindowClient(0, "LDmicroDialog", title, 
-    //     WS_OVERLAPPED | WS_SYSMENU,
-    //     100, 100, 304, 15 + 30*(boxes < 2 ? 2 : boxes), NULL, NULL,
-    //     Instance, NULL);
-
-/*    MakeControls(boxes, labels, fixedFontMask);
-  
+    SimpleDialog = CreateWindowClient(title, 100, 100,
+        304, 15 + 30*(boxes < 2 ? 2 : boxes), MainWindow);
+    SimpleGrid = new QGridLayout(SimpleDialog);
+    SimpleDialog->setWindowTitle(title);
+    MakeControls(boxes, labels, fixedFontMask);
     int i;
-    for(i = 0; i < boxes; i++) 
-    {
-        // SendMessage(Textboxes[i], WM_SETTEXT, 0, (LPARAM)dests[i]);
-        gtk_entry_set_text (GTK_ENTRY(Textboxes[i]), dests[i]);
+    for(i = 0; i < boxes; i++) {
+        Textboxes[i]->setText(dests[i]);
 
-        if(numOnlyMask & (1 << i)) 
-        {
-            g_signal_connect (G_OBJECT(Textboxes[i]), "insert-text",
-                G_CALLBACK(MyNumOnlyProc), NULL);
-            // PrevNumOnlyProc[i] = SetWindowLongPtr(Textboxes[i], GWLP_WNDPROC, 
-            //     (LONG_PTR)MyNumOnlyProc);
-        } else if(alnumOnlyMask & (1 << i)) 
-        {
-            g_signal_connect (G_OBJECT(Textboxes[i]), "insert-text",
-                G_CALLBACK(MyAlnumOnlyProc), NULL);
-            // PrevAlnumOnlyProc[i] = SetWindowLongPtr(Textboxes[i], GWLP_WNDPROC, 
-            //     (LONG_PTR)MyAlnumOnlyProc);
+        if(numOnlyMask & (1 << i)) {
+            Textboxes[i]->setValidator(
+        new QRegExpValidator(QRegExp("-?[0-9]+[.]?[0-9]+")));
+        }
+        if(alnumOnlyMask & (1 << i)) {
+            /*PrevAlnumOnlyProc[i] = SetWindowLongPtr(Textboxes[i], GWLP_WNDPROC, 
+                (LONG_PTR)MyAlnumOnlyProc);*/
+            Textboxes[i]->setValidator(
+                new QRegExpValidator(
+                    QRegExp("[a-zA-Z0-9_'-]+")));
         }
     }
+    int ret = SimpleDialog->exec();
+    switch(ret)
+    {
+        case QDialog::Accepted:
+        {
+            for(i = 0; i < boxes; i++) {
+                if(NoCheckingOnBox[i]) {
+                    strncpy(dests[i],
+                        Textboxes[i]->text().toStdString().c_str(),60);
+                } else {
+                    char get[20];
+                    // SendMessage(Textboxes[i], WM_GETTEXT, 15, (LPARAM)get);
+                    strncpy(get, Textboxes[i]->text().toStdString().c_str(),15);
 
-    g_signal_connect (CancelButton, "clicked", G_CALLBACK (SimpleDialogCancelProc), NULL);
-    g_signal_connect (OkButton, "clicked", G_CALLBACK (SimpleDialogWrapUp), NULL);
-    g_signal_connect (SimpleDialog, "key_press_event", G_CALLBACK (SimpleDialogKeyPressProc), NULL);
-
-    // EnableWindow(MainWindow, FALSE);
-    // ShowWindow(SimpleDialog, TRUE);
-    gtk_widget_show_all(SimpleDialog);
-*/    // SetFocus(Textboxes[0]);
-    // SendMessage(Textboxes[0], EM_SETSEL, 0, -1);
-
-    // MSG msg;
-    // DWORD ret;
-    // DialogDone = FALSE;
-    // DialogCancel = FALSE;
-    // while((ret = GetMessage(&msg, NULL, 0, 0)) && !DialogDone) {
-    //     if(msg.message == WM_KEYDOWN) {
-    //         if(msg.wParam == VK_RETURN) {
-    //             DialogDone = TRUE;
-    //             break;
-    //         } else if(msg.wParam == VK_ESCAPE) {
-    //             DialogDone = TRUE;
-    //             DialogCancel = TRUE;
-    //             break;
-    //         }
-    //     }
-
-    //     if(IsDialogMessage(SimpleDialog, &msg)) continue;
-    //     TranslateMessage(&msg);
-    //     DispatchMessage(&msg);
-    // }
-
-    // didCancel = DialogCancel;
-
-
-
-    // EnableWindow(MainWindow, TRUE);
-    // DestroyWindow(SimpleDialog);
-
-    // return !didCancel;
+                    if( (!strchr(get, '\'')) ||
+                            (get[0] == '\'' && get[2] == '\'' && strlen(get)==3) )
+                    {
+                        if(strlen(get) == 0) {
+                            Error(_("Empty textbox; not permitted."));
+                        } else {
+                            strcpy(dests[i], get);
+                        }
+                    } else {
+                        Error(_("Bad use of quotes: <%s>"), get);
+                    }
+                }
+            }
+            RetVal = TRUE;
+            break;
+        }
+        case  QDialog::Rejected:
+        RetVal = FALSE;
+        break;
+    }
+    DestroyWindow(boxes);
+    return RetVal;
 }
 
-/*void ShowTimerDialog(int which, int *delay, char *name)
+void ShowTimerDialog(int which, int *delay, char *name)
 {
     char *s;
     switch(which) { 
@@ -431,21 +412,18 @@ void ShowSimpleDialog(char *title, int boxes, char **labels, DWORD numOnlyMask,
     sprintf(delBuf, "%.3f", (*delay / 1000.0));
     strcpy(nameBuf, name+1);
     char *dests[] = { nameBuf, delBuf };
-
-    if (SIMPLE_DIALOG_ACTIVE)
-        return;
-    
-    SDdata.uflag = SD_TIMER;
-    SDdata.boxes = 2;
-    SDdata.str1 = name;
-    SDdata.num1 = delay;
-    SDdata.dests = new char*[2];
-    SDdata.dests[0] = new char[16];
-    SDdata.dests[1] = new char[16];
-    sprintf(SDdata.dests[1], "%.3f", (*delay / 1000.0));
-    strcpy(SDdata.dests[0], name+1);
-
-    ShowSimpleDialog(s, 2, labels, (1 << 1), (1 << 0), (1 << 0), dests);
+    if(ShowSimpleDialog(s, 2, labels, (1 << 1), (1 << 0), (1 << 0), dests)) {
+        name[0] = 'T';
+        strcpy(name+1, nameBuf);
+        double del = atof(delBuf);
+        if(del > 2140000) { // 2**31/1000, don't overflow signed int
+            Error(_("Delay too long; maximum is 2**31 us."));
+        } else if(del <= 0) {
+            Error(_("Delay cannot be zero or negative."));
+        } else {
+            *delay = (int)(1000*del + 0.5);
+        }
+    }
 }
 
 void ShowCounterDialog(int which, int *maxV, char *name)
@@ -465,20 +443,8 @@ void ShowCounterDialog(int which, int *maxV, char *name)
     char maxS[128];
     sprintf(maxS, "%d", *maxV);
     char *dests[] = { name+1, maxS };
-
-    if (SIMPLE_DIALOG_ACTIVE)
-        return;
-    
-    SDdata.uflag = SD_COUNTER;
-    SDdata.boxes = 2;
-    SDdata.str1 = name;
-    SDdata.num1 = maxV;
-    SDdata.dests = new char*[2];
-    SDdata.dests[0] = name+1;
-    SDdata.dests[1] = new char[128];
-    sprintf(SDdata.dests[1], "%d", *maxV);
-
     ShowSimpleDialog(title, 2, labels, 0x2, 0x1, 0x1, dests);
+    *maxV = atoi(maxS);
 }
 
 void ShowCmpDialog(int which, char *op1, char *op2)
@@ -521,16 +487,6 @@ void ShowCmpDialog(int which, char *op1, char *op2)
     }
     char *labels[] = { _("'Closed' if:"), l2 };
     char *dests[] = { op1, op2 };
-
-    if (SIMPLE_DIALOG_ACTIVE)
-        return;
-    
-    SDdata.uflag = SD_CMP;
-    SDdata.boxes = 2;
-    SDdata.dests = new char*[2];
-    SDdata.dests[0] = op1;
-    SDdata.dests[1] = op2;
-
     ShowSimpleDialog(title, 2, labels, 0, 0x3, 0x3, dests);
 }
 
@@ -538,16 +494,6 @@ void ShowMoveDialog(char *dest, char *src)
 {
     char *labels[] = { _("Destination:"), _("Source:") };
     char *dests[] = { dest, src };
-    
-    if (SIMPLE_DIALOG_ACTIVE)
-        return;
-    
-    SDdata.uflag = SD_MOVE;
-    SDdata.boxes = 2;
-    SDdata.dests = new char*[2];
-    SDdata.dests[0] = dest;
-    SDdata.dests[1] = src;
-
     ShowSimpleDialog(_("Move"), 2, labels, 0, 0x3, 0x3, dests);
 }
 
@@ -555,15 +501,6 @@ void ShowReadAdcDialog(char *name)
 {
     char *labels[] = { _("Destination:") };
     char *dests[] = { name };
-
-    if (SIMPLE_DIALOG_ACTIVE)
-        return;
-    
-    SDdata.uflag = SD_READ_ADC;
-    SDdata.boxes = 1;
-    SDdata.dests = new char*[1];
-    SDdata.dests[0] = name;
-
     ShowSimpleDialog(_("Read A/D Converter"), 1, labels, 0, 0x1, 0x1, dests);
 }
 
@@ -574,19 +511,8 @@ void ShowSetPwmDialog(char *name, int *targetFreq)
 
     char *labels[] = { _("Duty cycle var:"), _("Frequency (Hz):") };
     char *dests[] = { name, freq };
-
-    if (SIMPLE_DIALOG_ACTIVE)
-        return;
-    
-    SDdata.uflag = SD_SET_PWM;
-    SDdata.boxes = 2;
-    SDdata.num1 = targetFreq;
-    SDdata.dests = new char*[2];
-    SDdata.dests[0] = name;
-    SDdata.dests[1] = new char[100];
-    sprintf(SDdata.dests[1], "%d", *targetFreq);
-
     ShowSimpleDialog(_("Set PWM Duty Cycle"), 2, labels, 0x2, 0x1, 0x1, dests);
+    *targetFreq = atoi(freq);
 }
 
 void ShowUartDialog(int which, char *name)
@@ -594,14 +520,6 @@ void ShowUartDialog(int which, char *name)
     char *labels[] = { (which == ELEM_UART_RECV) ? _("Destination:") :
         _("Source:") };
     char *dests[] = { name };
-
-    if (SIMPLE_DIALOG_ACTIVE)
-        return;
-    
-    SDdata.uflag = SD_UART;
-    SDdata.boxes = 1;
-    SDdata.dests = new char*[2];
-    SDdata.dests[0] = name;
 
     ShowSimpleDialog((which == ELEM_UART_RECV) ? _("Receive from UART") :
         _("Send to UART"), 1, labels, 0, 0x1, 0x1, dests);
@@ -626,17 +544,6 @@ void ShowMathDialog(int which, char *dest, char *op1, char *op2)
 
     char *labels[] = { _("Destination:"), _("is set := :"), l2 };
     char *dests[] = { dest, op1, op2 };
-
-    if (SIMPLE_DIALOG_ACTIVE)
-        return;
-    
-    SDdata.uflag = SD_MATH;
-    SDdata.boxes = 3;
-    SDdata.dests = new char*[3];
-    SDdata.dests[0] = dest;
-    SDdata.dests[1] = op1;
-    SDdata.dests[2] = op2;
-
     ShowSimpleDialog(title, 3, labels, 0, 0x7, 0x7, dests);
 }
 
@@ -648,34 +555,19 @@ void ShowShiftRegisterDialog(char *name, int *stages)
     char *labels[] = { _("Name:"), _("Stages:") };
     char *dests[] = { name, stagesStr };
 
-    if (SIMPLE_DIALOG_ACTIVE)
-        return;
-    
-    SDdata.uflag = SD_SHIFT_REGISTER;
-    SDdata.boxes = 2;
-    SDdata.num1 = stages;
-    SDdata.dests = new char*[2];
-    SDdata.dests[0] = name;
-    SDdata.dests[1] = new char[20];
-    sprintf(SDdata.dests[1], "%d", *stages);
-
     ShowSimpleDialog(_("Shift Register"), 2, labels, 0x2, 0x1, 0x1, dests);
+    *stages = atoi(stagesStr);
+
+    if(*stages <= 0 || *stages >= 200) {
+        Error(_("Not a reasonable size for a shift register."));
+        *stages = 1;
+    }
 }
 
 void ShowFormattedStringDialog(char *var, char *string)
 {
     char *labels[] = { _("Variable:"), _("String:") };
     char *dests[] = { var, string };
-
-    if (SIMPLE_DIALOG_ACTIVE)
-        return;
-    
-    SDdata.uflag = SD_FORMATTED_STRING;
-    SDdata.boxes = 2;
-    SDdata.dests = new char*[2];
-    SDdata.dests[0] = var;
-    SDdata.dests[1] = string;
-
     NoCheckingOnBox[0] = TRUE;
     NoCheckingOnBox[1] = TRUE;
     ShowSimpleDialog(_("Formatted String Over UART"), 2, labels, 0x0,
@@ -688,15 +580,5 @@ void ShowPersistDialog(char *var)
 {
     char *labels[] = { _("Variable:") };
     char *dests[] = { var };
-
-    if (SIMPLE_DIALOG_ACTIVE)
-        return;
-    
-    SDdata.uflag = SD_PERSIST;
-    SDdata.boxes = 1;
-    SDdata.dests = new char*[1];
-    SDdata.dests[0] = var;
-
     ShowSimpleDialog(_("Make Persistent"), 1, labels, 0, 1, 1, dests);
 }
-*/

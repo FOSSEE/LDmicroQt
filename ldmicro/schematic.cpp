@@ -417,7 +417,7 @@ void EditSelectedElement(void)
                 &(Selected->d.coil.setOnly), &(Selected->d.coil.resetOnly),
                 Selected->d.coil.name);
             break;
-/*
+
         case ELEM_TON:
         case ELEM_TOF:
         case ELEM_RTO:
@@ -449,11 +449,11 @@ void EditSelectedElement(void)
             ShowMathDialog(SelectedWhich, Selected->d.math.dest, 
                 Selected->d.math.op1, Selected->d.math.op2); 
             break;
-*/
+
         case ELEM_RES:
             ShowResetDialog(Selected->d.reset.name);
             break;
-/*
+
         case ELEM_MOVE:
             ShowMoveDialog(Selected->d.move.dest, Selected->d.move.src);
             break;
@@ -492,7 +492,7 @@ void EditSelectedElement(void)
 
         case ELEM_LOOK_UP_TABLE:
             ShowLookUpTableDialog(Selected);
-            break;*/
+            break;
     }
 }
 

@@ -139,12 +139,12 @@ endif()
                             compilecommon.cpp
                             intcode.cpp
                             lang.cpp
-                            miscutil.cpp
+                            miscutil.cpp    #add message boxes to Error(), CompileSuccessfulMessage()
                             iolist.cpp
                             #confdialog.cpp
-                            #lutdialog.cpp
+                            lutdialog.cpp
                             resetdialog.cpp
-                            # simpledialog.cpp
+                            simpledialog.cpp
                             coildialog.cpp
                             contactsdialog.cpp
                             commentdialog.cpp

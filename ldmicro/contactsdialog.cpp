@@ -97,7 +97,8 @@ void ShowContactsDialog(BOOL *negated, char *name)
     // CoilDialog->setFixedSize(359,115);
     MakeControls();
     NameTextbox->setValidator(
-        new QRegExpValidator(QRegExp("[a-zA-Z0-9_]+")));
+        new QRegExpValidator(
+            QRegExp("[a-zA-Z0-9_]+")));
 
     if(name[0] == 'R') {
         SourceInternalRelayRadio->setChecked(TRUE);
