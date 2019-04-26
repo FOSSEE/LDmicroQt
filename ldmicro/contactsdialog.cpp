@@ -78,7 +78,7 @@ static void MakeControls(void)
     QObject::connect(ButtonBox, SIGNAL(rejected()), ContactsDialog, SLOT(reject()));
 }
 
-inline void DestroyWindow (){
+static inline void DestroyWindow (){
     delete NegatedCheckbox;
     delete SourceInternalRelayRadio;
     delete SourceInputPinRadio;

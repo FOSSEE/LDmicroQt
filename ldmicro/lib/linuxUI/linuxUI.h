@@ -310,7 +310,7 @@ BOOL KillTimer(
     HWID hWid,
     UINT uIDEvent);
 
-void DestroyWindow (HWID widget);
+// void DestroyWindow (HWID widget);
 
 class PaintWidget : public QWidget
 {

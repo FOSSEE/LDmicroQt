@@ -60,7 +60,7 @@ static BOOL NoCheckingOnBox[MAX_BOXES];
 #define SD_FORMATTED_STRING 0x0000010
 #define SD_PERSIST          0x0000011
 
-inline void DestroyWindow (int boxes){
+static inline void DestroyWindow (int boxes){
     for(int i = 0; i < boxes; i++) {
         delete Labels[i];
         delete Textboxes[i];

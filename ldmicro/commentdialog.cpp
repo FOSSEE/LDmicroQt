@@ -47,7 +47,7 @@ static void MakeControls(void)
     FixedFont(CommentTextbox);
 }
 
-inline void DestroyWindow(){
+static inline void DestroyWindow(){
     delete CommentDialog;
     delete CommentTextbox;
     delete CommentGrid;

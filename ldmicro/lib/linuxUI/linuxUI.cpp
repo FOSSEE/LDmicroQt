@@ -518,12 +518,12 @@ BOOL KillTimer(HWID hWid, UINT uIDEvent)
     return TRUE;
 }
 
-void DestroyWindow (HWID widget)
+/*void DestroyWindow (HWID widget)
 {
-    /*if (GTK_IS_WIDGET(widget))
+    if (GTK_IS_WIDGET(widget))
     {
         gtk_widget_destroy (widget);
-    }*/
-}
+    }
+}*/
 
 

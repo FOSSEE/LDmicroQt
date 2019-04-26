@@ -89,7 +89,7 @@ static void MakeControls(void)
     QObject::connect(ButtonBox, SIGNAL(rejected()), CoilDialog, SLOT(reject()));
 }
 
-inline void DestroyWindow()
+static inline void DestroyWindow()
 {
     delete SourceInternalRelayRadio;
     delete SourceMcuPinRadio;

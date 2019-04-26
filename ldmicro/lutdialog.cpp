@@ -80,7 +80,7 @@ void CountFunction(QString text);
 void StringFunction(QString text);
 
 
-inline void DestroyWindow (){
+static inline void DestroyWindow (){
     delete Labels[0];
     delete Labels[1];
     delete Labels[2];
@@ -382,11 +382,11 @@ void ShowLookUpTableDialog(ElemLeaf *l)
             int i;
             for(i = 0; i < count; i++) {
                 t->vals[i] = ValuesCache[i];
-                printf("Value:%d\n", ValuesCache[i]);
+                // printf("Value:%d\n", ValuesCache[i]);
             }
             t->count = count;
             t->editAsString = asString;
-            printf("Count:%d\n", count);
+            // printf("Count:%d\n", count);
         }
         break;
         case  QDialog::Rejected:
@@ -400,7 +400,7 @@ void ShowLookUpTableDialog(ElemLeaf *l)
 
 void CheckBoxFunction(int state)
 {
-    printf("CheckBoxFunctionCalled\n");
+    // printf("CheckBoxFunctionCalled\n");
     asString = state;
     DestroyLutControls();
     const char* buf;
@@ -412,7 +412,7 @@ void CheckBoxFunction(int state)
 // ShowLookUpTableDialog function to improve performance in Qt
 void CountFunction(QString text)
 {
-    printf("TextFunction called:%s\n",text.toStdString().c_str());
+    // printf("TextFunction called:%s\n",text.toStdString().c_str());
     const char* buf;
             buf = text.toStdString().c_str();
         if(atoi(buf) != ControlCount && !asString) {
@@ -430,7 +430,7 @@ void CountFunction(QString text)
 // ShowLookUpTableDialog function to improve performance in Qt
 void StringFunction(QString text)
 {
-    printf("StringFunction called \n");
+    // printf("StringFunction called \n");
     char* scratch = (char*)text.toStdString().c_str();
             // SendMessage(StringTextbox, WM_GETTEXT, (WPARAM)sizeof(scratch),
             //     (LPARAM)scratch);

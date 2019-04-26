@@ -566,9 +566,9 @@ cmp:
             CHANGING_PROGRAM(DeleteSelectedFromProgram());
             break;
 
-        /*case MNU_MCU_SETTINGS:
+        case MNU_MCU_SETTINGS:
             CHANGING_PROGRAM(ShowConfDialog());
-            break;*/
+            break;
 
         case MNU_SIMULATION_MODE:
             ToggleSimulationMode();

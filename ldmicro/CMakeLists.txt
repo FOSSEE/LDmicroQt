@@ -141,7 +141,7 @@ endif()
                             lang.cpp
                             miscutil.cpp    #add message boxes to Error(), CompileSuccessfulMessage()
                             iolist.cpp
-                            #confdialog.cpp
+                            confdialog.cpp
                             lutdialog.cpp
                             resetdialog.cpp
                             simpledialog.cpp
