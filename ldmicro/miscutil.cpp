@@ -102,7 +102,7 @@ void Error(char *str, ...)
         printf("%s\n", buf);
     } else {
         //HWND h = GetForegroundWindow();
-        // MessageBox(MainWindow, buf, _("LDmicro Error"), MB_OK | MB_ICONERROR);
+        MessageBox(MainWindow, buf, _("LDmicro Error"), MB_OK | MB_ICONERROR);
     }
 }
 
@@ -208,7 +208,7 @@ QDialog* CreateWindowClient(char *windowName,
     int x, int y, int width, int height, HWND parent)
 {
     QDialog* h = new QDialog(parent);
-    h->resize(width,height);
+    h->resize(width, height);
     h->setWindowTitle(windowName);
     // HWND h = CreateWindowEx(exStyle, className, windowName, style, x, y,
     //     width, height, parent, menu, instance, param);
@@ -288,6 +288,18 @@ void FixedFont(HWID h)
     qtfont.setFixedPitch(TRUE);
     qtfont.setStyle(MyFixedFont->fdwItalic ? QFont::StyleItalic : QFont::StyleNormal);
     qtfont.setWeight(MyFixedFont->fnWeight == FW_BOLD ? QFont::Bold : QFont::Normal);
+    h->setFont(qtfont);
+  //  SendMessage(h, WM_SETFONT, (WPARAM)MyFixedFont, TRUE);
+}
+
+void SetFont(HWID h, HFONT f)
+{
+    QFont qtfont = h->font();
+    qtfont.setFamily(f->lpszFace);
+    qtfont.setPixelSize(f->nHeight - 3);
+    qtfont.setFixedPitch(TRUE);
+    qtfont.setStyle(f->fdwItalic ? QFont::StyleItalic : QFont::StyleNormal);
+    qtfont.setWeight(f->fnWeight == FW_BOLD ? QFont::Bold : QFont::Normal);
     h->setFont(qtfont);
   //  SendMessage(h, WM_SETFONT, (WPARAM)MyFixedFont, TRUE);
 }

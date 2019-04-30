@@ -802,6 +802,7 @@ void MakeNamingListClass(void);
 void MakeDialogBoxClass(void);
 void NiceFont(HWID h);
 void FixedFont(HWID h);
+void SetFont(HWID h, HFONT f);
 void CompileSuccessfulMessage(char *str);
 extern BOOL RunningInBatchMode;
 extern HFONT MyNiceFont;

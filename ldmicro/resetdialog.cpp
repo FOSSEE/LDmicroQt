@@ -74,7 +74,7 @@ static void MakeControls(void)
     QObject::connect(ButtonBox, SIGNAL(rejected()), ResetDialog, SLOT(reject()));
 }
 
-inline void DestroyWindow (){
+static inline void DestroyWindow (){
     delete TypeTimerRadio;
     delete TypeCounterRadio;
     delete NameTextbox;

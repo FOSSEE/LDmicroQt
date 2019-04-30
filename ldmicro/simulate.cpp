@@ -27,12 +27,14 @@
 #include "linuxUI.h"
 //#include <commctrl.h>
 #include <stdio.h>
+#include<iostream>
 #include <stdlib.h>
 #include <limits.h>
 
 #include "ldmicro.h"
 #include "intcode.h"
 #include "freezeLD.h"
+#include <QDesktopWidget>
 
 static struct {
     char name[MAX_NAME_LEN];
@@ -70,6 +72,8 @@ static int AdcShadowsCount;
 // editing during simulation.
 BOOL InSimulationMode;
 
+static BOOL UARTWindowInitialized = FALSE;
+
 // Don't want to redraw the screen unless necessary; track whether a coil
 // changed state or a timer output switched to see if anything could have
 // changed (not just coil, as we show the intermediate steps too).
@@ -89,12 +93,17 @@ static int IntPc;
 
 // A window to allow simulation with the UART stuff (insert keystrokes into
 // the program, view the output, like a terminal window).
-static HWID UartSimulationWindow;
-static HWID UartSimulationTextControl;
+static QDialog* UartSimulationWindow;
+static QPlainTextEdit* UartSimulationTextControl;
 static LONG_PTR PrevTextProc;
 
 static int QueuedUartCharacter = -1;
 static int SimulateUartTxCountdown = 0;
+
+// Flags to verify textchange on UART terminal is due to external events
+// and not due to program changes
+static BOOL InternalChange = FALSE;
+static BYTE ChangeChar;
 
 static void AppendToUartSimulationTextControl(BYTE b);
 
@@ -843,9 +852,21 @@ void SimulationToggleContact(char *name)
 //
 // Ported: Read and write text fron the text view widget.
 //-----------------------------------------------------------------------------
-static void UartSimulationTextProc(HWID hwid, UINT umsg, char *text, UINT uszbuf)
+static void UartSimulationTextProc(/*HWID hwid, UINT umsg, char *text, UINT uszbuf*/)
 {
-    switch(umsg)
+    char text = UartSimulationTextControl->toPlainText().toStdString().back();
+    if(InternalChange)
+    {
+        if(text != ChangeChar)
+        {
+            QueuedUartCharacter = (BYTE)(text);
+            InternalChange = FALSE;
+        }
+        return;
+    }
+    QueuedUartCharacter = (BYTE)(text);
+    
+    /*switch(umsg)
     {
         case WM_SETTEXT:
         {
@@ -885,7 +906,7 @@ static void UartSimulationTextProc(HWID hwid, UINT umsg, char *text, UINT uszbuf
         }
         default:
             break;
-    }
+    }*/
 }
 
 //-----------------------------------------------------------------------------
@@ -893,7 +914,7 @@ static void UartSimulationTextProc(HWID hwid, UINT umsg, char *text, UINT uszbuf
 // characters that you type go into UART RECV instruction and whatever
 // the program puts into UART SEND shows up as text.
 //-----------------------------------------------------------------------------
-/*void ShowUartSimulationWindow(void)
+void ShowUartSimulationWindow(void)
 {
     DWORD TerminalX = 200, TerminalY = 200, TerminalW = 300, TerminalH = 150;
 
@@ -905,12 +926,38 @@ static void UartSimulationTextProc(HWID hwid, UINT umsg, char *text, UINT uszbuf
     if(TerminalW > 800) TerminalW = 100;
     if(TerminalH > 800) TerminalH = 100;
 
-    UartSimulationWindow = CreateWindowClient(GTK_WINDOW_TOPLEVEL, GDK_WINDOW_TYPE_HINT_NORMAL, 
-        "UART Simulation (Terminal)", TerminalX, TerminalY, TerminalW, TerminalH, NULL);
-    /// remove close button
-    gtk_window_set_deletable (GTK_WINDOW(UartSimulationWindow), FALSE);
+    QRect r = QApplication::desktop()->screenGeometry();
+ 
+    if(TerminalX >= (DWORD)(r.width() - 10)) TerminalX = 100;
+    if(TerminalY >= (DWORD)(r.height() - 10)) TerminalY = 100;
 
-    UartSimulationTextControl = gtk_text_view_new();
+    UartSimulationWindow = CreateWindowClient("UART Simulation (Terminal)",
+        TerminalX, TerminalY, TerminalW, TerminalH, MainWindow);
+    // UartSimulationWindow->setWindowTitle("UART Simulation (Terminal)");
+    /// remove close button
+    UartSimulationWindow->setWindowFlags(Qt::Window
+        | Qt::WindowMinimizeButtonHint |
+        Qt::WindowStaysOnTopHint);
+    UartSimulationWindow->setAttribute(Qt::WA_AlwaysStackOnTop);
+
+    UartSimulationTextControl = new QPlainTextEdit();
+    UartSimulationTextControl->resize(TerminalW, TerminalH);
+
+    QVBoxLayout* UartSimLayout = new QVBoxLayout(UartSimulationWindow);
+    UartSimLayout->addWidget(UartSimulationTextControl);
+
+    HFONT fixedFont = CreateFont(14, 0, 0, FW_REGULAR, FALSE, "Lucida Console");
+    SetFont(UartSimulationTextControl, fixedFont);
+    QObject::connect(UartSimulationTextControl,
+        &QPlainTextEdit::modificationChanged, UartSimulationTextProc);
+    UartSimulationWindow->raise();
+    UartSimulationWindow->show();
+    MainWindow->setFocus();
+    UARTWindowInitialized = TRUE;
+    // UartSimulationTextControl->document()->setModified(false);
+    // UartSimulationTextControl->setPlainText("H");
+
+    /*UartSimulationTextControl = gtk_text_view_new();
 
     gtk_widget_override_font(GTK_WIDGET(UartSimulationTextControl), pango_font_description_from_string("Lucida Console"));
 
@@ -929,8 +976,8 @@ static void UartSimulationTextProc(HWID hwid, UINT umsg, char *text, UINT uszbuf
     
     gtk_window_set_keep_above (GTK_WINDOW(MainWindow), TRUE);
     gtk_window_set_focus_visible (GTK_WINDOW(MainWindow), TRUE);   
-    gtk_window_set_keep_above (GTK_WINDOW(MainWindow), FALSE);
-}*/
+    gtk_window_set_keep_above (GTK_WINDOW(MainWindow), FALSE);*/
+}
 
 //-----------------------------------------------------------------------------
 // Get rid of the UART simulation terminal-type window.
@@ -940,27 +987,29 @@ void DestroyUartSimulationWindow(void)
     // Try not to destroy the window if it is already destroyed; that is
     // not for the sake of the window, but so that we don't trash the
     // stored position.
-    if(UartSimulationWindow == NULL) return;
 
-    DWORD TerminalX, TerminalY, TerminalW, TerminalH;
-    RECT r;
+    if(UARTWindowInitialized)
+    {
+        UARTWindowInitialized = FALSE;
+        
+        DWORD TerminalX, TerminalY, TerminalW, TerminalH;
+        QRect r;
 
-    GetClientRect(UartSimulationWindow, &r);
-    TerminalW = r.right - r.left;
-    TerminalH = r.bottom - r.top;
+        r = UartSimulationWindow->geometry();
+        TerminalW = r.width();
+        TerminalH = r.height();
 
-    GetWindowRect(UartSimulationWindow, &r);
-    TerminalX = r.left;
-    TerminalY = r.top;
+        TerminalX = r.left();
+        TerminalY = r.top();
 
-    FreezeDWORD(TerminalX);
-    FreezeDWORD(TerminalY);
-    FreezeDWORD(TerminalW);
-    FreezeDWORD(TerminalH);
+        FreezeDWORD(TerminalX);
+        FreezeDWORD(TerminalY);
+        FreezeDWORD(TerminalW);
+        FreezeDWORD(TerminalH);
 
-    // DestroyWindow(UartSimulationWindow);
-    ProgramChanged();
-    UartSimulationWindow = NULL;
+        delete UartSimulationTextControl;
+        delete UartSimulationWindow;
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -968,27 +1017,32 @@ void DestroyUartSimulationWindow(void)
 //-----------------------------------------------------------------------------
 static void AppendToUartSimulationTextControl(BYTE b)
 {
-    char append[5];
-
-    if((isalnum(b) || strchr("[]{};':\",.<>/?`~ !@#$%^&*()-=_+|", b) ||
-        b == '\r' || b == '\n') && b != '\0')
+    if(UARTWindowInitialized)
     {
-        append[0] = b;
-        append[1] = '\0';
-    } else {
-        sprintf(append, "\\x%02x", b);
+        char append[5];
+    
+        if((isalnum(b) || strchr("[]{};':\",.<>/?`~ !@#$%^&*()-=_+|", b) ||
+            b == '\r' || b == '\n') && b != '\0')
+        {
+            append[0] = b;
+            append[1] = '\0';
+        } else {
+            sprintf(append, "\\x%02x", b);
+        }
+    
+    #define MAX_SCROLLBACK 256
+        char buf[MAX_SCROLLBACK] = "\0";
+        strncpy(buf,
+            UartSimulationTextControl->toPlainText().toStdString().c_str(),
+            MAX_SCROLLBACK);
+        int overBy = (strlen(buf) + strlen(append) + 1) - sizeof(buf);
+        if(overBy > 0) {
+            memmove(buf, buf + overBy, strlen(buf));
+        }
+        strcat(buf, append);
+        InternalChange = TRUE;
+        ChangeChar = b;
+    
+        UartSimulationTextControl->setPlainText(buf);
     }
-
-#define MAX_SCROLLBACK 256
-    char buf[MAX_SCROLLBACK];
-
-    UartSimulationTextProc(UartSimulationTextControl, WM_GETTEXT, buf, strlen(buf));
-
-    int overBy = (strlen(buf) + strlen(append) + 1) - sizeof(buf);
-    if(overBy > 0) {
-        memmove(buf, buf + overBy, strlen(buf));
-    }
-    strcat(buf, append);
-
-    UartSimulationTextProc(UartSimulationTextControl, WM_SETTEXT, buf, strlen(buf));
 }

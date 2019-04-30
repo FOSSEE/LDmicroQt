@@ -105,7 +105,7 @@ static BOOL SaveAsDialog(void)
         return TRUE;
     }
 }
-/*
+
 //-----------------------------------------------------------------------------
 // Get a filename with a common dialog box and then export the program as
 // an ASCII art drawing.
@@ -131,7 +131,7 @@ static void ExportDialog(void)
         return;
 
     ExportDrawingAsText(exportFile);
-}*/
+}
 
 //-----------------------------------------------------------------------------
 // If we already have a filename, save the program to that. Otherwise same
@@ -383,17 +383,16 @@ static void ProcessMenu(int code)
             SaveAsDialog();
             UpdateMainWindowTitleBar();
             break;
-/*
+
         case MNU_EXPORT:
             ExportDialog();
             break;
 
         case MNU_EXIT:
             if(CheckSaveUserCancels()) break;
-            LD_WM_Close_call(NULL, NULL, NULL);
-            // PostQuitMessage(0);
+            LDmicroApp->exit();
             break;
-*/
+
         case MNU_INSERT_COMMENT:
             CHANGING_PROGRAM(AddComment(_("--add comment here--")));
             break;

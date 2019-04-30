@@ -984,9 +984,9 @@ void ToggleSimulationMode(void)
         ClearSimulationData(); // simulation.cpp, ldmicro.h
         // Recheck InSimulationMode, because there could have been a Compile
         // error, which would have kicked us out of simulation mode.
-        /*if(UartFunctionUsed() && InSimulationMode) {
+        if(UartFunctionUsed() && InSimulationMode) {
             ShowUartSimulationWindow(); // simulate.cpp
-        }*/
+        }
     }
     else {
         RealTimeSimulationRunning = FALSE;
