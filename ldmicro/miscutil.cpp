@@ -102,7 +102,7 @@ void Error(char *str, ...)
         printf("%s\n", buf);
     } else {
         //HWND h = GetForegroundWindow();
-        MessageBox(MainWindow, buf, _("LDmicro Error"), MB_OK | MB_ICONERROR);
+        MessageBox(MainWindow, buf, _("LDmicro Error"), MB_OK, MB_ICONERROR);
     }
 }
 

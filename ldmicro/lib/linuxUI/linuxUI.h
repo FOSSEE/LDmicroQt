@@ -26,6 +26,7 @@
 #include <QDialogButtonBox>
 #include <QRegExpValidator>
 #include <QCheckBox>
+#include <QSlider>
 // #include <QtGui>
 // #include <QSize>
 // #include "freezeLD.h"

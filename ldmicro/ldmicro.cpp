@@ -1388,6 +1388,15 @@ inline void MenuHandler ()
 //             G_CALLBACK(ProcessorCall), GINT_TO_POINTER((MNU_PROCESSOR_0 + i)));
 //     } 
 }
+void ActivateItem(QTreeWidgetItem* item, int column)
+{
+    NMHDR h;
+    h.code = LVN_ITEMACTIVATE;
+    h.hlistFrom = IoList;
+    h.item.iItem = IoList->indexOfTopLevelItem(item);
+    QTreeWidgetItem* selection;
+    IoListProc(&h);
+}
 
 //-----------------------------------------------------------------------------
 // Entry point into the program.
@@ -1502,7 +1511,7 @@ int main(int argc, char** argv)
 
     // RefreshScrollbars();
     UpdateMainWindowTitleBar();
-    
+    QObject::connect(IoList, &QTreeWidget::itemActivated, ActivateItem);
     // MakeDialogBoxClass();
 
 

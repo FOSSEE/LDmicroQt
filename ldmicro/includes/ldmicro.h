@@ -194,7 +194,7 @@ extern QAction* AboutMenu;
 
 extern QActionGroup* ProcessorMenuGroup;
 
-extern HWID PinList;
+extern QTreeWidget* PinList;
 
 // extern HMENU MNU_ADV_SIMULATION;
 
