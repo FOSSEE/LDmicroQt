@@ -551,6 +551,7 @@ void MakeMainWindowControls(void)
     QSize DWSize;
     WM_SCROLL scrollbar = new QScrollArea();
     scrollbar->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    scrollbar->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     scrollbar->setFocusPolicy(Qt::NoFocus);
     DWSize.setHeight(MainWindow->height() - IoListHeight);
     DWSize.setWidth(MainWindow->width());

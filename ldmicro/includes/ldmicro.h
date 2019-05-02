@@ -607,9 +607,6 @@ void CheckHeap(char *file, int line);
 class MyWidget : public QWidget
 {
     public:
-        void keyPressEvent(QKeyEvent* event);
-        void mouseReleaseEvent(QMouseEvent* event);
-        void mouseDoubleClickEvent(QMouseEvent* event);
         void closeEvent(QCloseEvent* event);
 };
 
@@ -656,10 +653,10 @@ extern HFONT FixedWidthFontBold;
 extern int SelectedGxAfterNextPaint;
 extern int SelectedGyAfterNextPaint;
 extern BOOL ScrollSelectedIntoViewAfterNextPaint;
-extern int ScrollXOffset;
-extern int ScrollYOffset;
-extern int ScrollXOffsetMax;
-extern int ScrollYOffsetMax;
+// extern int ScrollXOffset;
+// extern int ScrollYOffset;
+// extern int ScrollXOffsetMax;
+// extern int ScrollYOffsetMax;
 
 // schematic.cpp
 void SelectElement(int gx, int gy, int state);

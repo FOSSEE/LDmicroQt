@@ -62,10 +62,10 @@ static HBRUSH   BgBrush;
 static HBRUSH   SimBgBrush;
 
 // Parameters that determine our offset if we are scrolled
-int ScrollXOffset;
-int ScrollYOffset;
-int ScrollXOffsetMax;
-int ScrollYOffsetMax;
+// int ScrollXOffset;
+// int ScrollYOffset;
+// int ScrollXOffsetMax;
+// int ScrollYOffsetMax;
 
 // Is the cursor currently drawn? We XOR it so this gets toggled.
 static BOOL CursorDrawn;
@@ -93,16 +93,15 @@ BOOL BlinkCursor(BOOL kill = FALSE)
     }
 
     QRect c;
-    memcpy(&c, &Cursor, sizeof(c));
+    c = Cursor;
 
-    c.setTop(c.top() - ScrollYOffset*POS_HEIGHT*FONT_HEIGHT);
-    c.setLeft(c.left() - ScrollXOffset);
+    c.setTop(c.top() - /*ScrollYOffset**/POS_HEIGHT*FONT_HEIGHT);
+    c.setLeft(c.left() /*- ScrollXOffset*/);
+    // if(c.top() >= IoListTop) return TRUE;
 
-    if(c.top() >= IoListTop) return TRUE;
-
-    if(c.top() + c.height() >= IoListTop) {
+    /*if(c.top() + c.height() >= IoListTop) {
         c.setHeight(IoListTop - c.top() - 3);
-    }
+    }*/
     if(DrawWindow == NULL)
         return FALSE;
 
@@ -131,7 +130,7 @@ BOOL BlinkCursor(BOOL kill = FALSE)
         // PaintWindow(Hcr);
         // gtk_widget_queue_draw(DrawWindow);
     }
-    CursorObject->setGeometry(c);
+    CursorObject->setGeometry(Cursor);
 
     if (CursorObject->isVisible())
         CursorObject->setVisible(FALSE);
@@ -151,9 +150,9 @@ BOOL BlinkCursor(BOOL kill = FALSE)
 //-----------------------------------------------------------------------------
 static void DrawCharsToScreen(HCRDC Hcr, int cx, int cy, const char *str)
 {
-    cy -= ScrollYOffset*POS_HEIGHT;
+    // cy -= ScrollYOffset*POS_HEIGHT;
     if(cy < -2) return;
-    if(cy*FONT_HEIGHT + Y_PADDING > IoListTop) return;
+    // if(cy*FONT_HEIGHT + Y_PADDING > IoListTop) return;
     // IoListTop not initialized.
 
     COLORREF prev;
@@ -246,11 +245,11 @@ int ScreenColsAvailable(void)
 int ScreenRowsAvailable(void)
 {
     int adj;
-    if(ScrollXOffsetMax == 0) {
+    /*if(ScrollXOffsetMax == 0) {
         adj = 0;
-    } else {
+    } else {*/
         adj = 18;
-    }
+    // }
     return (IoListTop - Y_PADDING - adj) / (POS_HEIGHT*FONT_HEIGHT);
 }
 
@@ -298,7 +297,8 @@ void PaintWidget::paintEvent(QPaintEvent *event)
 
     int i;
     int cy = 0;
-    int rowsAvailable = ScreenRowsAvailable();
+    int cx = 0;
+    // int rowsAvailable = ScreenRowsAvailable();
 
     for(i = 0; i < Prog.numRungs; i++) {
         int thisHeight = POS_HEIGHT*CountHeightOfElement(ELEM_SERIES_SUBCKT,
@@ -308,8 +308,8 @@ void PaintWidget::paintEvent(QPaintEvent *event)
         // we still must draw a bit above and below so that the DisplayMatrix
         // is filled in enough to make it possible to reselect using the
         // cursor keys.
-        if(((cy + thisHeight) >= (ScrollYOffset - 8)*POS_HEIGHT) &&
-            (cy < (ScrollYOffset + rowsAvailable + 8)*POS_HEIGHT))
+        /*if(((cy + thisHeight) >= (ScrollYOffset - 8)*POS_HEIGHT) &&
+            (cy < (ScrollYOffset + rowsAvailable + 8)*POS_HEIGHT))*/
         {
             SetBkColor(DrawWindow, Hcr, InSimulationMode ? HighlightColours.simBg :
                 HighlightColours.bg);
@@ -318,8 +318,8 @@ void PaintWidget::paintEvent(QPaintEvent *event)
             SelectObject(Hcr, FixedWidthFont);
             int rung = i + 1;
             int y = Y_PADDING + FONT_HEIGHT*cy;
-            int yp = y + FONT_HEIGHT*(POS_HEIGHT/2) - 
-                POS_HEIGHT*FONT_HEIGHT*ScrollYOffset;
+            int yp = y; /*+ FONT_HEIGHT*(POS_HEIGHT/2) - 
+                POS_HEIGHT*FONT_HEIGHT*ScrollYOffset;*/
             
             if(rung < 10) {
                 char r[1] = { rung + '0' };
@@ -329,7 +329,7 @@ void PaintWidget::paintEvent(QPaintEvent *event)
                 TextOut(DrawWindow, Hcr, 8, yp, r, 2);
             }
 
-            int cx = 0;
+            cx = 0;
             DrawElement(Hcr, ELEM_SERIES_SUBCKT, Prog.rungs[i], &cx, &cy, 
                 Prog.rungPowered[i]);
         }
@@ -340,9 +340,14 @@ void PaintWidget::paintEvent(QPaintEvent *event)
     // printf("Endrung:%d\n", cy);
     QSize DWSize = this->size();
     int newHeight = ((cy + (POS_HEIGHT/2)) * FONT_HEIGHT + Y_PADDING + 50);
-    if(DWSize.height() < newHeight)
+    if(DWSize.height() + POS_HEIGHT < newHeight)
     {
         DWSize.setHeight(newHeight);
+    }
+    int newWidth = ((cx + (POS_WIDTH/2)) * FONT_WIDTH + X_PADDING);
+    if(DWSize.width() + POS_WIDTH < newWidth)
+    {
+        DWSize.setWidth(newWidth);
     }
     DrawWindow->resize(DWSize);
 
@@ -433,6 +438,7 @@ static void SetSyntaxHighlightingColours(void)
 void InitForDrawing(void)
 {
     DrawWindow = new PaintWidget();
+    DrawWindow->setFocusPolicy(Qt::StrongFocus);
     SetSyntaxHighlightingColours();
 
     FixedWidthFont = CreateFont(
@@ -595,7 +601,7 @@ void ExportDrawingAsText(char *file)
 //-----------------------------------------------------------------------------
 void SetUpScrollbars(BOOL *horizShown, SCROLLINFO *horiz, SCROLLINFO *vert)
 {
-    int totalHeight = 0;
+/*    int totalHeight = 0;
     int i;
     for(i = 0; i < Prog.numRungs; i++) {
         totalHeight += CountHeightOfElement(ELEM_SERIES_SUBCKT, Prog.rungs[i]);
@@ -630,11 +636,12 @@ void SetUpScrollbars(BOOL *horizShown, SCROLLINFO *horiz, SCROLLINFO *vert)
     // vert->fMask = SIF_DISABLENOSCROLL | SIF_ALL;
     vert->nMin = 0;
     vert->nMax = totalHeight - 1;
-    vert->nPos = ScrollYOffset;
+    // vert->nPos = ScrollYOffset;
+    vert->nPos = 0;
     vert->nPage = ScreenRowsAvailable();
+*/
+    // ScrollYOffsetMax = vert->nMax - vert->nPage + 1;
 
-    ScrollYOffsetMax = vert->nMax - vert->nPage + 1;
-
-    if(ScrollYOffset > ScrollYOffsetMax) ScrollYOffset = ScrollYOffsetMax;
-    if(ScrollYOffset < 0) ScrollYOffset = 0;
+    // if(ScrollYOffset > ScrollYOffsetMax) ScrollYOffset = ScrollYOffsetMax;
+    // if(ScrollYOffset < 0) ScrollYOffset = 0;
 }

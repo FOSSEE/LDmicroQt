@@ -320,6 +320,9 @@ public:
  //  MyWidget();
     // PaintWidget(QWidget* parent): QWidget(parent)
     // {}
+    void keyPressEvent(QKeyEvent* event);
+    void mouseReleaseEvent(QMouseEvent* event);
+    void mouseDoubleClickEvent(QMouseEvent* event);
  
 protected:
     void paintEvent(QPaintEvent *event);

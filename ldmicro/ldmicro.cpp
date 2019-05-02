@@ -609,7 +609,7 @@ cmp:
 // // WndProc functions for MainWindow.
 // //-----------------------------------------------------------------------------
 
-void MyWidget::keyPressEvent(QKeyEvent* event)
+void PaintWidget::keyPressEvent(QKeyEvent* event)
 {
     // if(event->key() == )
         int wParam = event->key();
@@ -626,32 +626,32 @@ void MyWidget::keyPressEvent(QKeyEvent* event)
         switch(wParam) 
         {
             case VK_DOWN:
-                if(ScrollYOffset < ScrollYOffsetMax)
-                    ScrollYOffset++;
+                /*if(ScrollYOffset < ScrollYOffsetMax)
+                    ScrollYOffset++;*/
                 RefreshScrollbars();
                 DrawWindow->repaint();
                 break;
 
             case VK_UP:
-                if(ScrollYOffset > 0)
-                    ScrollYOffset--;
+                /*if(ScrollYOffset > 0)
+                    ScrollYOffset--;*/
                 RefreshScrollbars();
                 DrawWindow->repaint();
                 break;
 
             case VK_LEFT:
-                ScrollXOffset -= FONT_WIDTH;
-                if(ScrollXOffset < 0) 
-                    ScrollXOffset = 0;
-                RefreshScrollbars();
+                // ScrollXOffset -= FONT_WIDTH;
+                // if(ScrollXOffset < 0) 
+                /*    ScrollXOffset = 0;
+                RefreshScrollbars();*/
                 DrawWindow->repaint();
                 break;
 
             case VK_RIGHT:
-                ScrollXOffset += FONT_WIDTH;
+                /*ScrollXOffset += FONT_WIDTH;
                 if(ScrollXOffset >= ScrollXOffsetMax)
                     ScrollXOffset = ScrollXOffsetMax;
-                RefreshScrollbars();
+                RefreshScrollbars();*/
                 DrawWindow->repaint();
                 break;
 
@@ -899,7 +899,7 @@ void MyWidget::closeEvent(QCloseEvent* event)
 //     return FALSE;
 // }
 
-void MyWidget :: mouseReleaseEvent(QMouseEvent* event)
+void PaintWidget :: mouseReleaseEvent(QMouseEvent* event)
 {
     /* Handles:
     * WM_LBUTTONDBLCLK, WM_LBUTTONDOWN
@@ -907,7 +907,7 @@ void MyWidget :: mouseReleaseEvent(QMouseEvent* event)
 
     QRect Rect;
     Rect = DrawWindow->rect();
-    QPoint wy = DrawWindow->mapFrom(MainWindow, event->pos());
+    QPoint wy = event->pos();
     // printf("mouseReleaseEvent: x:%d,y:%d",wy.x(),wy.y());
 
     if((wy.x() <= 0) || (wy.y() <= 0))
@@ -936,7 +936,7 @@ void MyWidget :: mouseReleaseEvent(QMouseEvent* event)
     // return FALSE;
 }
 }
-void MyWidget :: mouseDoubleClickEvent(QMouseEvent* event)
+void PaintWidget :: mouseDoubleClickEvent(QMouseEvent* event)
 {
     QRect Rect;
     Rect = DrawWindow->rect();

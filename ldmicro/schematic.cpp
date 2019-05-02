@@ -101,22 +101,22 @@ void SelectElement(int gx, int gy, int state)
         state = SELECTED_LEFT;
     }
 
-    if((gy - ScrollYOffset) >= ScreenRowsAvailable()) {
+    /*if((gy - ScrollYOffset) >= ScreenRowsAvailable()) {
         ScrollYOffset = gy - ScreenRowsAvailable() + 1;
         RefreshScrollbars();
     }
     if((gy - ScrollYOffset) < 0) {
-        ScrollYOffset = gy;
+        ScrollYOffset = 0;
         RefreshScrollbars();
-    }
-    if((gx - ScrollXOffset*POS_WIDTH*FONT_WIDTH) >= ScreenColsAvailable()) {
+    }*/
+    /*if((gx - ScrollXOffset*POS_WIDTH*FONT_WIDTH) >= ScreenColsAvailable()) {
         ScrollXOffset = gx*POS_WIDTH*FONT_WIDTH - ScreenColsAvailable();
         RefreshScrollbars();
     }
     if((gx - ScrollXOffset*POS_WIDTH*FONT_WIDTH) < 0) {
         ScrollXOffset = gx*POS_WIDTH*FONT_WIDTH;
         RefreshScrollbars();
-    }
+    }*/
 
     ok();
     Selected->selectedState = state;
@@ -258,8 +258,8 @@ BOOL MoveCursorTopLeft(void)
     // cursor in a position that would force us to scroll to put it in to
     // view.)
     for(i = 0; i < DISPLAY_MATRIX_X_SIZE; i++) {
-        for(j = ScrollYOffset; 
-            j < DISPLAY_MATRIX_Y_SIZE && j < (ScrollYOffset+16); j++)
+        for(j = 0; 
+            j < DISPLAY_MATRIX_Y_SIZE /*&& j < (ScrollYOffset+16)*/; j++)
         {
             if(VALID_LEAF(DisplayMatrix[i][j])) {
                 SelectElement(i, j, SELECTED_LEFT);
@@ -382,11 +382,11 @@ void MoveCursorKeyboard(int keyCode)
                 }
                 if(j != DISPLAY_MATRIX_Y_SIZE) {
                     SelectElement(i, j, SELECTED_ABOVE);
-                } else if(ScrollYOffsetMax - ScrollYOffset < 3) {
+                } /*else if(ScrollYOffsetMax - ScrollYOffset < 3) {
                     // special case: scroll the end marker into view
                     ScrollYOffset = ScrollYOffsetMax;
                     RefreshScrollbars();
-                }
+                }*/
             }
             break;
         }
@@ -505,14 +505,14 @@ void EditSelectedElement(void)
 //-----------------------------------------------------------------------------
 void EditElementMouseDoubleclick(int x, int y)
 {
-    x += ScrollXOffset;
+    /*x += ScrollXOffset;*/
 
     y += FONT_HEIGHT/2;
 
     int gx = (x - X_PADDING)/(POS_WIDTH*FONT_WIDTH);
     int gy = (y - Y_PADDING)/(POS_HEIGHT*FONT_HEIGHT);
 
-    gy += ScrollYOffset;
+    // gy += ScrollYOffset;
 
     if(InSimulationMode) {
         ElemLeaf *l = DisplayMatrix[gx][gy];
@@ -539,7 +539,7 @@ void EditElementMouseDoubleclick(int x, int y)
 //-----------------------------------------------------------------------------
 void MoveCursorMouseClick(int x, int y)
 {
-    x += ScrollXOffset;
+    /*x += ScrollXOffset;*/
 
     y += FONT_HEIGHT/2;
 
@@ -547,7 +547,7 @@ void MoveCursorMouseClick(int x, int y)
     int gy0 = (y - Y_PADDING)/(POS_HEIGHT*FONT_HEIGHT);
 
     int gx = gx0;
-    int gy = gy0 + ScrollYOffset;
+    int gy = gy0 /*+ ScrollYOffset*/;
 
     if(VALID_LEAF(DisplayMatrix[gx][gy])) {
         int i, j;
