@@ -276,31 +276,6 @@ int FillRect(
     const QRect   *lprc,
     HBRUSH       hbr);
 
-BOOL PatBlt(
-    HWID   hdc,
-    int    nXLeft,
-    int    nYLeft,
-    int    nWidth,
-    int    nHeight,
-    DWORD  dwRop,
-    HBRUSH hbr);
-
-BOOL GetClientRect(
-    HWID   hWid,
-    PRECT lpRect);
-
-BOOL MoveWindow(
-    HWID hWid,
-    int  X,
-    int  Y,
-    int  nWidth,
-    int  nHeight,
-    BOOL bRepaint);
-
-BOOL GetWindowRect(
-    HWID   hWid,
-    PRECT  pRect);
-
 UINT SetTimer(
     HWID  hWid,
     UINT  nIDEvent,

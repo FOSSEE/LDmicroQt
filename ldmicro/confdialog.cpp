@@ -29,8 +29,6 @@
 //#include <commctrl.h>
 #include "ldmicro.h"
 
-using namespace std;
-
 static QDialog* ConfDialog;
 
 static QLineEdit* CrystalTextbox;

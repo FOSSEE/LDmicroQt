@@ -28,8 +28,6 @@
 
 #include "ldmicro.h"
 
-using namespace std;
-
 static ElemSubcktSeries *LoadSeriesFromFile(FILE *f);
 
 //-----------------------------------------------------------------------------

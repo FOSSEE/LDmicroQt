@@ -27,8 +27,6 @@
 #include <iostream>
 #include "ldmicro.h"
 
-using namespace std;
-
 static QDialog* ResetDialog;
 
 static QRadioButton* TypeTimerRadio;

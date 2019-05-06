@@ -938,7 +938,7 @@ void ShowUartSimulationWindow(void)
     UartSimulationWindow->setWindowFlags(Qt::Window
         | Qt::WindowMinimizeButtonHint |
         Qt::WindowStaysOnTopHint);
-    UartSimulationWindow->setAttribute(Qt::WA_AlwaysStackOnTop);
+    UartSimulationWindow->setWindowFlags(Qt::Tool);
 
     UartSimulationTextControl = new QPlainTextEdit();
     UartSimulationTextControl->resize(TerminalW, TerminalH);

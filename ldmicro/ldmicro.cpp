@@ -34,10 +34,6 @@
 #include <iomanip>
 #include <iostream>
 #include <QPushButton>
-// #include <qapplication>
-
-using namespace std;
-
 
 HINSTANCE       Instance;
 QApplication*   LDmicroApp;
@@ -940,7 +936,7 @@ void PaintWidget :: mouseDoubleClickEvent(QMouseEvent* event)
 {
     QRect Rect;
     Rect = DrawWindow->rect();
-    QPoint wy = DrawWindow->mapFrom(MainWindow, event->pos());
+    QPoint wy = event->pos();
 
     if((wy.x() <= 0) || (wy.y() <= 0))
         return;

@@ -23,10 +23,6 @@ const UINT MF_GRAYED = 1;
 const UINT MF_CHECKED = 2;
 const UINT MF_UNCHECKED = 3;
 
-/// Accelerators (keyboard shortcuts)
-GtkAccelGroup* AccelGroup;
-GClosure* closure;
-
 /// ListStore
 HWID view;
 HTVC column;
@@ -395,59 +391,6 @@ int FillRect(HCRDC hDC, const QRect *lprc, HBRUSH hbr)
     return 0;
 }
 
-BOOL PatBlt(HWID hdc, int nXLeft, int nYLeft, int nWidth, int nHeight, DWORD dwRop, HBRUSH hbr)
-{
-    if (hdc == NULL)
-        return FALSE;
-    
-    //cairo_set_source_rgb(hdc, hbr->red, hbr->green, hbr->blue);
-    //cairo_rectangle(hdc, nXLeft, nYLeft + 20, nWidth, nHeight);
-    //cairo_stroke_preserve(hdc);
-
-    //cairo_fill(hdc);
-
-    return TRUE;
-}
-
-BOOL GetClientRect(HWID hWid, PRECT pRect)
-{   
- /*   GtkAllocation allocation;
-    gtk_widget_get_allocation (hWid, &allocation);
-
-    pRect->top = allocation.x;
-    pRect->left = allocation.y;
-    pRect->right = allocation.width;
-    pRect->bottom = allocation.height;
-*/
-    return TRUE;
-}
-
-BOOL MoveWindow(HWID hWid, int X, int Y, int nWidth, int nHeight, BOOL bRepaint)
-{
- /*   gtk_window_move(GTK_WINDOW(hWid), X, Y);
-    gtk_window_resize(GTK_WINDOW(hWid), nWidth, nHeight);
-
-    if (bRepaint)
-        gdk_window_invalidate_rect (gtk_widget_get_window (hWid), NULL, FALSE);
- */   
-    return TRUE;
-}
-
-
-BOOL GetWindowRect(HWID hWid, PRECT pRect)
-{
-    /*GtkAllocation allocation;
-    gtk_widget_get_allocation (hWid, &allocation);
-
-    pRect->top = allocation.x;
-    pRect->left = allocation.y;
-    pRect->right = allocation.width;
-    pRect->bottom = allocation.height;
-*/
-    return TRUE;
-}
-
-
 UINT SetTimer(HWID hWid, UINT  nIDEvent, UINT uElapse, UINT TimerID)
 {
     if(TimerID != NULL)
@@ -517,13 +460,4 @@ BOOL KillTimer(HWID hWid, UINT uIDEvent)
 
     return TRUE;
 }
-
-/*void DestroyWindow (HWID widget)
-{
-    if (GTK_IS_WIDGET(widget))
-    {
-        gtk_widget_destroy (widget);
-    }
-}*/
-
 

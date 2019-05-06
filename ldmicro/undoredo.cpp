@@ -29,8 +29,6 @@
 
 #include "ldmicro.h"
 
-using namespace std;
-
 // Store a `deep copy' of the entire program before every change, in a
 // circular buffer so that the first one scrolls out as soon as the buffer
 // is full and we try to push another one.

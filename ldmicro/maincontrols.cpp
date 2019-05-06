@@ -276,18 +276,18 @@ HMENU MakeMainWindowMenus(void)
     Help            = new QMenu("&Help", MainWindow);
 
     // Creating labels for File Menu
-    NewMenu = new QAction("&New");
+    NewMenu = new QAction("&New", NULL);
     NewMenu->setShortcuts(QKeySequence::New);
     // QKeySequence(Qt::CTRL + Qt::Key_N);
-    OpenMenu = new QAction("&Open");
+    OpenMenu = new QAction("&Open", NULL);
     OpenMenu->setShortcuts(QKeySequence::Open);
-    SaveMenu = new QAction("&Save");
+    SaveMenu = new QAction("&Save", NULL);
     SaveMenu->setShortcuts(QKeySequence::Save);
-    SaveAsMenu = new QAction("&Save As");
+    SaveAsMenu = new QAction("&Save As", NULL);
     SaveAsMenu->setShortcuts(QKeySequence::SaveAs);
-    ExportMenu = new QAction("&Export As Text");
+    ExportMenu = new QAction("&Export As Text", NULL);
     ExportMenu->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_E));
-    ExitMenu = new QAction("&Exit");
+    ExitMenu = new QAction("&Exit", NULL);
 
     // Appending menu items (labels) to File menu and adding separators
     FileMenu->addAction(NewMenu);
@@ -300,21 +300,21 @@ HMENU MakeMainWindowMenus(void)
     FileMenu->addAction(ExitMenu);
 
     // Creating labels for Edit Menu
-    UndoMenu = new QAction("&Undo");
+    UndoMenu = new QAction("&Undo", NULL);
     UndoMenu->setShortcuts(QKeySequence::Undo);
-    RedoMenu = new QAction("&Redo");
+    RedoMenu = new QAction("&Redo", NULL);
     RedoMenu->setShortcuts(QKeySequence::Redo);
-    InsertRungBeforeMenu = new QAction("&Insert Rung Before");
+    InsertRungBeforeMenu = new QAction("&Insert Rung Before", NULL);
     InsertRungBeforeMenu->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_6));
-    InsertRungAfterMenu = new QAction("&Insert Rung After");
+    InsertRungAfterMenu = new QAction("&Insert Rung After", NULL);
     InsertRungAfterMenu->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_V));
-    PushRungUpMenu = new QAction("&Move Selected Rung Up");;
+    PushRungUpMenu = new QAction("&Move Selected Rung Up", NULL);
     PushRungUpMenu->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_Up));
-    PushRungDownMenu = new QAction("&Move Selected Rung Down");;
+    PushRungDownMenu = new QAction("&Move Selected Rung Down", NULL);
     PushRungDownMenu->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_Down));
-    DeleteElementMenu = new QAction("&Delete Selected Element");
+    DeleteElementMenu = new QAction("&Delete Selected Element", NULL);
     DeleteElementMenu->setShortcut(QKeySequence(Qt::Key_Delete));
-    DeleteRungMenu = new QAction("&Delete Rung");
+    DeleteRungMenu = new QAction("&Delete Rung", NULL);
     DeleteRungMenu->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_Delete));
 
     // Appending menu items to Edit menu and adding separators
@@ -339,14 +339,14 @@ HMENU MakeMainWindowMenus(void)
     Settings->addMenu(MicroControllerMenu);
     // Appending the microcontroller names to "Microcontroller" item
     for (i = 0; i < NUM_SUPPORTED_MCUS; i++){
-    ProcessorMenuItems[i] = new QAction(SupportedMcus[i].mcuName);
+    ProcessorMenuItems[i] = new QAction(SupportedMcus[i].mcuName, NULL);
     ProcessorMenuItems[i]->setCheckable(true);
     ProcessorMenuItems[i]->setActionGroup(ProcessorMenuGroup);
     MicroControllerMenu->addAction(ProcessorMenuItems[i]);
     /*mcuList = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (ProcessorMenuItems[i]));
     gtk_menu_shell_append (GTK_MENU_SHELL (ProcessorMenu), ProcessorMenuItems[i]);*/
     }
-    ProcessorMenuItems[i] = new QAction("(no microcontroller)");
+    ProcessorMenuItems[i] = new QAction("(no microcontroller)", NULL);
     ProcessorMenuItems[i]->setCheckable(true);
     ProcessorMenuItems[i]->setActionGroup(ProcessorMenuGroup);
     MicroControllerMenu->addAction(ProcessorMenuItems[i]);

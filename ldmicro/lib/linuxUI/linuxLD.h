@@ -11,6 +11,7 @@
 #include <QSplitter>
 #include <Qt>
 #include <sys/mman.h>
+#include <iostream>
 
 /// common windows referances for linux
 
@@ -28,7 +29,14 @@
 #define LDMICRO_ICON "../ldmicro.ico"
 
 /// Macro functions
-#define max(_A, _B) std::max(_A, _B)
+// #define max(_A, _B) std::max(_A, _B)
+
+/*#define max(_A, _B) { \
+        if((_A) > (_B)) \
+            return (_A); \
+        else \
+            return (_B); \
+        }*/
 
 /// Typedefs
 //typedef int64_t __int64;
@@ -246,5 +254,7 @@ void RECT_to_GDRECT(
 /// functions to be ported
 void OutputDebugString(char*);
 double GetTickCount(void);
+
+size_t max(size_t A, size_t B);
 
 #endif

@@ -28,8 +28,6 @@
 
 #include "ldmicro.h"
 
-using namespace std;
-
 // Not all options all available e.g. can't delete the only relay coil in
 // a rung, can't insert two coils in series, etc. Keep track of what is
 // allowed so we don't corrupt our program.

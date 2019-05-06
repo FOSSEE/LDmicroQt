@@ -31,8 +31,6 @@
 
 #include "ldmicro.h"
 
-using namespace std;
-
 static QDialog* LutDialog;
 
 static QCheckBox* AsStringCheckbox;

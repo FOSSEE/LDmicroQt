@@ -32,8 +32,6 @@
 
 #include "ldmicro.h"
 
-using namespace std;
-
 extern char *HelpText[];
 extern char *HelpTextDe[];
 extern char *HelpTextFr[];

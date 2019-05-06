@@ -24,8 +24,8 @@
 // Jonathan Westhues, Oct 2004
 //-----------------------------------------------------------------------------
 #include "linuxUI.h"
-#include <stdio.h>
-#include <stdlib.h>
+// #include <stdio.h>
+// #include <stdlib.h>
 
 #include "ldmicro.h"
 

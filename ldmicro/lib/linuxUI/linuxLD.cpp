@@ -1,8 +1,6 @@
 #include "linuxUI.h"
 #include <iostream>
 
-using namespace std;
-
 std::vector<HEAPRECORD> HeapRecords;
 
 HANDLE HeapCreate(DWORD  flOptions, SIZE_T dwInitialSize, SIZE_T dwMaximumSize)
@@ -22,6 +20,14 @@ HANDLE HeapCreate(DWORD  flOptions, SIZE_T dwInitialSize, SIZE_T dwMaximumSize)
     HeapRecords.push_back(hHeapRecord);
 
     return hHeap;
+}
+
+size_t max(size_t A, size_t B)
+{
+    if(A>B)
+        return A;
+    else
+        return B;
 }
 
 LPVOID HeapAlloc(HANDLE hHeap, DWORD  dwFlags, SIZE_T dwBytes)
@@ -102,7 +108,7 @@ BOOL HeapFree(HANDLE hHeap, DWORD  dwFlags, LPVOID lpMem)
 
 }
 
-HICON LoadImage(HINSTANCE hinst, LPCTSTR lpszName, UINT uType, int cxDesired,
+/*HICON LoadImage(HINSTANCE hinst, LPCTSTR lpszName, UINT uType, int cxDesired,
     int cyDesired, UINT fuLoad)
 {
     HICON pixbuf;
@@ -115,26 +121,27 @@ HICON LoadImage(HINSTANCE hinst, LPCTSTR lpszName, UINT uType, int cxDesired,
     }
 
     return pixbuf;
-}
+}*/
 
-void RECT_to_GDRECT(const RECT *rc, GDRECT *gdrc)
-{
-    // gdrc->x = rc->left;
-    // gdrc->y = rc->top;
-    // gdrc->width = rc->right - rc->left;
-    // gdrc->height = rc->bottom - rc->top;
-}
 
 void OutputDebugString(char* str)
 {
 
 }
 
-double GetTickCount(void) 
+/*double GetTickCount(void) 
 {
 //   timespec now;
 //   clock_gettime()
 //   if (clock_gettime(CLOCK_MONOTONIC, &now))
 //     return 0;
   return 10.2;//now.tv_sec * 1000.0 + now.tv_nsec / 1000000.0;
+}*/
+double GetTickCount(void) 
+{
+  timespec now;
+  if (clock_gettime(CLOCK_MONOTONIC, &now))
+    return 0;
+  return now.tv_sec * 1000.0 + now.tv_nsec / 1000000.0;
+
 }
