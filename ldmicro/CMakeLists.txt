@@ -45,10 +45,6 @@ IF(UNIX)
     endif()
     MESSAGE( STATUS "Performing system check - done" )
 
-    MESSAGE ( STATUS "Searching for GTK+3.0..." )
-    find_package (PkgConfig REQUIRED)
-    pkg_check_modules (GTK3 REQUIRED gtk+-3.0)
-
     ## Set object dir
     set(OBJDIR ${CMAKE_CURRENT_SOURCE_DIR}/obj)
 
@@ -88,16 +84,6 @@ IF(UNIX)
         "${PROJECT_INCLUDE_DIR}/ldmicroVC.h"
     )
     # MESSAGE ( STATUS " PROJECT_INCLUDE_DIR: " ${PROJECT_INCLUDE_DIR} )
-
-    ## Add GTK3 include files if GTK3 is found
-    IF ( GTK3_FOUND )
-        include_directories (${GTK3_INCLUDE_DIRS})
-        link_directories (${GTK3_LIBRARY_DIRS})
-        add_definitions (${GTK3_CFLAGS_OTHER})
-        link_libraries (${GTK3_LIBRARIES})
-        # MESSAGE( STATUS " GTK3_INCLUDE_DIR: " ${GTK3_INCLUDE_DIRS} )
-        # MESSAGE( STATUS " GTK3_LIBRARIES: " ${GTK3_LIBRARIES} )
-    ENDIF ( GTK3_FOUND )
 
     set_property(SOURCE ${OBJDIR}/helptext.cpp PROPERTY SKIP_AUTOGEN ON)
 

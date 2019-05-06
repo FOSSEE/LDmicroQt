@@ -42,6 +42,7 @@ QIcon*          MWIcon;
 QMenuBar*       MainMenu;
 QGroupBox*      CursorObject;
 HWID            DrawWindow;
+WM_SCROLL       scrollbar;
 // parameters used to capture the mouse when implementing our totally non-
 // general splitter control
 //static HHOOK       MouseHookHandle;
@@ -69,9 +70,6 @@ char CurrentCompileFile[MAX_PATH];
 // choice, and so on--basically everything that would be saved in the
 // project file.
 PlcProgram Prog;
-
-/// Function to safely quit program gtk main loop
-gboolean LD_WM_Close_call(GtkWidget *widget, GdkEvent *event, gpointer user_data);
 
 //-----------------------------------------------------------------------------
 // Get a filename with a common dialog box and then save the program to that
@@ -358,6 +356,7 @@ static void ProcessMenu(int code)
         case MNU_NEW:
             if(CheckSaveUserCancels()) break;
             NewProgram();
+            DrawWindow->resize(scrollbar->size());
             strcpy(CurrentSaveFile, "");
             strcpy(CurrentCompileFile, "");
             GenerateIoListDontLoseSelection();
@@ -366,6 +365,7 @@ static void ProcessMenu(int code)
             break;
 
         case MNU_OPEN:
+            DrawWindow->resize(scrollbar->size());
             if(CheckSaveUserCancels()) break;
             OpenDialog();
             break;
@@ -704,12 +704,22 @@ void PaintWidget::keyPressEvent(QKeyEvent* event)
     return;
 }
 
+void MyWidget::resizeEvent(QResizeEvent *event)
+{
+    DrawWindow->resize(scrollbar->size());
+}
+
 void MyWidget::closeEvent(QCloseEvent* event)
 {
     if(CheckSaveUserCancels())
         event->ignore();
     else
+    {
         event->accept();
+        FreezeWindowPos(MainWindow);
+        IoListHeight = IoList->height();
+        FreezeDWORD(IoListHeight);
+    }
 
     /*GdkRectangle allocation;
     gtk_widget_get_allocation(GTK_WIDGET(view), &allocation); 

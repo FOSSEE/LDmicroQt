@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <stdlib.h>
+#include <unistd.h>
 #include <stdio.h>
 
 /*
@@ -18,7 +19,7 @@
  */
 void FreezeWindowPosF(HWID hwid, char *subKey, char *name)
 {
-    /*char* Ld_CWD = (char *)malloc(MAX_PATH);
+    char* Ld_CWD = (char *)malloc(MAX_PATH);
     getcwd(Ld_CWD, MAX_PATH);
     
     if (!Ld_CWD)
@@ -31,7 +32,7 @@ void FreezeWindowPosF(HWID hwid, char *subKey, char *name)
     }
 
     sprintf(moveToKeyLocatin, "mkdir -p %s/%s/%s", getenv("HOME"), FREEZE_REGISTER, subKey);
-    system(moveToKeyLocatin);  
+    system(moveToKeyLocatin);
     sprintf(moveToKeyLocatin, "%s/%s/%s", getenv("HOME"), FREEZE_REGISTER, subKey);
     if (-1 == chdir(moveToKeyLocatin))
     {
@@ -50,9 +51,9 @@ void FreezeWindowPosF(HWID hwid, char *subKey, char *name)
 
     Key newKey;
 
-    int val;
+    QSize val;
 
-    sprintf(keyName, "%s_width", name);
+    sprintf(keyName, "%s_size", name);
     std::ofstream Register(keyName, std::ios::binary | std::ios::trunc);
     if (!Register.is_open())
     {
@@ -60,13 +61,14 @@ void FreezeWindowPosF(HWID hwid, char *subKey, char *name)
         free(keyName);
         return;
     }
-    gtk_window_get_size(GTK_WINDOW(hwid), &val, NULL);
-    newKey.type = 'i';
-    newKey.val.i = val;
-    Register.write((char*) &newKey, sizeof(newKey));
+    // gtk_window_get_size(GTK_WINDOW(hwid), &val, NULL);
+    val = hwid->size();
+    Register.write((char*)&val, sizeof(val));
     Register.close();
 
-    sprintf(keyName, "%s_height", name);
+    QPoint pos;
+
+    sprintf(keyName, "%s_pos", name);
     Register.open(keyName, std::ios::binary | std::ios::trunc);
     if (!Register.is_open())
     {
@@ -74,39 +76,12 @@ void FreezeWindowPosF(HWID hwid, char *subKey, char *name)
         free(keyName);
         return;
     }
-    gtk_window_get_size(GTK_WINDOW(hwid), NULL, &val);
-    newKey.type = 'i';
-    newKey.val.i = val;
-    Register.write((char*) &newKey, sizeof(newKey));
+
+    pos = hwid->pos();
+    Register.write((char*) &pos, sizeof(pos));
     Register.close();
 
-    sprintf(keyName, "%s_posX", name);
-    Register.open(keyName, std::ios::binary | std::ios::trunc);
-    if (!Register.is_open())
-    {
-        free(Ld_CWD);
-        free(keyName);
-        return;
-    }
-    gtk_window_get_position(GTK_WINDOW(hwid), &val, NULL);
-    newKey.type = 'i';
-    newKey.val.i = val;
-    Register.write((char*) &newKey, sizeof(newKey));
-    Register.close();
-    
-    sprintf(keyName, "%s_posY", name);
-    Register.open(keyName, std::ios::binary | std::ios::trunc);
-    if (!Register.is_open())
-    {
-        free(Ld_CWD);
-        free(keyName);
-        return;
-    }
-    gtk_window_get_position(GTK_WINDOW(hwid), NULL, &val);
-    newKey.type = 'i';
-    newKey.val.i = val;
-    Register.write((char*) &newKey, sizeof(newKey));
-    Register.close();
+    unsigned int WindowState;
 
     sprintf(keyName, "%s_maximized", name);
     Register.open(keyName, std::ios::binary | std::ios::trunc);
@@ -116,14 +91,13 @@ void FreezeWindowPosF(HWID hwid, char *subKey, char *name)
         free(keyName);
         return;
     }
-    newKey.type = 'b';
-    newKey.val.b = gtk_window_is_maximized(GTK_WINDOW(hwid));
-    Register.write((char*) &newKey, sizeof(newKey));
+    WindowState = hwid->windowState();
+    Register.write((char*) &WindowState, sizeof(unsigned int));
     Register.close();
 
     free(keyName);
     chdir(Ld_CWD);
-    free(Ld_CWD);*/
+    free(Ld_CWD);
 }
 
 static void Clamp(LONG *v, LONG min, LONG max)
@@ -166,10 +140,10 @@ void ThawWindowPosF(HWID hwid, char *subKey, char *name)
         return;
     }
 
-    Key newKey1,  newKey2;
+    QSize val;
 
     /// set size
-    sprintf(keyName, "%s_width", name);
+    sprintf(keyName, "%s_size", name);
     std::ifstream Register(keyName, std::ios::binary);
     if (!Register.is_open())
     {
@@ -177,28 +151,18 @@ void ThawWindowPosF(HWID hwid, char *subKey, char *name)
         free(keyName);
         return;
     }
-    Register.read((char*) &newKey1, sizeof(newKey1));
+    Register.read((char*) &val, sizeof(val));
     Register.close();
-
-    sprintf(keyName, "%s_height", name);
-    Register.open(keyName, std::ios::binary);
-    if (!Register.is_open())
-    {
-        free(Ld_CWD);
-        free(keyName);
-        return;
-    }
-    Register.read((char*) &newKey2, sizeof(newKey2));
-    Register.close();
-    if (newKey1.type == 'i' && newKey2.type == 'i')
+    if (val.width()>100 && val.height()>50)
         {
-            QSize MwSize(newKey1.val.i,newKey2.val.i);
-            hwid->resize(MwSize);
+            hwid->resize(val);
         }
 
 
     /// set position
-    sprintf(keyName, "%s_posX", name);
+
+    QPoint pos;
+    sprintf(keyName, "%s_pos", name);
     Register.open(keyName, std::ios::binary);
     if (!Register.is_open())
     {
@@ -206,22 +170,12 @@ void ThawWindowPosF(HWID hwid, char *subKey, char *name)
         free(keyName);
         return;
     }
-    Register.read((char*) &newKey1, sizeof(newKey1));
+    Register.read((char*) &pos, sizeof(pos));
     Register.close();
 
-    sprintf(keyName, "%s_posY", name);
-    Register.open(keyName, std::ios::binary);
-    if (!Register.is_open())
-    {
-        free(Ld_CWD);
-        free(keyName);
-        return;
-    }
-    Register.read((char*) &newKey2, sizeof(newKey2));
-    Register.close();
-    if (newKey1.type == 'i' && newKey2.type == 'i')
-        hwid->move(newKey1.val.i, newKey2.val.i);
+    hwid->move(pos);
 
+    unsigned int value;
 
     sprintf(keyName, "%s_maximized", name);
     Register.open(keyName, std::ios::binary);
@@ -231,11 +185,10 @@ void ThawWindowPosF(HWID hwid, char *subKey, char *name)
         free(keyName);
         return;
     }
-    Register.read((char*) &newKey1, sizeof(newKey1));
+    Register.read((char*) &value, sizeof(unsigned int));
     Register.close();
-    if  (newKey1.type == 'b')
-        if (newKey1.val.b)
-            hwid->showMaximized();
+        if (value == Qt::WindowMaximized)
+            hwid->setWindowState(Qt::WindowMaximized);
 
 
     /// gtk_window_move handles off-screen window placement
@@ -274,12 +227,9 @@ void FreezeDWORDF(DWORD val, char *subKey, char *name)
     }
     free(moveToKeyLocatin);
 
-    Key newKey;
-    newKey.type = 'D';
-    newKey.val.D = val;
     std::ofstream Register(name, std::ios::binary | std::ios::trunc);
 
-    Register.write((char*) &newKey, sizeof(newKey));
+    Register.write((char*) &val, sizeof(DWORD));
     Register.close();
 
     chdir(Ld_CWD);
@@ -313,7 +263,7 @@ DWORD ThawDWORDF(DWORD val, char *subKey, char *name)
     }
     free(moveToKeyLocatin);
 
-    Key newKey;
+    DWORD newKey;
 
     std::ifstream Register(name, std::ios::binary);
     Register.read((char*) &newKey, sizeof(newKey));
@@ -324,11 +274,8 @@ DWORD ThawDWORDF(DWORD val, char *subKey, char *name)
 
     if(Register.bad())
         return val;
-
-    if(newKey.type == 'D')
-        return newKey.val.D;
     else
-        return val;
+        return newKey;
 }
 
 /*
@@ -336,7 +283,7 @@ DWORD ThawDWORDF(DWORD val, char *subKey, char *name)
  */
 void FreezeStringF(char *val, char *subKey, char *name)
 {
-    char* Ld_CWD = (char *)malloc(MAX_PATH);
+    /*char* Ld_CWD = (char *)malloc(MAX_PATH);
     getcwd(Ld_CWD, MAX_PATH);
 
     if (!Ld_CWD)
@@ -366,7 +313,7 @@ void FreezeStringF(char *val, char *subKey, char *name)
     Register.close();
 
     chdir(Ld_CWD);
-    free(Ld_CWD);
+    free(Ld_CWD);*/
 }
 
 /*
@@ -374,7 +321,7 @@ void FreezeStringF(char *val, char *subKey, char *name)
  */
 void ThawStringF(char *val, int max, char *subKey, char *name)
 {
-    char* Ld_CWD = (char *)malloc(MAX_PATH);
+    /*char* Ld_CWD = (char *)malloc(MAX_PATH);
     getcwd(Ld_CWD, MAX_PATH);
 
     if (!Ld_CWD)
@@ -407,6 +354,6 @@ void ThawStringF(char *val, int max, char *subKey, char *name)
     Register >> val;
 
     chdir(Ld_CWD);
-    free(Ld_CWD);
+    free(Ld_CWD);*/
 }
 

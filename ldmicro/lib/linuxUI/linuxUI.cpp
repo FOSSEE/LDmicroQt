@@ -25,7 +25,6 @@ const UINT MF_UNCHECKED = 3;
 
 /// ListStore
 HWID view;
-HTVC column;
  
 /// Wraper function for gtk_window_has_toplevel_focus
 BOOL GetFocus(HWID window)

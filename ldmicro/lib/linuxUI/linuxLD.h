@@ -78,18 +78,13 @@ typedef PVOID HANDLE;
 typedef HANDLE HINSTANCE;
 typedef HANDLE HGDIOBJ;
 
-typedef GtkApplication*     HAPP;
-typedef GtkTreeViewColumn*  HTVC;
-typedef GdkRectangle*   GDRECT;
 typedef QTreeWidget*    HLIST;
 typedef QList<QTreeWidgetItem *>     ITLIST;
-typedef GDRECT*     PGDRECT;
 typedef QMenu*      HMENU;
 typedef ITLIST      HITLIST;
 typedef QPainter*   HCRDC;
 typedef QWidget*    HWID;
 typedef QWidget*    HWND;
-typedef GdkPixbuf*  HICON;
 typedef QScrollArea* WM_SCROLL;
 
 
@@ -237,19 +232,6 @@ BOOL HeapFree(
     HANDLE hHeap,
     DWORD  dwFlags,
     LPVOID lpMem);
-
-HICON LoadImage(
-    HINSTANCE hinst,
-    LPCTSTR   lpszName,
-    UINT      uType,
-    int       cxDesired,
-    int       cyDesired,
-    UINT      fuLoad
-);
-
-void RECT_to_GDRECT(
-    const RECT *rc,
-    GDRECT     *gdrc);
 
 /// functions to be ported
 void OutputDebugString(char*);

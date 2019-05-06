@@ -549,7 +549,7 @@ void MakeMainWindowControls(void)
     IoList->insertTopLevelItems(0, items);*/
     DrawWindow->setAutoFillBackground(true);
     QSize DWSize;
-    WM_SCROLL scrollbar = new QScrollArea();
+    scrollbar = new QScrollArea();
     scrollbar->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     scrollbar->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     scrollbar->setFocusPolicy(Qt::NoFocus);

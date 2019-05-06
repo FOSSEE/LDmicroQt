@@ -2,7 +2,6 @@
 #define __LINUX_UI__
 
 /// includes
-#include <gtk/gtk.h>
 #include <QApplication>
 #include <QWidget>
 #include <QMenu>
@@ -39,6 +38,9 @@
 #include "linuxLD.h"
 
 // 4000 ICON "ldmicro.ico"
+
+#define TRUE true
+#define FALSE false
 
 /// version control
 #define LDMicro_VERSION_MAJOR 1
@@ -148,13 +150,10 @@ extern const UINT MF_CHECKED;
 extern const UINT MF_UNCHECKED;
 
 /// Accelerators (keyboard shortcuts)
-extern GtkAccelGroup* AccelGroup;
-extern GClosure* closure;
 extern QGroupBox*       CursorObject;
 
 /// ListStore
 extern HWID view;
-extern HTVC column;
 
 // Timer IDs associated with the main window.
 extern int CursorTimer;

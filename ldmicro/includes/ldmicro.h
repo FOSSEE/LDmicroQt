@@ -593,6 +593,7 @@ extern HWID             MainWindow;
 extern QIcon*           MWIcon;
 extern QMenuBar*        MainMenu;
 extern HWID             DrawWindow;
+extern WM_SCROLL        scrollbar;
 extern PlcProgram       Prog;
 extern char             CurrentSaveFile[MAX_PATH];
 extern char             CurrentCompileFile[MAX_PATH];
@@ -607,6 +608,7 @@ void CheckHeap(char *file, int line);
 class MyWidget : public QWidget
 {
     public:
+        void resizeEvent(QResizeEvent *event);
         void closeEvent(QCloseEvent* event);
 };
 
