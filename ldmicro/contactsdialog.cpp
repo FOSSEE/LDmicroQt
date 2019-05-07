@@ -53,9 +53,12 @@ static void MakeControls(void)
     ContactsGrid->setSpacing(3);
     SourceGrid->setSpacing(3);
 
-    SourceInternalRelayRadio = new QRadioButton(_("Internal Relay"), ContactsDialog);
-    SourceInputPinRadio = new QRadioButton(_("Input pin"), ContactsDialog);
-    SourceOutputPinRadio = new QRadioButton(_("Output pin"), ContactsDialog);
+    SourceInternalRelayRadio = new QRadioButton(_("Internal Relay"),
+        ContactsDialog);
+    SourceInputPinRadio = new QRadioButton(_("Input pin"),
+        ContactsDialog);
+    SourceOutputPinRadio = new QRadioButton(_("Output pin"),
+        ContactsDialog);
     SourceGrid->addWidget(SourceInternalRelayRadio,0,0);
     SourceGrid->addWidget(SourceInputPinRadio,1,0);
     SourceGrid->addWidget(SourceOutputPinRadio,2,0);
@@ -74,8 +77,14 @@ static void MakeControls(void)
     ContactsGrid->addWidget(grouper,0,0);
     ContactsGrid->addLayout(NameGrid,0,1);
     ContactsGrid->addWidget(ButtonBox,0,2);
-    QObject::connect(ButtonBox, SIGNAL(accepted()), ContactsDialog, SLOT(accept()));
-    QObject::connect(ButtonBox, SIGNAL(rejected()), ContactsDialog, SLOT(reject()));
+    QObject::connect(ButtonBox,
+        SIGNAL(accepted()),
+        ContactsDialog,
+        SLOT(accept()));
+    QObject::connect(ButtonBox,
+        SIGNAL(rejected()),
+        ContactsDialog,
+        SLOT(reject()));
 }
 
 static inline void DestroyWindow (){

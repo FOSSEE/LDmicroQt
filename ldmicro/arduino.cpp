@@ -97,34 +97,29 @@ static int EepromHighByteWaitingBit;
 
 // Some useful registers, unfortunately many of which are in different places
 // on different AVRs! I consider this a terrible design choice by Atmel.
-static DWORD REG_TIMSK1;       //====Need to come back to
-//static DWORD REG_TIFR0;       //====Need to come back to
-static DWORD REG_TIFR1;       //====Need to come back to
-//static DWORD REG_TIFR2;       //====Need to come back to
+static DWORD REG_TIMSK1;
+static DWORD REG_TIFR1;
 #define REG_OCR1AH  0x89
 #define REG_OCR1AL  0x88
 #define REG_TCCR1A  0x80
 #define REG_TCCR1B  0x81
-#define REG_TCCR1C  0x82       //====Newly added. Need to check working
+#define REG_TCCR1C  0x82
 #define REG_SPH     0x5e
 #define REG_SPL     0x5d
 #define REG_ADMUX   0x7C
 #define REG_ADCSRA  0x7A
-//#define REG_ADCSRB  0x7B       //====Newly added. Need to check if needed
 #define REG_ADCL    0x78
 #define REG_ADCH    0x79
 
-static DWORD REG_UBRRH;       //====Need to come back to
-static DWORD REG_UBRRL;       //====Need to come back to
-//static DWORD REG_UCSRC;       //====Need to come back to
-static DWORD REG_UCSRB;       //====Need to come back to
-static DWORD REG_UCSRA;       //====Need to come back to
-static DWORD REG_UDR;       //====Need to come back to  ---------------------------------------------------------------->3:39 PM 4/10/2015
+static DWORD REG_UBRRH;
+static DWORD REG_UBRRL;
+static DWORD REG_UCSRB;
+static DWORD REG_UCSRA;
+static DWORD REG_UDR;
 
 #define REG_OCR2A    0xB3
-//#define REG_OCR2B    0xB4       //====Newly added. Need to check if needed and use
 #define REG_TCCR2A   0xB0
-#define REG_TCCR2B   0xB1       //====Newly added. Need to check if needed
+#define REG_TCCR2B   0xB1
 
 #define REG_EEARH   0x42
 #define REG_EEARL   0x41
@@ -427,7 +422,10 @@ static void WriteHexFile(FILE *f)
 
     DWORD i;
     for(i = 0; i < ArduinoProgWriteP; i++) {
-        DWORD w = Assemble(i, ArduinoProg[i].op, ArduinoProg[i].arg1, ArduinoProg[i].arg2);
+        DWORD w = Assemble(i,
+            ArduinoProg[i].op,
+            ArduinoProg[i].arg1,
+            ArduinoProg[i].arg2);
 
         if(soFarCount == 0) soFarStart = i;
         soFar[soFarCount++] = (BYTE)(w & 0xff);
@@ -660,7 +658,7 @@ static void WriteRuntime(void)
         
         WriteMemory(REG_UBRRH, divisor >> 8);
         WriteMemory(REG_UBRRL, divisor & 0xff);
-        WriteMemory(REG_UCSRB, (1 << 4) | (1 << 3)); // RXEN, TXEN ===>may need to change later on ucsr0b is the registername here
+        WriteMemory(REG_UCSRB, (1 << 4) | (1 << 3));
 
         for(i = 0; i < Prog.mcu->pinCount; i++) {
             if(Prog.mcu->pinInfo[i].pin == Prog.mcu->uartNeeds.txPin) {
@@ -752,8 +750,6 @@ static void CallSubroutine(DWORD addr)
         Instruction(OP_RCALL, addr, 0);
     }
 }
-
-//==================================================================================>>4:24 PM 3/31/2015
 
 //-----------------------------------------------------------------------------
 // Compile the intermediate code to AVR native code.
@@ -1023,8 +1019,7 @@ static void CompileFromIntermediate(void)
                     case 1024: cs = 5; break;
                     default: oops(); break;
                 }
-    
-                // fast PWM mode, non-inverted operation, given prescale      ==================================================12:27 PM 4/1/2015
+
                 WriteMemory(REG_TCCR2A, (1 << 7) | (1 << 1) | (1 << 0));
                 WriteMemory(REG_TCCR2B, cs);
 
@@ -1327,18 +1322,13 @@ void CompileArduino(char *outFile)
     // Here we must set up the addresses of some registers that for some
     // stupid reason move around from AVR to AVR.
 
-        //REG_TIMSK0 = 0x6E;
         REG_TIMSK1 = 0x6F;
-        //REG_TIMSK2 = 0x70;
-        //REG_TIFR0 = 0x35;
         REG_TIFR1 = 0x36;
-        //REG_TIFR2 = 0x37;
         REG_UBRRH = 0xC5;
         REG_UBRRL = 0xC4;
-        //REG_UCSRC = 0xC2;
         REG_UCSRB = 0xC1;
         REG_UCSRA = 0xC0;
-        REG_UDR = 0xC6;      //---------------------------------------------------------------------------->12:19 PM 4/10/2015
+        REG_UDR = 0xC6;
 
     WipeMemory();
     MultiplyUsed = FALSE;
@@ -1378,4 +1368,3 @@ void CompileArduino(char *outFile)
         "This does not happen automatically."), outFile);
     CompileSuccessfulMessage(str);
 }
-//====================================================================================================================>4:34 PM 4/1/2015

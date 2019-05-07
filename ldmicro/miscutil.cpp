@@ -208,54 +208,9 @@ QDialog* CreateWindowClient(char *windowName,
     QDialog* h = new QDialog(parent);
     h->resize(width, height);
     h->setWindowTitle(windowName);
-    // HWND h = CreateWindowEx(exStyle, className, windowName, style, x, y,
-    //     width, height, parent, menu, instance, param);
-
-    // RECT r;
-    // GetClientRect(h, &r);
-    // width = width - (r.right - width);
-    // height = height - (r.bottom - height);
-    
-    // SetWindowPos(h, HWND_TOP, x, y, width, height, 0);
 
     return h;
 }
-
-//-----------------------------------------------------------------------------
-// Window proc for the dialog boxes. This Ok/Cancel stuff is common to a lot
-// of places, and there are no other callbacks from the children.
-//-----------------------------------------------------------------------------
-// static LRESULT CALLBACK DialogProc(HWND hwnd, UINT msg, WPARAM wParam,
-//     LPARAM lParam)
-// {
-    // switch (msg) {
-    //     case WM_NOTIFY:
-    //         break;
-
-    //     case WM_COMMAND: {
-    //         HWND h = (HWND)lParam;
-    //         if(h == OkButton && wParam == BN_CLICKED) {
-    //             DialogDone = TRUE;
-    //         } else if(h == CancelButton && wParam == BN_CLICKED) {
-    //             DialogDone = TRUE;
-    //             DialogCancel = TRUE;
-    //         }
-    //         break;
-    //     }
-
-    //     case WM_CLOSE:
-    //     case WM_DESTROY:
-    //         DialogDone = TRUE;
-    //         DialogCancel = TRUE;
-    //         break;
-
-    //     default:
-    //         return DefWindowProc(hwnd, msg, wParam, lParam);
-    // }
-
-//     return 1;
-// }
-
 
 
 //-----------------------------------------------------------------------------
@@ -299,7 +254,6 @@ void SetFont(HWID h, HFONT f)
     qtfont.setStyle(f->fdwItalic ? QFont::StyleItalic : QFont::StyleNormal);
     qtfont.setWeight(f->fnWeight == FW_BOLD ? QFont::Bold : QFont::Normal);
     h->setFont(qtfont);
-  //  SendMessage(h, WM_SETFONT, (WPARAM)MyFixedFont, TRUE);
 }
 
 //-----------------------------------------------------------------------------
@@ -307,34 +261,9 @@ void SetFont(HWID h, HFONT f)
 //-----------------------------------------------------------------------------
 void MakeDialogBoxClass(void)
 {
-    // WNDCLASSEX wc;
-    // memset(&wc, 0, sizeof(wc));
-    // wc.cbSize = sizeof(wc);
-
-    // wc.style            = CS_BYTEALIGNCLIENT | CS_BYTEALIGNWINDOW | CS_OWNDC |
-    //                       CS_DBLCLKS;
-    // wc.lpfnWndProc      = (WNDPROC)DialogProc;
-    // wc.hInstance        = Instance;
-    // wc.hbrBackground    = (HBRUSH)COLOR_BTNSHADOW;
-    // wc.lpszClassName    = "LDmicroDialog";
-    // wc.lpszMenuName     = NULL;
-    // wc.hCursor          = LoadCursor(NULL, IDC_ARROW);
-    // wc.hIcon            = (HICON)LoadImage(Instance, MAKEINTRESOURCE(4000),
-    //                         IMAGE_ICON, 32, 32, 0);
-    // wc.hIconSm          = (HICON)LoadImage(Instance, MAKEINTRESOURCE(4000),
-    //                         IMAGE_ICON, 16, 16, 0);
-
-    // RegisterClassEx(&wc);
-
     MyNiceFont = CreateFont(16, 0, 0, FW_REGULAR, FALSE, "Tahoma");
 
-    // if(!MyNiceFont)
-    //     MyNiceFont = (HFONT)GetStockObject(SYSTEM_FONT);
-
     MyFixedFont = CreateFont(14, 0, 0, FW_REGULAR, FALSE, "Lucida Console");
-
-    // if(!MyFixedFont)
-    //     MyFixedFont = (HFONT)GetStockObject(SYSTEM_FONT);
 }
 
 //-----------------------------------------------------------------------------

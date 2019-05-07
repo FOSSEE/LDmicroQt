@@ -336,8 +336,8 @@ static void CenterWithSpaces(HCRDC Hcr, int cx, int cy, char *str, BOOL powered,
 // Like CenterWithWires, but for an arbitrary width position (e.g. for ADD
 // and SUB, which are double-width).
 //-----------------------------------------------------------------------------
-static void CenterWithWiresWidth(HCRDC Hcr, int cx, int cy,const char *str, BOOL before,
-    BOOL after, int totalWidth)
+static void CenterWithWiresWidth(HCRDC Hcr, int cx, int cy,const char *str,
+    BOOL before, BOOL after, int totalWidth)
 {
     int extra = totalWidth - FormattedStrlen(str);
 
@@ -360,7 +360,8 @@ static void CenterWithWiresWidth(HCRDC Hcr, int cx, int cy,const char *str, BOOL
 // the left and right coloured according to the powered state. Draws on the
 // middle line.
 //-----------------------------------------------------------------------------
-static void CenterWithWires(HCRDC Hcr, int cx, int cy, const char *str, BOOL before, BOOL after)
+static void CenterWithWires(HCRDC Hcr, int cx, int cy, const char *str,
+    BOOL before, BOOL after)
 {
     CenterWithWiresWidth(Hcr, cx, cy, str, before, after, POS_WIDTH);
 }
@@ -369,8 +370,8 @@ static void CenterWithWires(HCRDC Hcr, int cx, int cy, const char *str, BOOL bef
 // Draw an end of line element (coil, RES, MOV, etc.). Special things about
 // an end of line element: we must right-justify it.
 //-----------------------------------------------------------------------------
-static BOOL DrawEndOfLine(HCRDC Hcr, int which, ElemLeaf *leaf, int *cx, int *cy,
-    BOOL poweredBefore)
+static BOOL DrawEndOfLine(HCRDC Hcr, int which, ElemLeaf *leaf,
+    int *cx, int *cy, BOOL poweredBefore)
 {
     int cx0 = *cx, cy0 = *cy;
 
@@ -460,8 +461,10 @@ static BOOL DrawEndOfLine(HCRDC Hcr, int which, ElemLeaf *leaf, int *cx, int *cy
             break;
         }
         case ELEM_PERSIST:
-            CenterWithSpaces(Hcr, *cx, *cy, leaf->d.persist.var, poweredAfter, TRUE);
-            CenterWithWires(Hcr, *cx, *cy, "{PERSIST}", poweredBefore, poweredAfter);
+            CenterWithSpaces(Hcr, *cx, *cy, leaf->d.persist.var,
+                poweredAfter, TRUE);
+            CenterWithWires(Hcr, *cx, *cy, "{PERSIST}", poweredBefore,
+                poweredAfter);
             break;
 
         case ELEM_MOVE: {
@@ -611,8 +614,8 @@ static BOOL DrawEndOfLine(HCRDC Hcr, int which, ElemLeaf *leaf, int *cx, int *cy
             int extra = 2*POS_WIDTH - FormattedStrlen(top);
             PoweredText(Hcr, poweredAfter);
             DrawChars(Hcr, *cx + (extra/2), *cy + (POS_HEIGHT/2) - 1, top);
-            CenterWithWiresWidth(Hcr, *cx, *cy, bot, poweredBefore, poweredAfter,
-                2*POS_WIDTH);
+            CenterWithWiresWidth(Hcr, *cx, *cy, bot, poweredBefore,
+                poweredAfter, 2*POS_WIDTH);
 
             *cx += POS_WIDTH;
 
@@ -725,12 +728,14 @@ cmp:
                 break;
         }
         case ELEM_OPEN:
-            CenterWithWires(Hcr, *cx, *cy, "+      +", poweredBefore, poweredAfter);
+            CenterWithWires(Hcr, *cx, *cy, "+      +", poweredBefore,
+                poweredAfter);
             *cx += POS_WIDTH;
             break;
 
         case ELEM_SHORT:
-            CenterWithWires(Hcr, *cx, *cy, "+------+", poweredBefore, poweredAfter);
+            CenterWithWires(Hcr, *cx, *cy, "+------+", poweredBefore,
+                poweredAfter);
             *cx += POS_WIDTH;
             break;
 
@@ -803,7 +808,8 @@ cmp:
             char str[POS_WIDTH*2];
             memset(str, 0, sizeof(str));
             char *srcStr = leaf->d.fmtdStr.string;
-            memcpy(str, srcStr, std::min<size_t>(strlen(srcStr), (size_t)(POS_WIDTH*2 - 7) ));
+            memcpy(str, srcStr, std::min<size_t>(strlen(srcStr),
+                (size_t)(POS_WIDTH*2 - 7) ));
 
             char bot[100];
             sprintf(bot, "{\"%s\"}", str);
@@ -815,8 +821,8 @@ cmp:
                 leaf->d.fmtdStr.var);
             BodyText(Hcr);
 
-            CenterWithWiresWidth(Hcr, *cx, *cy, bot, poweredBefore, poweredAfter,
-                2*POS_WIDTH);
+            CenterWithWiresWidth(Hcr, *cx, *cy, bot, poweredBefore,
+                poweredAfter, 2*POS_WIDTH);
             *cx += 2*POS_WIDTH;
             break;
         }
@@ -825,12 +831,14 @@ cmp:
             CenterWithWires(Hcr, *cx, *cy,
                 (which == ELEM_UART_RECV) ? "{UART RECV}" : "{UART SEND}",
                 poweredBefore, poweredAfter);
-            CenterWithSpaces(Hcr, *cx, *cy, leaf->d.uart.name, poweredAfter, TRUE);
+            CenterWithSpaces(Hcr, *cx, *cy, leaf->d.uart.name,
+                poweredAfter, TRUE);
             *cx += POS_WIDTH;
             break;
 
         default:
-            poweredAfter = DrawEndOfLine(Hcr, which, leaf, cx, cy, poweredBefore);
+            poweredAfter = DrawEndOfLine(Hcr, which, leaf,
+                cx, cy, poweredBefore);
             break;
     }
 
@@ -926,7 +934,8 @@ cmp:
 // element, else FALSE. This is needed to colour all the wires correctly,
 // since the colouring indicates whether a wire is energized.
 //-----------------------------------------------------------------------------
-BOOL DrawElement(HCRDC Hcr, int which, void *elem, int *cx, int *cy, BOOL poweredBefore)
+BOOL DrawElement(HCRDC Hcr, int which, void *elem,
+    int *cx, int *cy, BOOL poweredBefore)
 {
     BOOL poweredAfter;
 

@@ -145,8 +145,6 @@ BOOL ShowSimpleDialog(char *title, int boxes, char **labels, DWORD numOnlyMask,
         new QRegExpValidator(QRegExp("-?[0-9]+[.]?[0-9]+")));
         }
         if(alnumOnlyMask & (1 << i)) {
-            /*PrevAlnumOnlyProc[i] = SetWindowLongPtr(Textboxes[i], GWLP_WNDPROC, 
-                (LONG_PTR)MyAlnumOnlyProc);*/
             Textboxes[i]->setValidator(
                 new QRegExpValidator(
                     QRegExp("[a-zA-Z0-9_'-]+")));

@@ -144,7 +144,8 @@ static void MakeFixedControls(BOOL forPwl)
     LutGrid->addWidget(ButtonBox,0,1);
     QObject::connect(ButtonBox, SIGNAL(accepted()), LutDialog, SLOT(accept()));
     QObject::connect(ButtonBox, SIGNAL(rejected()), LutDialog, SLOT(reject()));
-    QObject::connect(AsStringCheckbox, &QCheckBox::stateChanged,CheckBoxFunction);
+    QObject::connect(AsStringCheckbox,
+        &QCheckBox::stateChanged, CheckBoxFunction);
     QObject::connect(CountTextbox, &QLineEdit::textChanged,CountFunction);
 }
 
@@ -172,12 +173,6 @@ static void DestroyLutControls(BOOL destroyFlag = TRUE)
         }
         delete LutControlGrid;
     }
-
-    // int i;
-    /*for(i = 0; i < MAX_LOOK_UP_TABLE_LEN; i++) {
-        delete ValuesTextbox[i];
-        delete ValuesLabel[i];
-    }*/
 }
 
 
@@ -276,12 +271,8 @@ static void MakeLutControls(BOOL asString, int counts, BOOL forPwl)
             FixedFont(ValuesLabel[i]);
             LutControlGrid->addWidget(ValuesLabel[i], x , y);
         }
-        // if(counts > 16)
             FixedControlGrid->addLayout(LutControlGrid, 4, 0, 1, 0,
             Qt::AlignTop);
-        // else
-        //     FixedControlGrid->addLayout(LutControlGrid, 4, 0, 1, 0,
-        //     Qt::AlignTop);
         CountTextbox->setReadOnly(FALSE);
     }
 }

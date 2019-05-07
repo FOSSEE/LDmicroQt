@@ -119,18 +119,15 @@ static void MakeControls(int a)
     qtfont.setFamily(FixedWidthFont->lpszFace);
     qtfont.setPixelSize(FixedWidthFont->nHeight - 3);
     qtfont.setFixedPitch(TRUE);
-    qtfont.setStyle(FixedWidthFont->fdwItalic ? QFont::StyleItalic : QFont::StyleNormal);
-    qtfont.setWeight(FixedWidthFont->fnWeight == FW_BOLD ? QFont::Bold : QFont::Normal);
-    // hcr->setFont(qtfont);
+    qtfont.setStyle(FixedWidthFont->fdwItalic ?
+        QFont::StyleItalic : QFont::StyleNormal);
+    qtfont.setWeight(FixedWidthFont->fnWeight == FW_BOLD ?
+        QFont::Bold : QFont::Normal);
     for(i = 0; Text[a][i]; i++) {
         char *s = Text[a][i];
-        // f.setBold(TRUE);
         cf.setFontWeight(cf.fontWeight()* 2);
 
         cf.setFont(qtfont);
-        /*RichEdit[a]->appendPlainText("Welcome");
-        RichEdit[a]->setCurrentCharFormat(cf);
-        RichEdit[a]->appendPlainText("Thank you");*/
         if((s[0] == '=') ||
            (Text[a][i+1] && Text[a][i+1][0] == '='))
         {
@@ -193,8 +190,6 @@ void ShowHelpDialog(BOOL about)
 
     MakeControls(a);
 
-    // PackBoxHelp = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-    // gtk_box_pack_start(GTK_BOX(PackBoxHelp), RichEdit[a], FALSE, TRUE, 0);
     QVBoxLayout* PackBoxHelp = new QVBoxLayout;
     PackBoxHelp->addWidget(RichEdit[a]);
     HelpDialog[a] = new QDialog(MainWindow);
@@ -206,9 +201,5 @@ void ShowHelpDialog(BOOL about)
     RichEdit[a]->verticalScrollBar()->setValue(
         RichEdit[a]->verticalScrollBar()->minimum());
 
-    /*if(HelpWindowOpen[a]) {
-        gtk_widget_grab_focus (HelpDialog[a]);
-        return;
-    }*/
     HelpWindowOpen[a] = TRUE;
 }

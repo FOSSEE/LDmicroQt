@@ -403,55 +403,6 @@ void SaveIoListToFile(FILE *f)
 }
 
 //-----------------------------------------------------------------------------
-// Dialog proc for the popup that lets you set the value of an analog input for
-// simulation.
-//-----------------------------------------------------------------------------
-/*static gboolean AnalogSliderDialogKeyboardProc(GtkWidget* widget, GdkEventKey* event, gpointer name)
-{
-    SWORD v = (SWORD)gtk_range_get_value(GTK_RANGE(AnalogSliderTrackbar));
-    SetAdcShadow((char*)name, v);
-    if (AnalogSliderDone == TRUE || AnalogSliderCancel == TRUE)
-    {
-        DestroyWindow (AnalogSliderMain);
-        ProgramChanged();
-        return FALSE;
-    }
-
-    if (event->keyval == GDK_KEY_Return){
-        DestroyWindow (AnalogSliderMain);
-        ProgramChanged();
-        AnalogSliderDone = TRUE;
-    }
-    else if (event->keyval == GDK_KEY_Escape){
-        DestroyWindow (AnalogSliderMain);
-        ProgramChanged();
-        AnalogSliderDone = TRUE;
-        AnalogSliderCancel = TRUE;
-    }
-
-    return FALSE;
-}
-
-static gboolean AnalogSliderDialogMouseProc(GtkWidget *widget, GdkEventButton *event, gpointer name)
-{
-    SWORD v = (SWORD)gtk_range_get_value(GTK_RANGE(AnalogSliderTrackbar));
-    SetAdcShadow((char*)name, v);
-    if (event->button == 1 && event->type == GDK_BUTTON_RELEASE){
-        DestroyWindow (AnalogSliderMain);
-        ProgramChanged();
-        AnalogSliderDone = TRUE;
-    }
-
-    return FALSE;
-}
-
-void AnalogSliderUpdateProc (GtkRange *range, GtkScrollType step, gpointer name)
-{
-    SWORD v = (SWORD)gtk_range_get_value(GTK_RANGE(AnalogSliderTrackbar));
-    SetAdcShadow((char*)name, v);
-}
-*/
-//-----------------------------------------------------------------------------
 // A little toolbar-style window that pops up to allow the user to set the
 // simulated value of an ADC pin.
 //-----------------------------------------------------------------------------
@@ -514,7 +465,6 @@ void ShowAnalogSliderPopup(char *name)
     std::bind( &Receiver::updateValue, receiver, "senderValue", std::placeholders::_1 )
 );*/
     AnalogSliderMain->show();
-    // ListView_RedrawItems(IoList, 0, Prog.io.count - 1);
 }
 
 void AnalogSliderRelProc(char* name)
@@ -522,11 +472,7 @@ void AnalogSliderRelProc(char* name)
     SWORD v = AnalogSliderTrackbar->value();
     AnalogSliderMain->hide();
     SetAdcShadow(name, v);
-    /*delete AnalogSliderLabel;
-    delete AnalogSliderTrackbar;*/
-    // delete AnalogSliderMain;
     SimulateOneCycle(TRUE);
-    // printf("Slider done:%s, %d\n", name, v);
 }
 
 void ListView_RedrawItems(HLIST list, int min, int max)
@@ -539,7 +485,6 @@ void ListView_RedrawItems(HLIST list, int min, int max)
     NMHDR h;
     h.code = LVN_GETDISPINFO;
     h.hlistFrom = list;
-    // printf("ioCount:%d\n",Prog.io.count);
     list->clear();
     h.hlistIter.clear();
     for(int i = 0; i < Prog.io.count; i++) {
@@ -558,138 +503,12 @@ void AnalogSliderProc(int Value)
     char str[5];
                 sprintf(str, "%d", Value);
     AnalogSliderLabel->setText(str);
-    /*const char* buf;
-            buf = text.toStdString().c_str();
-        if(atoi(buf) != ControlCount && !asString) {
-            ControlCount = atoi(buf);
-            if(ControlCount < 0 || ControlCount > 32) {
-                ControlCount = 0;
-                CountTextbox->setText("");
-            }
-            DestroyLutControls();
-            MakeLutControls(asString, ControlCount, FALSE);
-        }*/
-}
-/*
-//-----------------------------------------------------------------------------
-// Window proc for the contacts dialog box
-//-----------------------------------------------------------------------------
-static void IoDialogProc(BOOL DialogDone, int item)
-{
-    if(DialogDone)
-    {
-        char pin[16];
-        ITLIST iter;
-
-        GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(PinList));
-        gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);
-
-        if(gtk_tree_selection_get_selected (selection, NULL, &iter))
-        {
-            GValue valproc = G_VALUE_INIT;
-
-            gtk_tree_model_get_value (gtk_tree_view_get_model (GTK_TREE_VIEW(PinList)),
-                            &iter, 0, &valproc);
-            gchar* str = (char*)g_value_get_string(&valproc);
-            strcpy(pin, str);
-            g_free(str);
-        }
-        else
-            strcpy(pin, _("(no pin)"));
-
-        if(strcmp(pin, _("(no pin)"))==0) 
-        {
-            int i;
-            for(i = 0; i < IoSeenPreviouslyCount; i++) {
-                if(strcmp(IoSeenPreviously[i].name,
-                    Prog.io.assignment[item].name)==0)
-                {
-                    IoSeenPreviously[i].pin = NO_PIN_ASSIGNED;
-                }
-            }
-            Prog.io.assignment[item].pin = NO_PIN_ASSIGNED;
-        } 
-        else 
-        {
-            Prog.io.assignment[item].pin = atoi(pin);
-            // Only one name can be bound to each pin; make sure that there's
-            // not another entry for this pin in the IoSeenPreviously list,
-            // that might get used if the user creates a new pin with that
-            // name.
-            int i;
-            for(i = 0; i < IoSeenPreviouslyCount; i++) {
-                if(IoSeenPreviously[i].pin == atoi(pin)) {
-                    IoSeenPreviously[i].pin = NO_PIN_ASSIGNED;
-                }
-            }
-        }
-        RefreshControlsToSettings();
-    }
-
-    DestroyWindow(IoDialog);
-    ProgramChanged();
 }
 
-void IoDialogRowActivateProc(GtkTreeView *tree_view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer user_data)
-{
-    IoDialogProc(TRUE, GPOINTER_TO_INT(user_data));
-}
-
-void IoDialogCancelProc(HWID widget, gpointer data)
-{
-    IoDialogProc(FALSE, GPOINTER_TO_INT(data));
-}
-
-void IoDialogOkProc(HWID widget, gpointer data)
-{
-    IoDialogProc(TRUE, GPOINTER_TO_INT(data));
-}
-
-static gboolean IoDialogKeyPressProc(HWID widget, GdkEventKey* event, gpointer data)
-{
-    if (event -> keyval == GDK_KEY_Return)
-    {
-        IoDialogProc(TRUE, GPOINTER_TO_INT(data));
-    }
-    else if (event -> keyval == GDK_KEY_Escape)
-    {
-        IoDialogProc(FALSE, GPOINTER_TO_INT(data));
-    }
-
-    return FALSE;
-}
-
-//-----------------------------------------------------------------------------
-// Create our window class; nothing exciting.
-//-----------------------------------------------------------------------------
-// static BOOL MakeWindowClass()
-// {
-//     WNDCLASSEX wc;
-//     memset(&wc, 0, sizeof(wc));
-//     wc.cbSize = sizeof(wc);
-
-//     wc.style            = CS_BYTEALIGNCLIENT | CS_BYTEALIGNWINDOW | CS_OWNDC |
-//                             CS_DBLCLKS;
-//     wc.lpfnWndProc      = (WNDPROC)IoDialogProc;
-//     wc.hInstance        = Instance;
-//     wc.hbrBackground    = (HBRUSH)COLOR_BTNSHADOW;
-//     wc.lpszClassName    = "LDmicroIo";
-//     wc.lpszMenuName     = NULL;
-//     wc.hCursor          = LoadCursor(NULL, IDC_ARROW);
-//     wc.hIcon            = (HICON)LoadImage(Instance, MAKEINTRESOURCE(4000),
-//                             IMAGE_ICON, 32, 32, 0);
-//     wc.hIconSm          = (HICON)LoadImage(Instance, MAKEINTRESOURCE(4000),
-//                             IMAGE_ICON, 16, 16, 0);
-
-//     return RegisterClassEx(&wc);
-// }
-*/
 static void MakeControls()
 {
     QVBoxLayout* IoLayout = new QVBoxLayout(IoDialog);
-    // QLabel* textLabel = new QLabel(_("Assign:"));
     NiceFont(IoDialog);
-    // HLIST IoPinList = (GtkTreeModel*)gtk_list_store_new (1, G_TYPE_STRING);
     
     PinList = new QTreeWidget();
     PinList->setHeaderLabel(_("Assign:"));
@@ -697,45 +516,13 @@ static void MakeControls()
     PinList->setFixedSize(125, 320);
     ButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok
         | QDialogButtonBox::Cancel, Qt::Vertical);
-    // IoLayout->addWidget(textLabel);
+
     IoLayout->addWidget(PinList);
     IoLayout->addWidget(ButtonBox);
     QObject::connect(PinList, &QTreeWidget::itemActivated,
                      IoDialog, &QDialog::accept);
     QObject::connect(ButtonBox, SIGNAL(accepted()), IoDialog, SLOT(accept()));
     QObject::connect(ButtonBox, SIGNAL(rejected()), IoDialog, SLOT(reject()));
-    /*HLIST IoPinList = (GtkTreeModel*)gtk_list_store_new (1, G_TYPE_STRING);
-    
-    PinList = gtk_tree_view_new_with_model (GTK_TREE_MODEL(IoPinList));
-    HTVC column = gtk_tree_view_column_new_with_attributes(_("Assign:"),
-                                                    gtk_cell_renderer_text_new(),
-                                                    "text", 0,
-                                                    NULL);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(PinList), column);
-    FixedFont(PinList);
-
-    OkButton = gtk_button_new_with_label (_("OK"));
-    NiceFont(OkButton);
-
-    CancelButton = gtk_button_new_with_label (_("Cancel"));
-    NiceFont(CancelButton);
-
-    /// Add list to scrolled window to enable scrolling
-    HWID PinScroll = gtk_scrolled_window_new (NULL, NULL);
-    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (PinScroll),
-				                          GTK_POLICY_AUTOMATIC, 
-				                          GTK_POLICY_ALWAYS);
-    gtk_widget_set_hexpand(GTK_WIDGET(PinScroll), TRUE);  
-    gtk_widget_set_vexpand(GTK_WIDGET(PinScroll), TRUE);
-
-    gtk_container_add (GTK_CONTAINER(PinScroll), PinList);
-
-    /// Pack all the widgets into main window
-    HWID PinBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-    gtk_box_pack_start(GTK_BOX(PinBox), PinScroll, FALSE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(PinBox), OkButton, FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(PinBox), CancelButton, FALSE, FALSE, 0);
-    gtk_container_add(GTK_CONTAINER(Dialog), PinBox);*/
 }
 void ShowIoDialog(int item)
 {
@@ -847,12 +634,9 @@ void ShowIoDialog(int item)
     {
         case QDialog::Accepted:
         {
-            // int sel = PinList->indexOfTopLevelItem(PinList->currentItem());
             char pin[16];
-            // SendMessage(PinList, LB_GETTEXT, (WPARAM)sel, (LPARAM)pin);
             strncpy(pin,
                 PinList->currentItem()->text(0).toStdString().c_str(), 16);
-            // printf("Accepted:%s\n", pin);
             if(strcmp(pin, _("(no pin)"))==0) {
             int i;
             for(i = 0; i < IoSeenPreviouslyCount; i++) {
@@ -863,7 +647,6 @@ void ShowIoDialog(int item)
                 }
             }
                 Prog.io.assignment[item].pin = NO_PIN_ASSIGNED;
-            // printf("Count:%d\n", count);
             } else {
                 Prog.io.assignment[item].pin = atoi(pin);
                 // Only one name can be bound to each pin; make sure that there's
@@ -883,76 +666,7 @@ void ShowIoDialog(int item)
         break;
     }
     DestroyWindow();
- /*   ITLIST iter;
-    GValue val = G_VALUE_INIT;
-    g_value_init (&val, G_TYPE_STRING);
-    
-    HLIST model = gtk_tree_view_get_model (GTK_TREE_VIEW(PinList));
-    
-    gtk_tree_model_get_iter_first (GTK_TREE_MODEL(model), &iter);
-
-    gtk_list_store_append (GTK_LIST_STORE(model), &iter);
-    
-    g_value_set_string(&val, _("(no pin)"));
-    gtk_list_store_set_value (GTK_LIST_STORE(model), &iter, 0, &val);
-    
-    int i;
-    for(i = 0; i < Prog.mcu->pinCount; i++) {
-        int j;
-        for(j = 0; j < Prog.io.count; j++) {
-            if(j == item) continue;
-            if(Prog.io.assignment[j].pin == Prog.mcu->pinInfo[i].pin) {
-                goto cant_use_this_io;
-            }
-        }
-
-        if(UartFunctionUsed() && Prog.mcu &&
-                ((Prog.mcu->pinInfo[i].pin == Prog.mcu->uartNeeds.rxPin) ||
-                 (Prog.mcu->pinInfo[i].pin == Prog.mcu->uartNeeds.txPin)))
-        {
-            goto cant_use_this_io;
-        }
-
-        if(PwmFunctionUsed() && 
-            Prog.mcu->pinInfo[i].pin == Prog.mcu->pwmNeedsPin)
-        {
-            goto cant_use_this_io;
-        }
-
-        if(Prog.io.assignment[item].name[0] == 'A') {
-            for(j = 0; j < Prog.mcu->adcCount; j++) {
-                if(Prog.mcu->adcInfo[j].pin == Prog.mcu->pinInfo[i].pin) {
-                    // okay; we know how to connect it up to the ADC
-                    break;
-                }
-            }
-            if(j == Prog.mcu->adcCount) {
-                goto cant_use_this_io;
-            }
-        }
-
-        char buf[40];
-        if(Prog.mcu->pinCount <= 21) {
-            sprintf(buf, "%3d   %c%c%d", Prog.mcu->pinInfo[i].pin,
-                Prog.mcu->portPrefix, Prog.mcu->pinInfo[i].port,
-                Prog.mcu->pinInfo[i].bit);
-        } else {
-            sprintf(buf, "%3d  %c%c%d", Prog.mcu->pinInfo[i].pin,
-                Prog.mcu->portPrefix, Prog.mcu->pinInfo[i].port,
-                Prog.mcu->pinInfo[i].bit);
-        }
-        gtk_list_store_append (GTK_LIST_STORE(model), &iter);
-        g_value_set_string(&val, buf);
-        gtk_list_store_set_value (GTK_LIST_STORE(model), &iter, 0, &val);
-cant_use_this_io:;
-    }
-
-    gtk_widget_show_all(IoDialog);
-
-    g_signal_connect (PinList, "row_activated", G_CALLBACK (IoDialogRowActivateProc), GINT_TO_POINTER(item));
-    g_signal_connect (IoDialog, "key_press_event", G_CALLBACK (IoDialogKeyPressProc), GINT_TO_POINTER(item));
-    g_signal_connect (CancelButton, "clicked", G_CALLBACK (IoDialogCancelProc), GINT_TO_POINTER(item));
-    g_signal_connect (OkButton, "clicked", G_CALLBACK (IoDialogOkProc), GINT_TO_POINTER(item));*/
+ 
 }
 //-----------------------------------------------------------------------------
 // Called in response to a notify for the listview. Handles click, text-edit
@@ -972,11 +686,13 @@ void IoListProc(NMHDR *h)
             char IO_value_holder[60];
             QString val;
             /// case LV_IO_NAME:
-            val = QString::fromStdString((const char*)Prog.io.assignment[item].name);
+            val = QString::fromStdString(
+                (const char*)Prog.io.assignment[item].name);
             StrL.insert(0,val);
 
             /// case LV_IO_TYPE: 
-            val = QString::fromStdString(IoTypeToString(Prog.io.assignment[item].type));
+            val = QString::fromStdString(
+                IoTypeToString(Prog.io.assignment[item].type));
             StrL.insert(1,val);
 
             /// case LV_IO_STATE: 

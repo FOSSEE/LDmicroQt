@@ -168,7 +168,7 @@ endif()
     set(CPACK_GENERATOR "DEB")
     set(CPACK_PACKAGE_VERSION_MAJOR "2")
     set(CPACK_PACKAGE_VERSION_MINOR "2")
-    set(CPACK_PACKAGE_VERSION_PATCH "4")
+    set(CPACK_PACKAGE_VERSION_PATCH "0")
     
     set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
     set(CPACK_PACKAGE_DESCRIPTION "Ladder Logic editor, simulator and compiler for 8 bit microcontrollers")

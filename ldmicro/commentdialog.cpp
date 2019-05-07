@@ -42,8 +42,14 @@ static void MakeControls(void)
     CommentTextbox = new QLineEdit();
     CommentGrid->addWidget(CommentTextbox, 0, 0);
     CommentGrid->addWidget(ButtonBox, 0, 1);
-    QObject::connect(ButtonBox, SIGNAL(accepted()), CommentDialog, SLOT(accept()));
-    QObject::connect(ButtonBox, SIGNAL(rejected()), CommentDialog, SLOT(reject()));
+    QObject::connect(ButtonBox,
+        SIGNAL(accepted()),
+        CommentDialog,
+        SLOT(accept()));
+    QObject::connect(ButtonBox,
+        SIGNAL(rejected()),
+        CommentDialog,
+        SLOT(reject()));
     FixedFont(CommentTextbox);
 }
 
@@ -66,7 +72,8 @@ void ShowCommentDialog(char *comment)
     {
         case QDialog::Accepted:
         {
-            strncpy(comment, CommentTextbox->text().toStdString().c_str(),
+            strncpy(comment,
+                CommentTextbox->text().toStdString().c_str(),
                 MAX_COMMENT_LEN -1);
             
         }

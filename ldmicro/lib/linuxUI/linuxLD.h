@@ -28,16 +28,6 @@
 #define IMAGE_ICON 1
 #define LDMICRO_ICON "../ldmicro.ico"
 
-/// Macro functions
-// #define max(_A, _B) std::max(_A, _B)
-
-/*#define max(_A, _B) { \
-        if((_A) > (_B)) \
-            return (_A); \
-        else \
-            return (_B); \
-        }*/
-
 /// Typedefs
 //typedef int64_t __int64;
 typedef bool BOOL;
@@ -160,18 +150,7 @@ typedef struct {
   UINT   mask;
   int    iItem;
   int    iSubItem;
-//   UINT   state;
-//   UINT   stateMask;
   LPTSTR pszText;
-//   int    cchTextMax;
-//   int    iImage;
-//   LPARAM lParam;
-//   int    iIndent;
-//   int    iGroupId;
-//   UINT   cColumns;
-//   PUINT  puColumns;
-//   int    *piColFmt;
-//   int    iGroup;
 } LVITEM, *LPLVITEM;
 
 typedef struct tagNMHDR {
@@ -193,7 +172,6 @@ typedef struct FontTag {
 typedef struct tagLOGBRUSH {
   UINT      lbStyle;
   COLORREF  lbColor;
-//   ULONG_PTR lbHatch;
 } LOGBRUSH, *PLOGBRUSH;
 
 typedef struct _RECT {

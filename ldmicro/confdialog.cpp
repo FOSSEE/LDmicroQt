@@ -104,7 +104,8 @@ static void MakeControls(void)
     }
     else {
         strcpy(explanation, _("No serial instructions (UART Send/UART Receive) "
-            "are in use; add one to program before setting baud rate.\r\n\r\n") );
+            "are in use; add one to program before setting baud rate.\r\n\r\n")
+        );
     }
 
     strcat(explanation,
@@ -136,93 +137,11 @@ static void MakeControls(void)
         Qt::AlignJustify);
     NiceFont(ConfDialog);
     CycleTextbox->setFocus();
-    // int height = textLabel4->pos().y();
-    // printf("Height:%d\n", height);
-    // ConfDialog->setSize(ConfGrid->sizeHint());
     ConfDialog->adjustSize();
     QObject::connect(ButtonBox, SIGNAL(accepted()), ConfDialog, SLOT(accept()));
     QObject::connect(ButtonBox, SIGNAL(rejected()), ConfDialog, SLOT(reject()));
-//     PrevCycleProc = SetWindowLongPtr(CycleTextbox, GWLP_WNDPROC, 
-//         (LONG_PTR)MyNumberProc);
-
-//     PrevCrystalProc = SetWindowLongPtr(CrystalTextbox, GWLP_WNDPROC, 
-//         (LONG_PTR)MyNumberProc);
-
-//     PrevBaudProc = SetWindowLongPtr(BaudTextbox, GWLP_WNDPROC, 
-//         (LONG_PTR)MyNumberProc);
-}
-/*
-//-----------------------------------------------------------------------------
-// Don't allow any characters other than 0-9. in the text boxes.
-//-----------------------------------------------------------------------------
-
-void ConfDialogMyNumberProc (GtkEditable *editable, gchar *NewText, gint length, 
-    gint *position, gpointer data){
-    gtk_widget_set_sensitive (MainWindow, TRUE);
-    for (int i = 0; i < length; i++){
-        if (!(isdigit (NewText[i]) || NewText[i] == '.' || NewText[i] == '\b')){
-            g_signal_stop_emission_by_name (G_OBJECT (editable), "insert-text");
-            return;
-        }
-    }
 }
 
-// Gets data from the text boxes
-void ConfDialogGetData (GtkWidget* widget, gpointer data){
-    char* buf;
-        
-    buf = const_cast <char*> (gtk_entry_get_text (GTK_ENTRY (CycleTextbox)));
-    Prog.cycleTime = (int)(1000*atof(buf) + 0.5);
-    if(Prog.cycleTime == 0) {
-        Error(_("Zero cycle time not valid; resetting to 10 ms."));
-        Prog.cycleTime = 10000;
-    }
-
-    buf = const_cast <char*> (gtk_entry_get_text (GTK_ENTRY(CrystalTextbox)));
-    Prog.mcuClock = (int)(1e6*atof(buf) + 0.5);
-
-    buf = const_cast <char*> (gtk_entry_get_text (GTK_ENTRY(BaudTextbox)));
-    Prog.baudRate = atoi(buf);        
-    DestroyWindow (ConfDialog);
-    ProgramChanged();
-}
-
-// Checks for the required key press
-gboolean ConfDialogKeyPress (GtkWidget* widget, GdkEventKey* event, gpointer data){
-    if (event -> keyval == GDK_KEY_Return){
-        ConfDialogGetData(NULL, NULL);
-    }
-    else if (event -> keyval == GDK_KEY_Escape){
-        DestroyWindow (ConfDialog);
-        ProgramChanged();
-        gtk_widget_set_sensitive (MainWindow, TRUE);
-    }
-    return FALSE;
-}
-
-void ConfCallDestroyWindow (HWID widget, gpointer data){
-    DestroyWindow (ConfDialog);
-    ProgramChanged();
-    gtk_widget_set_sensitive (MainWindow, TRUE);
-}
-
-// Consists of all the signal calls
-void ConfDialogSignalCall () {
-    g_signal_connect (G_OBJECT(CycleTextbox), "insert-text",
-		     G_CALLBACK(ConfDialogMyNumberProc), NULL);
-    g_signal_connect (G_OBJECT(CrystalTextbox), "insert-text",
-		     G_CALLBACK(ConfDialogMyNumberProc), NULL);
-    g_signal_connect (G_OBJECT(BaudTextbox), "insert-text",
-		     G_CALLBACK(ConfDialogMyNumberProc), NULL);
-    g_signal_connect (G_OBJECT (ConfDialog), "key-press-event",
-                    G_CALLBACK(ConfDialogKeyPress), NULL);
-    g_signal_connect (G_OBJECT (OkButton), "clicked",
-                    G_CALLBACK(ConfDialogGetData), NULL);
-    g_signal_connect (G_OBJECT (CancelButton), "clicked",
-                    G_CALLBACK(ConfCallDestroyWindow), NULL);
-    g_signal_connect (ConfDialog, "delete_event", G_CALLBACK (ConfCallDestroyWindow), NULL);
-}
-*/
 void ShowConfDialog(void)
 {
     // The window's height will be resized later, to fit the explanation text.
@@ -262,34 +181,5 @@ void ShowConfDialog(void)
         case QDialog::Rejected:
         break;
     }
-    // DestroyWindow();
-/*    GdkEventKey* event;
 
-    ConfDialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW(ConfDialog), "PLC Configuration");
-    gtk_window_set_default_size(GTK_WINDOW(ConfDialog), 200, 250);
-    gtk_window_set_resizable (GTK_WINDOW (ConfDialog), FALSE);
-    gtk_container_add(GTK_CONTAINER(ConfDialog), ConfPackingBox);
-    gtk_widget_add_events (ConfDialog, GDK_KEY_PRESS_MASK);
-    gtk_widget_add_events (ConfDialog, GDK_BUTTON_PRESS_MASK);
-
-    char buf[16];
-    sprintf(buf, "%.1f", (Prog.cycleTime / 1000.0));
-    gtk_entry_set_text (GTK_ENTRY (CycleTextbox), buf);
-
-    sprintf(buf, "%.6f", Prog.mcuClock / 1e6);
-    gtk_entry_set_text (GTK_ENTRY (CrystalTextbox), buf);
-
-    sprintf(buf, "%d", Prog.baudRate);
-    gtk_entry_set_text (GTK_ENTRY (BaudTextbox), buf);
-
-    gtk_widget_set_sensitive (MainWindow, FALSE);
-    gtk_widget_grab_focus (OkButton);
-    gtk_widget_set_state_flags (CycleTextbox, GTK_STATE_FLAG_FOCUSED, TRUE);
-    gtk_widget_grab_focus (CycleTextbox);
-    gtk_widget_show_all (ConfDialog);
-
-    ConfDialogSignalCall();
-
-    return;*/
 }

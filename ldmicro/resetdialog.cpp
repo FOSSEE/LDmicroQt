@@ -118,35 +118,4 @@ void ShowResetDialog(char *name)
         break;
     }
     DestroyWindow();
-    /*ResetGrid = gtk_grid_new();
-    ResetPackingBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-
-    ResetDialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW(ResetDialog), "Reset");
-    gtk_window_set_default_size(GTK_WINDOW(ResetDialog), 100, 50);
-    gtk_window_set_resizable (GTK_WINDOW (ResetDialog), FALSE);
-    gtk_container_add(GTK_CONTAINER(ResetDialog), ResetPackingBox);
-    gtk_widget_add_events (ResetDialog, GDK_KEY_PRESS_MASK);
-    gtk_widget_add_events (ResetDialog, GDK_BUTTON_PRESS_MASK);
-
-    MakeControls();
-   
-    if(name[0] == 'T') {
-        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (TypeTimerRadio), TRUE);
-    }
-    else {
-        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (TypeCounterRadio), TRUE);
-    }
-    gtk_entry_set_text (GTK_ENTRY (NameTextbox), name+1);
-
-    gtk_widget_set_sensitive (MainWindow, FALSE);
-    gtk_widget_show_all (ResetDialog);
-    gtk_widget_grab_focus (NameTextbox);
-    
-    g_signal_connect (G_OBJECT (ResetDialog), "key-press-event",
-                    G_CALLBACK(ResetDialogKeyPress), (gpointer)name);
-    g_signal_connect (G_OBJECT (OkButton), "clicked",
-                    G_CALLBACK(ResetDialogMouseClick), (gpointer)name);
-    g_signal_connect (G_OBJECT (CancelButton), "clicked",
-                    G_CALLBACK(ResetCallDestroyWindow), NULL);*/
 }

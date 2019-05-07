@@ -815,43 +815,6 @@ void SimulationToggleContact(char *name)
     // ListView_RedrawItems(IoList, 0, Prog.io.count - 1);
 }
 
-//-----------------------------------------------------------------------------
-// Dialog proc for the popup that lets you interact with the UART stuff.
-//-----------------------------------------------------------------------------
-// static LRESULT CALLBACK UartSimulationProc(HWND hwnd, UINT msg,
-//     WPARAM wParam, LPARAM lParam)
-// {
-//     switch (msg) {
-//         case WM_DESTROY:
-//             DestroyUartSimulationWindow();
-//             break;
-
-//         case WM_CLOSE:
-//             break;
-
-//         case WM_SIZE:
-//             MoveWindow(UartSimulationTextControl, 0, 0, LOWORD(lParam),
-//                 HIWORD(lParam), TRUE);
-//             break;
-
-//         case WM_ACTIVATE:
-//             if(wParam != WA_INACTIVE) {
-//                 SetFocus(UartSimulationTextControl);
-//             }
-//             break;
-
-//         default:
-//             return DefWindowProc(hwnd, msg, wParam, lParam);
-//     }
-//     return 1;
-// }
-
-//-----------------------------------------------------------------------------
-// Intercept WM_CHAR messages that to the terminal simulation window so that
-// we can redirect them to the PLC program.
-//
-// Ported: Read and write text fron the text view widget.
-//-----------------------------------------------------------------------------
 static void UartSimulationTextProc(/*HWID hwid, UINT umsg, char *text, UINT uszbuf*/)
 {
     char text = UartSimulationTextControl->toPlainText().toStdString().back();
@@ -865,48 +828,6 @@ static void UartSimulationTextProc(/*HWID hwid, UINT umsg, char *text, UINT uszb
         return;
     }
     QueuedUartCharacter = (BYTE)(text);
-    
-    /*switch(umsg)
-    {
-        case WM_SETTEXT:
-        {
-            GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW(hwid));
-            gtk_text_buffer_set_text (buffer, text, -1);
-            gtk_text_view_set_buffer (GTK_TEXT_VIEW(hwid), buffer);
-            
-            GtkTextIter end;
-            gtk_text_buffer_get_end_iter (buffer, &end);
-            gtk_text_view_scroll_to_iter (GTK_TEXT_VIEW(hwid), &end, 0.2, FALSE, 1, 1);
-            break;
-        }
-        case WM_SETTEXT_END:
-        {
-            GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW(hwid));
-            gtk_text_buffer_insert_at_cursor (buffer, text, -1);
-            gtk_text_view_set_buffer (GTK_TEXT_VIEW(hwid), buffer);
-
-            GtkTextIter end;
-            gtk_text_buffer_get_end_iter (buffer, &end);
-            gtk_text_view_scroll_to_iter (GTK_TEXT_VIEW(hwid), &end, 0.2, FALSE, 1, 1);
-            break;
-        }
-        case WM_GETTEXT:
-        {
-            GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW(hwid));
-            GtkTextIter start, end;
-            gtk_text_buffer_get_start_iter (buffer, &start);
-            gtk_text_buffer_get_end_iter (buffer, &end);
-
-            char *txtBuf = gtk_text_buffer_get_text (buffer, &start, &end, FALSE);
-
-            strcpy(text, txtBuf);
-            strcat(text, "\0");
-            g_free(txtBuf);
-            break;
-        }
-        default:
-            break;
-    }*/
 }
 
 //-----------------------------------------------------------------------------
@@ -954,29 +875,6 @@ void ShowUartSimulationWindow(void)
     UartSimulationWindow->show();
     MainWindow->setFocus();
     UARTWindowInitialized = TRUE;
-    // UartSimulationTextControl->document()->setModified(false);
-    // UartSimulationTextControl->setPlainText("H");
-
-    /*UartSimulationTextControl = gtk_text_view_new();
-
-    gtk_widget_override_font(GTK_WIDGET(UartSimulationTextControl), pango_font_description_from_string("Lucida Console"));
-
-    /// Add text view into a scrolled window to enable scrolling functionality
-    HWID TextViewScroll = gtk_scrolled_window_new (NULL, NULL);
-    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (TextViewScroll),
-				                          GTK_POLICY_AUTOMATIC, 
-				                          GTK_POLICY_AUTOMATIC);
-    gtk_widget_set_hexpand(GTK_WIDGET(TextViewScroll), TRUE);  
-    gtk_widget_set_vexpand(GTK_WIDGET(TextViewScroll), TRUE);
-
-    gtk_container_add (GTK_CONTAINER(TextViewScroll), UartSimulationTextControl);
-    gtk_container_add (GTK_CONTAINER(UartSimulationWindow), TextViewScroll);
-
-    gtk_widget_show_all(UartSimulationWindow);
-    
-    gtk_window_set_keep_above (GTK_WINDOW(MainWindow), TRUE);
-    gtk_window_set_focus_visible (GTK_WINDOW(MainWindow), TRUE);   
-    gtk_window_set_keep_above (GTK_WINDOW(MainWindow), FALSE);*/
 }
 
 //-----------------------------------------------------------------------------

@@ -200,7 +200,7 @@ void UndoUndo(void)
         SetUndoEnabled(FALSE, TRUE);
     }
    RefreshControlsToSettings(); 
-   RefreshScrollbars();
+   // RefreshScrollbars();
    InvalidateRect(MainWindow, NULL, FALSE);
 }
 
@@ -223,7 +223,7 @@ void UndoRedo(void)
         SetUndoEnabled(TRUE, FALSE);
     }
     RefreshControlsToSettings(); 
-    RefreshScrollbars();
+    // RefreshScrollbars();
     InvalidateRect(MainWindow, NULL, FALSE);
 }
 

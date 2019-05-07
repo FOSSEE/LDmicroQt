@@ -43,9 +43,7 @@ QMenuBar*       MainMenu;
 QGroupBox*      CursorObject;
 HWID            DrawWindow;
 WM_SCROLL       scrollbar;
-// parameters used to capture the mouse when implementing our totally non-
-// general splitter control
-//static HHOOK       MouseHookHandle;
+
 static int         MouseY;
 int CursorTimer;
 int SimulateTimer;
@@ -279,7 +277,7 @@ static void OpenDialog(void)
     DrawWindow->repaint();
 
     GenerateIoListDontLoseSelection();
-    RefreshScrollbars();
+    // RefreshScrollbars();
     UpdateMainWindowTitleBar();
 }
 
@@ -292,47 +290,14 @@ void ProgramChanged(void)
 {
     ProgramChangedNotSaved = TRUE;
     GenerateIoListDontLoseSelection();
-    RefreshScrollbars();
+    // RefreshScrollbars();
 }
+
 #define CHANGING_PROGRAM(x) { \
         UndoRemember(); \
         x; \
         ProgramChanged();\
     }
-
-//-----------------------------------------------------------------------------
-// Hook that we install when the user starts dragging the `splitter,' in case
-// they drag it out of the narrow area of the drawn splitter bar. Resize
-// the listview in response to mouse move, and unhook ourselves when they
-// release the mouse button.
-//-----------------------------------------------------------------------------
-// static LRESULT CALLBACK MouseHook(int code, WPARAM wParam, LPARAM lParam)
-// {
-//     switch(code) {
-//         case HC_ACTION: {
-//             MSLLHOOKSTRUCT *mhs = (MSLLHOOKSTRUCT *)lParam;
-
-//             switch(wParam) {
-//                 case WM_MOUSEMOVE: {
-//                     int dy = MouseY - mhs->pt.y;
-                   
-//                     IoListHeight += dy;
-//                     if(IoListHeight < 50) IoListHeight = 50;
-//                     MouseY = mhs->pt.y;
-//                     MainWindowResized();
-
-//                     break;
-//                 }
-
-//                 case WM_LBUTTONUP:
-//                     UnhookWindowsHookEx(MouseHookHandle);
-//                     break;
-//             }
-//             break;
-//         }
-//     }
-//     return CallNextHookEx(MouseHookHandle, code, wParam, lParam);
-// }
 
 //-----------------------------------------------------------------------------
 // Handle a selection from the menu bar of the main window.
@@ -360,7 +325,7 @@ static void ProcessMenu(int code)
             strcpy(CurrentSaveFile, "");
             strcpy(CurrentCompileFile, "");
             GenerateIoListDontLoseSelection();
-            RefreshScrollbars();
+            // RefreshScrollbars();
             UpdateMainWindowTitleBar();
             break;
 
@@ -607,47 +572,27 @@ cmp:
 
 void PaintWidget::keyPressEvent(QKeyEvent* event)
 {
-    // if(event->key() == )
         int wParam = event->key();
-
-    /*if(wParam == VK_TAB) {
-        // SetFocus(IoList);
-        gtk_window_set_focus (GTK_WINDOW(MainWindow), view);
-        // BlinkCursor(0, 0, 0, 0);
-        
-    }*/
 
     if(InSimulationMode) 
     {
         switch(wParam) 
         {
             case VK_DOWN:
-                /*if(ScrollYOffset < ScrollYOffsetMax)
-                    ScrollYOffset++;*/
-                RefreshScrollbars();
+                // RefreshScrollbars();
                 DrawWindow->repaint();
                 break;
 
             case VK_UP:
-                /*if(ScrollYOffset > 0)
-                    ScrollYOffset--;*/
-                RefreshScrollbars();
+                // RefreshScrollbars();
                 DrawWindow->repaint();
                 break;
 
             case VK_LEFT:
-                // ScrollXOffset -= FONT_WIDTH;
-                // if(ScrollXOffset < 0) 
-                /*    ScrollXOffset = 0;
-                RefreshScrollbars();*/
                 DrawWindow->repaint();
                 break;
 
             case VK_RIGHT:
-                /*ScrollXOffset += FONT_WIDTH;
-                if(ScrollXOffset >= ScrollXOffsetMax)
-                    ScrollXOffset = ScrollXOffsetMax;
-                RefreshScrollbars();*/
                 DrawWindow->repaint();
                 break;
 
@@ -720,190 +665,7 @@ void MyWidget::closeEvent(QCloseEvent* event)
         IoListHeight = IoList->height();
         FreezeDWORD(IoListHeight);
     }
-
-    /*GdkRectangle allocation;
-    gtk_widget_get_allocation(GTK_WIDGET(view), &allocation); 
-    IoListHeight = allocation.height;
-    FreezeWindowPos(MainWindow);
-    FreezeDWORD(IoListHeight);*/
 }
-// gboolean LD_WM_KeyDown_call(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
-// {   
-//     /* Handles:
-//     * WM_KEYDOWN
-//     */
-
-//     UINT wParam = event->keyval;
-
-//     if(wParam == VK_TAB) {
-//         // SetFocus(IoList);
-//         gtk_window_set_focus (GTK_WINDOW(MainWindow), view);
-//         // BlinkCursor(0, 0, 0, 0);
-        
-//     }
-
-//     if(InSimulationMode) 
-//     {
-//         switch(wParam) 
-//         {
-//             case VK_DOWN:
-//                 if(ScrollYOffset < ScrollYOffsetMax)
-//                     ScrollYOffset++;
-//                 RefreshScrollbars();
-//                 gtk_widget_queue_draw(DrawWindow);
-//                 break;
-
-//             case VK_UP:
-//                 if(ScrollYOffset > 0)
-//                     ScrollYOffset--;
-//                 RefreshScrollbars();
-//                 gtk_widget_queue_draw(DrawWindow);
-//                 break;
-
-//             case VK_LEFT:
-//                 ScrollXOffset -= FONT_WIDTH;
-//                 if(ScrollXOffset < 0) 
-//                     ScrollXOffset = 0;
-//                 RefreshScrollbars();
-//                 gtk_widget_queue_draw(DrawWindow);
-//                 break;
-
-//             case VK_RIGHT:
-//                 ScrollXOffset += FONT_WIDTH;
-//                 if(ScrollXOffset >= ScrollXOffsetMax)
-//                     ScrollXOffset = ScrollXOffsetMax;
-//                 RefreshScrollbars();
-//                 gtk_widget_queue_draw(DrawWindow);
-//                 break;
-
-//             case VK_RETURN:
-//             case VK_ESCAPE:
-//                 ToggleSimulationMode();
-//                 break;
-//         }
-//     }
-
-//     switch(wParam) 
-//     {
-//         case VK_UP:
-//             if(event->state & GDK_SHIFT_MASK)
-//             {
-//                 CHANGING_PROGRAM(PushRungUp());
-//             }
-//             else
-//             {
-//                 MoveCursorKeyboard(wParam);
-//             }
-
-//             gtk_widget_queue_draw(DrawWindow);
-//             break;
-
-//         case VK_DOWN:
-//             if(event->state & GDK_SHIFT_MASK)
-//             {
-//                 CHANGING_PROGRAM(PushRungDown());
-//             }
-//             else
-//             {
-//                 MoveCursorKeyboard(wParam);
-//             }
-
-//             gtk_widget_queue_draw(DrawWindow);
-//             break;
-
-//         case VK_RIGHT:
-//         case VK_LEFT:
-//             MoveCursorKeyboard(wParam);
-//             gtk_widget_queue_draw(DrawWindow);
-//             break;
-
-//         case VK_RETURN:
-//             CHANGING_PROGRAM(EditSelectedElement());
-//             gtk_widget_queue_draw(DrawWindow);
-//             break;
-
-//         default:
-//             break;
-//     }
-
-//     return FALSE;
-// }
-
-// gboolean LD_WM_Close_call(GtkWidget *widget, GdkEvent *event, gpointer user_data)
-// {
-//     /* Handles:
-//     * WM_CLOSE
-//     */
-    
-//     if(CheckSaveUserCancels())
-//         return TRUE;
-//     GdkRectangle allocation;
-//     gtk_widget_get_allocation(GTK_WIDGET(view), &allocation); 
-//     IoListHeight = allocation.height;
-//     FreezeWindowPos(MainWindow);
-//     FreezeDWORD(IoListHeight);
-//     g_print("List Height close: %d\n",IoListHeight);
-
-//     gtk_main_quit();
-//     gdk_threads_leave();
-// }
-
-// gboolean LD_GTK_mouse_click_hook(GtkWidget *widget, GdkEvent *event, gpointer user_data)
-// {
-//     /* Handles:
-//     * WM_LBUTTONDBLCLK, WM_LBUTTONDOWN
-//     */
-
-//     RECT Rect;
-//     GetWindowRect(ScrollWindow, &Rect);
-//     int wy;
-//     gtk_window_get_position(GTK_WINDOW(MainWindow), NULL, &wy);
-
-//     // g_print("net: %i\n", wy + 30 + Rect.bottom);
-
-//     /// Identify if mouse is clicked outside drawing area
-//     if (wy + 30 + Rect.bottom < event->button.y_root)
-//         return FALSE;
-
-//     GtkAdjustment *adjustment = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(ScrollWindow));
-
-//     switch(event->button.type)
-//     {
-//         case GDK_BUTTON_PRESS:
-//             if (event->button.button == 1) /// left click
-//             {
-//                 GLOBAL_mouse_last_clicked_x = event->button.x_root;
-//                 GLOBAL_mouse_last_clicked_y = event->button.y_root;
-
-//                 int x = event->button.x;
-//                 int y = event->button.y - 30 + gtk_adjustment_get_value(adjustment);
-
-//                 if(!InSimulationMode) MoveCursorMouseClick(x, y);
-
-//                 gtk_widget_queue_draw(DrawWindow);
-//             }
-//             break;
-//         case GDK_2BUTTON_PRESS:
-//             if (event->button.button == 1) /// left click
-//             {
-//                 GLOBAL_mouse_last_clicked_x = event->button.x_root;
-//                 GLOBAL_mouse_last_clicked_y = event->button.y_root;
-                
-//                 int x = event->button.x;
-//                 int y = event->button.y - 30 + gtk_adjustment_get_value(adjustment);
-
-//                 if(InSimulationMode) {
-//                     EditElementMouseDoubleclick(x, y);
-//                 } else {
-//                     CHANGING_PROGRAM(EditElementMouseDoubleclick(x, y));
-//                 }
-//                 gtk_widget_queue_draw(DrawWindow);
-//             }
-//             break;
-
-//     }
-//     return FALSE;
-// }
 
 void PaintWidget :: mouseReleaseEvent(QMouseEvent* event)
 {
@@ -914,14 +676,12 @@ void PaintWidget :: mouseReleaseEvent(QMouseEvent* event)
     QRect Rect;
     Rect = DrawWindow->rect();
     QPoint wy = event->pos();
-    // printf("mouseReleaseEvent: x:%d,y:%d",wy.x(),wy.y());
 
     if((wy.x() <= 0) || (wy.y() <= 0))
         return;
 
-    //No need to identify if mouse is outside the scope as the function is not called
-
-    // GtkAdjustment *adjustment = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(ScrollWindow));
+    //No need to identify if mouse is outside the scope since
+    //the function is not called
 
     switch(event->button())
     {
@@ -930,16 +690,11 @@ void PaintWidget :: mouseReleaseEvent(QMouseEvent* event)
                 GLOBAL_mouse_last_clicked_x = event->x();
                 GLOBAL_mouse_last_clicked_y = event->y();
 
-                /*int x = event->button.x;
-                int y = event->button.y - 30 + gtk_adjustment_get_value(adjustment);*/
-
                 if(!InSimulationMode) MoveCursorMouseClick(wy.x(), wy.y());
 
-                // gtk_widget_queue_draw(DrawWindow);
                 DrawWindow->repaint();
 
             break;
-    // return FALSE;
 }
 }
 void PaintWidget :: mouseDoubleClickEvent(QMouseEvent* event)
@@ -955,16 +710,12 @@ void PaintWidget :: mouseDoubleClickEvent(QMouseEvent* event)
         case Qt::LeftButton:
                 GLOBAL_mouse_last_clicked_x = event->x();
                 GLOBAL_mouse_last_clicked_y = event->y();
-                
-                /*int x = event->button.x;
-                int y = event->button.y - 30 + gtk_adjustment_get_value(adjustment);*/
 
                 if(InSimulationMode) {
                     EditElementMouseDoubleclick(wy.x(), wy.y());
                 } else {
                     CHANGING_PROGRAM(EditElementMouseDoubleclick(wy.x(), wy.y()));
                 }
-                // gtk_widget_queue_draw(DrawWindow);
                 DrawWindow->repaint();
             break;
 
@@ -972,202 +723,10 @@ void PaintWidget :: mouseDoubleClickEvent(QMouseEvent* event)
 
 }
 
-// gboolean LD_GTK_mouse_scroll_hook(GtkWidget *widget, GdkEvent *event, gpointer user_data)
-// {
-//     /* Handles:
-//     * WM_VSCROLL, WM_HSCROLL, WM_MOUSEWHEEL
-//     */
-
-//     GtkAdjustment *adjustment = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(ScrollWindow));
-    
-//     switch(event->scroll.direction)
-//     {
-//         case GDK_SCROLL_UP:
-//             if (gtk_adjustment_get_value(adjustment) == gtk_adjustment_get_lower(adjustment))
-//                 VscrollProc(SB_TOP);
-//             else
-//                 VscrollProc(SB_LINEUP);
-//             break;
-//         case GDK_SCROLL_DOWN:
-//             if (gtk_adjustment_get_value(adjustment) == gtk_adjustment_get_upper(adjustment) - gtk_widget_get_allocated_height (ScrollWindow))
-//                 VscrollProc(SB_BOTTOM);
-//             else
-//                 VscrollProc(SB_LINEDOWN);
-//             break;
-//         case GDK_SCROLL_LEFT:
-//             HscrollProc(SB_LINEUP);
-//             break;
-//         case GDK_SCROLL_RIGHT:
-//             HscrollProc(SB_LINEDOWN);
-//             break;
-//         case GDK_SCROLL_SMOOTH:
-//             double d_x, d_y;
-//             gdk_event_get_scroll_deltas (event, &d_x, &d_y);
-//             if(d_y > 0) {
-//                 VscrollProc(SB_LINEUP);
-//             } else {
-//                 VscrollProc(SB_LINEDOWN);
-//             }
-//             break;
-
-//     }
-
-//     gtk_widget_queue_draw(DrawWindow);
-//     return FALSE;
-// }
-
-// gboolean LD_WM_MouseMove_call(GtkWidget *widget, GdkEvent *event, gpointer user_data)
-// {
-//     /* Handles:
-//     * WM_MOUSEMOVE
-//     */
-
-//     // int x = LOWORD(lParam);
-//     // int y = HIWORD(lParam);
-
-//     // if((y > (IoListTop - 9)) && (y < (IoListTop + 3))) {
-//     //     SetCursor(LoadCursor(NULL, IDC_SIZENS));
-//     // } else {
-//     //     SetCursor(LoadCursor(NULL, IDC_ARROW));
-//     // }
-    
-//     // int dy = MouseY - mhs->pt.y;
-    
-//     // int dy = MouseY - mhs->pt.y;
-
-//     // IoListHeight += dy;
-//     // if(IoListHeight < 50) IoListHeight = 50;
-//     // MouseY = mhs->pt.y;
-//     // MainWindowResized();
-
-//     return FALSE;
-// }
-
-// gboolean LD_WM_Paint_call(HWID widget, HCRDC cr, gpointer data)
-// {
-//     /* Handles:
-//     * WM_PAINT
-//     */
-
-//     static BOOL Paint_call_first = TRUE;
-
-//     if (Paint_call_first)
-//     {        
-//         gtk_widget_override_background_color(GTK_WIDGET(widget), 
-//                     GTK_STATE_FLAG_NORMAL, (HBRUSH)GetStockObject(BLACK_BRUSH));
-
-//         gint width = gtk_widget_get_allocated_width (widget);
-//         gint height = gtk_widget_get_allocated_height (widget);
-
-//         gtk_widget_set_size_request(widget, width, height + 1);
-
-//         gdk_cairo_set_source_rgba (cr, (HBRUSH)GetStockObject(BLACK_BRUSH));
-
-//         cairo_rectangle(cr, 0, 0, width, height);
-//         cairo_stroke_preserve(cr);
-
-//         cairo_fill (cr);
-
-//         Paint_call_first = FALSE;
-//     }
-
-//     /// This draws the schematic.
-//     MainWindowResized();
-//     PaintWindow(cr);
-
-//     return FALSE;
-// }
-
-// gboolean LD_WM_Destroy_call(GtkWidget *widget, GdkEvent *event, gpointer user_data)
-// {
-//     /* Handles:
-//     * WM_DESTROY
-//     */
-
-//     if(CheckSaveUserCancels())
-//         return TRUE;
-
-//     FreezeWindowPos(MainWindow);
-//     FreezeDWORD(IoListHeight);
-
-//     gtk_main_quit();
-//     gdk_threads_leave();
-// }
-
-// gboolean LD_WM_Size_call(GtkWidget *widget, GdkEvent *event, gpointer user_data)
-// {
-//     /* Handles:
-//     * WM_SIZE
-//     */
-//     MainWindowResized();
-//     return FALSE;
-// }
-
 void ProgramSlots :: LD_WM_Command_call(int CommandCode)
 {
     ProcessMenu(CommandCode);
 }
-
-// gboolean LD_WM_SetFocus_call(GtkWidget *widget, GdkEvent *event, gpointer user_data)
-// {
-//     /* Handles:
-//     * WM_SETFOCUS
-//     */
-
-//     InvalidateRect(DrawWindow, NULL, FALSE);
-
-//     return FALSE;
-// }
-
-// void LD_WM_Notify_Row_Activate_call(GtkTreeView *tree_view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer user_data)
-// {
-//     /* Handles:
-//     * WM_NOTIFY
-//     */
-
-//     // g_print("Row activated!\n");
-
-//     int *ip = gtk_tree_path_get_indices ( path );
-
-//     NMHDR h;
-//     h.code = LVN_ITEMACTIVATE;
-//     h.item.iItem = ip[0];
-//     h.hlistFrom = IoList;
-
-//     IoListProc(&h);
-// }
-
-// void LD_WM_Notify_Cursor_Change_call(GtkTreeView *tree_view, gpointer user_data)
-// {
-//     /* Handles:
-//     * WM_NOTIFY
-//     */
-    
-//     ITLIST iter;
-
-//     // BOOL empty = !gtk_tree_model_get_iter_first (IoList, &iter);
-//     // g_print("empty = %i\n", (empty == TRUE) );
-
-//     HLIST pTreeModel;
-//     int *ip;
-//     GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
-//     gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);
-//     if(gtk_tree_selection_get_selected (selection, &pTreeModel, &iter))
-//     {
-//         GtkTreePath *path = gtk_tree_model_get_path ( pTreeModel , &iter ) ;
-//         ip = gtk_tree_path_get_indices ( path );
-//     }
-//     else
-//         if(!gtk_tree_model_get_iter_first (IoList, &iter))
-//             return;
-
-//     NMHDR h;
-//     h.code = LVN_GETDISPINFO;
-//     h.item.iItem = (ip == NULL) ? 0 : ip[0];
-//     h.hlistFrom = IoList;
-//     h.hlistIter = &iter;
-//     IoListProc(&h);
-// }
 
 inline void MenuHandler ()
 {
@@ -1368,31 +927,6 @@ inline void MenuHandler ()
 
     //Connect map to combined function call
     QObject::connect (CommandMapper, SIGNAL(mapped(int)), &MenuHandle, SLOT(LD_WM_Command_call(int))) ;
-    // QObject::connect(ExitMenu, SIGNAL(changed()), LDmicroApp, SLOT(aboutQt()));
-//     g_signal_connect(G_OBJECT(NewMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_NEW));
-
-//     g_signal_connect(G_OBJECT(OpenMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_OPEN));
-
-//     g_signal_connect(G_OBJECT(SaveMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_SAVE));
-
-//     g_signal_connect(G_OBJECT(SaveAsMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_SAVE_AS));
-
-//     g_signal_connect(G_OBJECT(ExportMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_EXPORT));
-
-//     g_signal_connect(G_OBJECT(ExitMenu), "activate",
-//         G_CALLBACK(LD_WM_Command_call), GINT_TO_POINTER(MNU_EXIT));
-
-//     // Connect microcontroller signals automatically
-//     for(int i = 0; i < NUM_SUPPORTED_MCUS; i++)
-//     {
-//         g_signal_connect(G_OBJECT(ProcessorMenuItems[i]), "toggled",
-//             G_CALLBACK(ProcessorCall), GINT_TO_POINTER((MNU_PROCESSOR_0 + i)));
-//     } 
 }
 void ActivateItem(QTreeWidgetItem* item, int column)
 {
@@ -1479,16 +1013,11 @@ int main(int argc, char** argv)
     
     // Initialize cursor and set color
     CursorObject = new QGroupBox(DrawWindow);
-    // CursorObject->setColor();
 
-    // QMenu TopMenu("Top Menu", MainWindow);
-    // MainMenu->addMenu(&TopMenu);
-    // MainWindow->layout()->setMenuBar(MainMenu);
     MainWindow->setWindowTitle("LDmicro");
     MainWindow->resize(MwSize);
     MainWindow->move( 10, 10);
-    // MainWindow->setStyleSheet("background-color: black;");
-    //Default Icon for entire app
+
     app.setWindowIcon(*MWIcon);
     //Icon for main window
     MainWindow->setWindowIcon(*MWIcon);
@@ -1515,92 +1044,9 @@ int main(int argc, char** argv)
 
     GenerateIoListDontLoseSelection(); 
 
-    // RefreshScrollbars();
     UpdateMainWindowTitleBar();
     QObject::connect(IoList, &QTreeWidget::itemActivated, ActivateItem);
-    // MakeDialogBoxClass();
 
-
-    /*ThawWindowPos(MainWindow);
-    ThawDWORD(IoListHeight);
-    g_print("IoListHeight start: %d\n", IoListHeight);
-    MakeMainWindowControls(); /// takes care of MakeMainWindowMenus()
-    MainWindowResized();
-
-    /// Keyboard and mouse hooks equivalent to MainWndProc
-    g_signal_connect (MainWindow, "delete_event", G_CALLBACK (LD_WM_Close_call), NULL);
-    g_signal_connect (MainWindow, "key_press_event", G_CALLBACK (LD_WM_KeyDown_call), NULL);
-    g_signal_connect (MainWindow, "button_press_event", G_CALLBACK (LD_GTK_mouse_click_hook), NULL);
-    g_signal_connect (MainWindow, "scroll_event", G_CALLBACK (LD_GTK_mouse_scroll_hook), NULL);
-    g_signal_connect (MainWindow, "motion_notify_event", G_CALLBACK (LD_WM_MouseMove_call), NULL);
-    g_signal_connect (DrawWindow, "draw", G_CALLBACK (LD_WM_Paint_call), NULL);
-    g_signal_connect (MainWindow, "destroy_event", G_CALLBACK (LD_WM_Destroy_call), NULL);
-    g_signal_connect (MainWindow, "configure_event", G_CALLBACK (LD_WM_Size_call), NULL);
-    g_signal_connect (MainWindow, "focus_in_event", G_CALLBACK (LD_WM_SetFocus_call), NULL);
-    g_signal_connect (view, "row_activated", G_CALLBACK (LD_WM_Notify_Row_Activate_call), NULL);
-    g_signal_connect (view, "cursor_changed", G_CALLBACK (LD_WM_Notify_Cursor_Change_call), NULL);
-    MenuHandler();
-    /// Keyboard and mouse hooks equivalent to MainWndProc - end
-
-    NewProgram();
-    strcpy(CurrentSaveFile, "");
-
-    /// We are running interactively, or we would already have exited. We
-    /// can therefore show the window now, and otherwise set up the GUI.
-
-    /// Displaying the window
-    gtk_widget_show_all(MainWindow);
-
-    /// Blink cursor
-    SetTimer(DrawWindow, TIMER_BLINK_CURSOR, 200, BlinkCursor);
-    // SetTimer(MainWindow, TIMER_BLINK_CURSOR, 800, BlinkCursor);
-    */
-    /*if(argc >= 2) {
-        char line[MAX_PATH];
-        if(*argv[1] == '"') { 
-            strcpy(line, argv[1]+1);
-        } else {
-            strcpy(line, argv[1]);
-        }
-        if(strchr(line, '"')) *strchr(line, '"') = '\0';
-        
-        realpath(line, CurrentSaveFile);
-        if(!LoadProjectFromFile(CurrentSaveFile)) {
-            NewProgram();
-            Error(_("Couldn't open '%s'."), CurrentSaveFile);
-            CurrentSaveFile[0] = '\0';
-        }
-        UndoFlush();
-    }*/
-
-    /*GenerateIoListDontLoseSelection(); 
-    RefreshScrollbars();
-    UpdateMainWindowTitleBar();
-*/
-    // MSG msg;
-    // DWORD ret;
-    // while(ret = GetMessage(&msg, NULL, 0, 0)) {
-    //     if(msg.hwnd == IoList && msg.message == WM_KEYDOWN) {
-    //         if(msg.wParam == VK_TAB) {
-    //             SetFocus(MainWindow);
-    //             continue;
-    //         }
-    //     }
-    //     if(msg.message == WM_KEYDOWN && msg.wParam != VK_UP &&
-    //         msg.wParam != VK_DOWN && msg.wParam != VK_RETURN && msg.wParam
-    //         != VK_SHIFT)
-    //     {
-    //         if(msg.hwnd == IoList) {
-    //             msg.hwnd = MainWindow;
-    //             SetFocus(MainWindow);
-    //         }
-    //     }
-    //     TranslateMessage(&msg);
-    //     DispatchMessage(&msg);
-    // }
-    
-/*    gtk_main();
-    return EXIT_SUCCESS;*/
     return app.exec();
     delete MainWindow;
     delete MWIcon;

@@ -586,7 +586,7 @@ void SetMenusEnabled(BOOL canNegate, BOOL canNormal, BOOL canResetOnly,
     BOOL canPushRungDown, BOOL canPushRungUp, BOOL canInsertComment);
 
 void SetUndoEnabled(BOOL undoEnabled, BOOL redoEnabled);
-void RefreshScrollbars(void);
+// void RefreshScrollbars(void);
 extern HINSTANCE        Instance;
 extern QApplication*    LDmicroApp;
 extern HWID             MainWindow;
@@ -647,7 +647,6 @@ BOOL BlinkCursor(BOOL kill);
 void PaintWindow();
 void ExportDrawingAsText(char *file);
 void InitForDrawing(void);
-void SetUpScrollbars(BOOL *horizShown, SCROLLINFO *horiz, SCROLLINFO *vert);
 int ScreenRowsAvailable(void);
 int ScreenColsAvailable(void);
 extern HFONT FixedWidthFont;

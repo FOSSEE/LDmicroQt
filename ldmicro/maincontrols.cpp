@@ -139,127 +139,16 @@ int                 IoListTop;
 // whether the simulation is running in real time
 static BOOL         RealTimeSimulationRunning;
 
-// Displaying keyboard shortcuts for each menu item
-/*void AddMenuAccelerators (void){
-    // Declaring the accelerator group for keyboard shortcuts
-    AccelGroup = gtk_accel_group_new ();
-
-    // Creating keyboard shortcuts for File menu
-    gtk_widget_add_accelerator (NewMenu, "activate", AccelGroup, GDK_KEY_N,
-                                GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (OpenMenu, "activate", AccelGroup, GDK_KEY_O,
-                                GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (SaveMenu, "activate", AccelGroup, GDK_KEY_S,
-                                GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (ExportMenu, "activate", AccelGroup, GDK_KEY_E,
-                                GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-
-    // Creating keyboard shortcuts for Edit menu
-    gtk_widget_add_accelerator (UndoMenu, "activate", AccelGroup, GDK_KEY_Z,
-                                GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (RedoMenu, "activate", AccelGroup, GDK_KEY_Y,
-                                GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (InsertRungBeforeMenu, "activate", AccelGroup, GDK_KEY_F6,
-                                GDK_SHIFT_MASK, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (InsertRungAfterMenu, "activate", AccelGroup, GDK_KEY_V,
-                                GDK_SHIFT_MASK, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (PushRungUpMenu, "activate", AccelGroup, GDK_KEY_uparrow,
-                                GDK_SHIFT_MASK, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (PushRungDownMenu, "activate", AccelGroup, GDK_KEY_downarrow,
-                                GDK_SHIFT_MASK, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (DeleteElementMenu, "activate", AccelGroup, GDK_KEY_Delete,
-                                (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (DeleteRungMenu, "activate", AccelGroup, GDK_KEY_Delete,
-                                GDK_SHIFT_MASK, GTK_ACCEL_VISIBLE);
-    
-    // Creating keyboard shortcuts for Instructions menu
-    gtk_widget_add_accelerator (InsertCommentMenu, "activate", AccelGroup, GDK_KEY_semicolon,
-                                (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (InsertContactsMenu, "activate", AccelGroup, GDK_KEY_C,
-                                (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (InsertOsrMenu, "activate", AccelGroup, GDK_KEY_backslash,
-                                (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (InsertOsfMenu, "activate", AccelGroup, GDK_KEY_slash,
-                                (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (InsertTonMenu, "activate", AccelGroup, GDK_KEY_O,
-                                (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (InsertTofMenu, "activate", AccelGroup, GDK_KEY_F,
-                                (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (InsertRtoMenu, "activate", AccelGroup, GDK_KEY_T,
-                                (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (InsertCtuMenu, "activate", AccelGroup, GDK_KEY_U,
-                                (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (InsertCtdMenu, "activate", AccelGroup, GDK_KEY_I,
-                                (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (InsertCtcMenu, "activate", AccelGroup, GDK_KEY_J,
-                                (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (InsertEquMenu, "activate", AccelGroup, GDK_KEY_equal,
-                                (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (InsertGrtMenu, "activate", AccelGroup, GDK_KEY_greater,
-                                (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (InsertGeqMenu, "activate", AccelGroup, GDK_KEY_Stop,
-                                (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (InsertLesMenu, "activate", AccelGroup, GDK_KEY_less,
-                                (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (InsertLeqMenu, "activate", AccelGroup, GDK_KEY_comma,
-                                (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (InsertCoilMenu, "activate", AccelGroup, GDK_KEY_L,
-                                (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (InsertResMenu, "activate", AccelGroup, GDK_KEY_E,
-                                (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (InsertMovMenu, "activate", AccelGroup, GDK_KEY_M,
-                                (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (InsertAddMenu, "activate", AccelGroup, GDK_KEY_plus,
-                                (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (InsertSubMenu, "activate", AccelGroup, GDK_KEY_minus,
-                                (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (InsertMulMenu, "activate", AccelGroup, GDK_KEY_multiply,
-                                (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (InsertDivMenu, "activate", AccelGroup, GDK_KEY_D,
-                                (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (InsertReadAdcMenu, "activate", AccelGroup, GDK_KEY_P,
-                                (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (MakeNormalMenu, "activate", AccelGroup, GDK_KEY_A,
-                                (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (NegateMenu, "activate", AccelGroup, GDK_KEY_N,
-                                (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (MakeSetOnlyMenu, "activate", AccelGroup, GDK_KEY_S,
-                                (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (MakeResetOnlyMenu, "activate", AccelGroup, GDK_KEY_R,
-                                (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-    
-    // Creating keyboard shortcuts for Simulation menu
-    gtk_widget_add_accelerator (SimulationModeMenu, "activate", AccelGroup, GDK_KEY_M,
-                                GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (StartSimulationMenu, "activate", AccelGroup, GDK_KEY_R,
-                                GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (StopSimulationMenu, "activate", AccelGroup, GDK_KEY_H,
-                                GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator (SingleCycleMenu, "activate", AccelGroup, GDK_KEY_space,
-                                (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-    
-    // Creating keyboard shortcuts for Compile menu
-    gtk_widget_add_accelerator (CompileMenu, "activate", AccelGroup, GDK_KEY_F5,
-                                (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-    
-    // Creating keyboard shortcuts for Help menu
-    gtk_widget_add_accelerator (ManualMenu, "activate", AccelGroup, GDK_KEY_F1,
-                                (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-    
-    gtk_window_add_accel_group (GTK_WINDOW (MainWindow), AccelGroup);
-
-}
-*/
 //-----------------------------------------------------------------------------
 // Create the top-level menu bar for the main window. Mostly static, but we
 // create the "select processor" menu from the list in mcutable.h dynamically.
 //-----------------------------------------------------------------------------
 HMENU MakeMainWindowMenus(void)
 {
-    HMENU  FileMenuSeparator;                                       // File menu separator
-    HMENU  EditMenuSeparator;                                       // Edit menu separator
-    HMENU  InstructionMenuSeparator;                                // Instruction menu separator
-    HMENU  SimulateMenuSeparator;                                   // Simulate menu separator
+    HMENU  FileMenuSeparator;
+    HMENU  EditMenuSeparator;
+    HMENU  InstructionMenuSeparator;
+    HMENU  SimulateMenuSeparator;
 
     int i;
 
@@ -343,17 +232,11 @@ HMENU MakeMainWindowMenus(void)
     ProcessorMenuItems[i]->setCheckable(true);
     ProcessorMenuItems[i]->setActionGroup(ProcessorMenuGroup);
     MicroControllerMenu->addAction(ProcessorMenuItems[i]);
-    /*mcuList = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (ProcessorMenuItems[i]));
-    gtk_menu_shell_append (GTK_MENU_SHELL (ProcessorMenu), ProcessorMenuItems[i]);*/
     }
     ProcessorMenuItems[i] = new QAction("(no microcontroller)", NULL);
     ProcessorMenuItems[i]->setCheckable(true);
     ProcessorMenuItems[i]->setActionGroup(ProcessorMenuGroup);
     MicroControllerMenu->addAction(ProcessorMenuItems[i]);
-    /*ProcessorMenuItems[NUM_SUPPORTED_MCUS] = gtk_radio_menu_item_new_with_label (mcuList, "(no microcontroller)");
-    mcuList = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (ProcessorMenuItems[NUM_SUPPORTED_MCUS]));
-    gtk_menu_shell_append (GTK_MENU_SHELL (ProcessorMenu), ProcessorMenuItems[NUM_SUPPORTED_MCUS]);
-    gtk_menu_item_set_submenu(GTK_MENU_ITEM(MicroControllerMenu), ProcessorMenu);*/
 
     // Creating labels for Instruction Menu and adding separators
     InsertCommentMenu = new QAction("&Insert Comment", MainWindow);
@@ -368,7 +251,8 @@ HMENU MakeMainWindowMenus(void)
     InsertTonMenu->setShortcut(QKeySequence(Qt::Key_O));
     InsertTofMenu = new QAction("&Insert TOF (Delayed Turn Off)", MainWindow);
     InsertTofMenu->setShortcut(QKeySequence(Qt::Key_F));
-    InsertRtoMenu = new QAction("&Insert RTO (Retentive Delayed Turn On)", MainWindow);
+    InsertRtoMenu = new QAction("&Insert RTO (Retentive Delayed Turn On)",
+        MainWindow);
     InsertRtoMenu->setShortcut(QKeySequence(Qt::Key_T));
     InsertCtuMenu = new QAction("&Insert CTU (Count Up)", MainWindow);
     InsertCtuMenu->setShortcut(QKeySequence(Qt::Key_U));
@@ -378,18 +262,24 @@ HMENU MakeMainWindowMenus(void)
     InsertCtcMenu->setShortcut(QKeySequence(Qt::Key_J));
     InsertEquMenu = new QAction("&Insert EQU (Compare for Equals)", MainWindow);
     InsertEquMenu->setShortcut(QKeySequence(Qt::Key_Equal));
-    InsertNeqMenu = new QAction("&Insert NEQ (Compare for Not Equals)", MainWindow);
-    InsertGrtMenu = new QAction("&Insert GRT (Compare for Greater Than)", MainWindow);
+    InsertNeqMenu = new QAction("&Insert NEQ (Compare for Not Equals)",
+        MainWindow);
+    InsertGrtMenu = new QAction("&Insert GRT (Compare for Greater Than)",
+        MainWindow);
     InsertGrtMenu->setShortcut(QKeySequence(Qt::Key_Greater));
-    InsertGeqMenu = new QAction("&Insert GEQ (Compare for Greater Than or Equal)", MainWindow);
+    InsertGeqMenu = new QAction(
+        "&Insert GEQ (Compare for Greater Than or Equal)", MainWindow);
     InsertGeqMenu->setShortcut(QKeySequence(Qt::Key_Period));
-    InsertLesMenu = new QAction("&Insert LES (Compare for Less Than)", MainWindow);
+    InsertLesMenu = new QAction(
+        "&Insert LES (Compare for Less Than)", MainWindow);
     InsertLesMenu->setShortcut(QKeySequence(Qt::Key_Less));
-    InsertLeqMenu = new QAction("&Insert LEQ (Compare for Less Than or Equal)", MainWindow);
+    InsertLeqMenu = new QAction(
+        "&Insert LEQ (Compare for Less Than or Equal)", MainWindow);
     InsertLeqMenu->setShortcut(QKeySequence(Qt::Key_Comma));
     InsertOpenMenu = new QAction("&Insert Open Circuit", MainWindow);
     InsertShortMenu = new QAction("&Insert Short Circuit", MainWindow);
-    InsertMasterRlyMenu = new QAction("&Insert Master Control Relay", MainWindow);
+    InsertMasterRlyMenu = new QAction(
+        "&Insert Master Control Relay", MainWindow);
     InsertCoilMenu = new QAction("&Insert Coil", MainWindow);
     InsertCoilMenu->setShortcut(QKeySequence(Qt::Key_L));
     InsertResMenu = new QAction("&Insert RES (Counter/RTO Reset)", MainWindow);
@@ -398,16 +288,20 @@ HMENU MakeMainWindowMenus(void)
     InsertMovMenu->setShortcut(QKeySequence(Qt::Key_M));
     InsertAddMenu = new QAction("&Insert ADD (16-bit Integer Ad)", MainWindow);
     InsertAddMenu->setShortcut(QKeySequence(Qt::Key_Plus));
-    InsertSubMenu = new QAction("&Insert SUB (16-bit Integer Subtract)", MainWindow);
+    InsertSubMenu = new QAction(
+        "&Insert SUB (16-bit Integer Subtract)", MainWindow);
     InsertSubMenu->setShortcut(QKeySequence(Qt::Key_Minus));
-    InsertMulMenu = new QAction("&Insert MUL (16-bit Integer Multiply)", MainWindow);
+    InsertMulMenu = new QAction(
+        "&Insert MUL (16-bit Integer Multiply)", MainWindow);
     InsertMulMenu->setShortcut(QKeySequence(Qt::Key_Asterisk));
-    InsertDivMenu = new QAction("&Insert DIV (16-bit Integer Division)", MainWindow);
+    InsertDivMenu = new QAction(
+        "&Insert DIV (16-bit Integer Division)", MainWindow);
     InsertDivMenu->setShortcut(QKeySequence(Qt::Key_D));
     InsertShiftRegMenu = new QAction("&Insert Shift Register", MainWindow);
     InsertLutMenu = new QAction("&Insert Look-Up Table", MainWindow);
     InsertPwlMenu = new QAction("&Insert Piecewise Linear", MainWindow);
-    InsertFmtdStrMenu = new QAction("&Insert Formatted String Over UART", MainWindow);
+    InsertFmtdStrMenu = new QAction(
+        "&Insert Formatted String Over UART", MainWindow);
     InsertUartSendMenu = new QAction("&Insert UART Send", MainWindow);
     InsertUartRecvMenu = new QAction("&Insert UART Receive", MainWindow);
     InsertSetPwmMenu = new QAction("&Insert Set PWM Output", MainWindow);
@@ -518,10 +412,6 @@ HMENU MakeMainWindowMenus(void)
     MainMenu->addMenu(Compile);
     MainMenu->addMenu(Help);
 
-    // Packing the menu bar into the box for alignment
-    // MainMenu->addMenu(TopMenu);
-    // AddMenuAccelerators ();
-    
     return FileMenu;
 }
 
@@ -544,9 +434,6 @@ void MakeMainWindowControls(void)
             "Pin on Processor",
             "MCU Port"};
     IoList->setHeaderLabels(ColumnNames);
-    /*QList<QTreeWidgetItem *> items;
-    items.append(new QTreeWidgetItem(QStringList(QString("Item1"))));
-    IoList->insertTopLevelItems(0, items);*/
     DrawWindow->setAutoFillBackground(true);
     QSize DWSize;
     scrollbar = new QScrollArea();
@@ -556,169 +443,24 @@ void MakeMainWindowControls(void)
     DWSize.setHeight(MainWindow->height() - IoListHeight);
     DWSize.setWidth(MainWindow->width());
     DrawWindow->setMinimumHeight(100);
-    // scrollbar->setWidgetResizable(TRUE);
     scrollbar->resize(DWSize);
-    // DrawWindow->resize(scrollbar->viewportSizeHint());
     scrollbar->setWidget(DrawWindow);
     splitter->addWidget(scrollbar);
     DWSize.setWidth(MainWindow->width() - 
         (scrollbar->sizeHint().width()+ MainWindow->sizeHint().width()));
     DrawWindow->resize(DWSize);
-    /*QPalette pal = QPalette();
-    pal.setColor(QPalette::Background, Qt::black);
-    DrawWindow->setAutoFillBackground(true);
-    DrawWindow->setPalette(pal);*/
-    // DrawWindow->setGeometry(0, 0, 500, 500);
     DWSize.setHeight(IoListHeight);
     IoList->resize(DWSize);
     splitter->addWidget(IoList);
     QStatusBar* StatusGrid = new QStatusBar(MainWindow);
-    // QHBoxLayout* StatusLayout = new QHBoxLayout(StatusGrid);
-    /*QFrame* StatusSplit = new QFrame(MainWindow);
-    StatusSplit->setFrameShape(QFrame::HLine);*/
-    // StatusGrid->showMessage("Ready");
     PackBoxMenu->addWidget(splitter);
-    // PackBoxMenu->addWidget(StatusSplit);
     for(int i = 0; i<3;i++)
     {
         StatusBar[i] = new QLabel(StatusGrid);
         StatusBar[i]->setText("LDMicro Started");
         StatusGrid->addPermanentWidget(StatusBar[i], 1);
     }
-    // StatusGrid->setLayout(StatusLayout);
     PackBoxMenu->addWidget(StatusGrid);
-    // HWID grid = gtk_grid_new();
-    /// Pane to separate Scrolled Window and other widgets
-    /*HWID pane = gtk_paned_new (GTK_ORIENTATION_VERTICAL);
-
-    IoList = (GtkTreeModel*)gtk_list_store_new (5, 
-                                G_TYPE_STRING,   
-                                G_TYPE_STRING,    
-                                G_TYPE_STRING,
-                                G_TYPE_STRING,
-                                G_TYPE_STRING);
-
-    int typeWidth = 85;
-    int pinWidth = 100;
-    int portWidth = 90;
-
-    /// Creating a list
-    view = gtk_tree_view_new_with_model (GTK_TREE_MODEL(IoList));
-    gtk_tree_view_set_model (GTK_TREE_VIEW (view), GTK_TREE_MODEL (IoList));
-    gtk_tree_view_set_enable_search (GTK_TREE_VIEW (view), FALSE);
-
-    column = gtk_tree_view_column_new_with_attributes("Name",
-                                                    gtk_cell_renderer_text_new(),
-                                                    "text", LV_IO_NAME,
-                                                    NULL);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
-    gtk_tree_view_column_set_min_width (column, 250);
-
-    column = gtk_tree_view_column_new_with_attributes("Type",
-                                                    gtk_cell_renderer_spin_new(),
-                                                    "text", LV_IO_TYPE,
-                                                    NULL);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
-    gtk_tree_view_column_set_min_width (column, typeWidth);
-
-    column = gtk_tree_view_column_new_with_attributes("State",
-                                                    gtk_cell_renderer_text_new(),
-                                                    "text", LV_IO_STATE,
-                                                    NULL);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
-    gtk_tree_view_column_set_min_width (column, 100);
-
-    column = gtk_tree_view_column_new_with_attributes("Pin on Processor",
-                                                    gtk_cell_renderer_text_new(),
-                                                    "text", LV_IO_PIN,
-                                                    NULL);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
-    gtk_tree_view_column_set_min_width (column, pinWidth);
-
-    column = gtk_tree_view_column_new_with_attributes("MCU Port",
-                                                    gtk_cell_renderer_text_new(),
-                                                    "text", LV_IO_PORT,
-                                                    NULL);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
-    gtk_tree_view_column_set_min_width (column, portWidth);
-
-    /// Appending Menus to grid
-    gtk_grid_attach (GTK_GRID (grid), MakeMainWindowMenus(), 0, 0, 1, 1);
-
-    /// Creating Scrolled Window
-    ScrollWindow = gtk_scrolled_window_new (NULL, NULL);
-    HWID ViewPortMenu = gtk_viewport_new (NULL,NULL);
-    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (ScrollWindow),
-				                          GTK_POLICY_AUTOMATIC, 
-				                          GTK_POLICY_ALWAYS);
-    gtk_widget_set_hexpand(GTK_WIDGET(ScrollWindow), TRUE);  
-    gtk_widget_set_vexpand(GTK_WIDGET(ScrollWindow), TRUE);
-
-    /// Adding DrawWindow to pane
-    gtk_container_add (GTK_CONTAINER(ViewPortMenu), DrawWindow);
-    gtk_container_add (GTK_CONTAINER(ScrollWindow), ViewPortMenu);
-    gtk_paned_pack1 (GTK_PANED (pane), ScrollWindow, TRUE, TRUE);
-    gtk_paned_set_position (GTK_PANED (pane), 0);
-
-    /// Appending tree view to scrolled window 
-    HWID ViewScroll = gtk_scrolled_window_new (NULL, NULL);
-    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (ViewScroll),
-				                          GTK_POLICY_AUTOMATIC, 
-				                          GTK_POLICY_ALWAYS);
-    gtk_widget_set_hexpand(GTK_WIDGET(ViewScroll), TRUE);  
-    gtk_widget_set_vexpand(GTK_WIDGET(ViewScroll), TRUE);
-
-    gtk_container_add (GTK_CONTAINER(ViewScroll), view);
-
-    /// Appending tree view to pane and pane to grid
-    gtk_paned_pack2 (GTK_PANED(pane), ViewScroll, FALSE, FALSE);
-    gtk_paned_set_position (GTK_PANED (pane), 400);
-    gtk_grid_attach (GTK_GRID (grid), pane, 0, 0, 1, 1); 
-    
-    gtk_box_pack_start(GTK_BOX(PackBoxMenu), grid, FALSE, TRUE, 0);
-
-    /// Grid for status bars
-    HWID StatusGrid = gtk_grid_new();
-
-    // Change background color to grey
-    gtk_widget_override_background_color(GTK_WIDGET(StatusGrid), 
-        GTK_STATE_FLAG_NORMAL, ((HBRUSH)GetStockObject(DKGRAY_BRUSH)));
-
-    /// Creating Status Bar 1 and attaching to grid
-    StatusBar[0] = gtk_statusbar_new();
-   
-    gtk_statusbar_push (GTK_STATUSBAR (StatusBar[0]),
-                        gtk_statusbar_get_context_id (GTK_STATUSBAR (StatusBar[0]),
-                        "Introduction"), "LDMicro Started");
-
-    /// Appneding Status Bar 1 to the status grid
-    gtk_grid_attach (GTK_GRID (StatusGrid), StatusBar[0], 0, 0, 1, 1);
-    
-    /// Creating Status Bar 2 and attaching to grid
-    StatusBar[1] = gtk_statusbar_new();
-   
-    gtk_statusbar_push (GTK_STATUSBAR (StatusBar[1]),
-                        gtk_statusbar_get_context_id (GTK_STATUSBAR (StatusBar[1]),
-                        "Introduction"), "LDMicro Started");
-
-    /// Appneding Status Bar 2 to the status box
-    gtk_grid_attach (GTK_GRID (StatusGrid), StatusBar[1], 1, 0, 1, 1);
-    
-    /// Creating Status Bar 3 and attaching to grid
-    StatusBar[2] = gtk_statusbar_new();
-   
-    gtk_statusbar_push (GTK_STATUSBAR (StatusBar[2]),
-                        gtk_statusbar_get_context_id (GTK_STATUSBAR (StatusBar[2]),
-                        "Introduction"), "LDMicro Started");
-
-    /// Appneding Status Bar 3 to the status box
-    gtk_grid_attach (GTK_GRID (StatusGrid), StatusBar[2], 2, 0, 1, 1);
-
-    /// Attach status grid to box
-    gtk_box_pack_start(GTK_BOX(PackBoxMenu), StatusGrid, FALSE, FALSE, 0);
-
-    /// Adding box to Main Window
-    gtk_container_add(GTK_CONTAINER(MainWindow), PackBoxMenu);*/
 }
 
 //-----------------------------------------------------------------------------
@@ -726,132 +468,10 @@ void MakeMainWindowControls(void)
 // to a change in the size of the program or a change in the size of the
 // window.
 //-----------------------------------------------------------------------------
-void RefreshScrollbars(void)
+/*void RefreshScrollbars(void)
 {
-    // SCROLLINFO vert, horiz;
-    // SetUpScrollbars(&NeedHoriz, &horiz, &vert);
+}*/
 
-    // SetScrollInfo(HorizScrollBar, SB_CTL, &horiz, TRUE);
-    // SetScrollInfo(VertScrollBar, SB_CTL, &vert, TRUE);
-
-    // RECT main;
-    // GetClientRect(MainWindow, &main);
-
-    // if(NeedHoriz) {
-    //     MoveWindow(HorizScrollBar, 0, IoListTop - ScrollHeight - 2,
-    //         main.right - ScrollWidth - 2, ScrollHeight, TRUE);
-    //     ShowWindow(HorizScrollBar, SW_SHOW);
-    //     EnableWindow(HorizScrollBar, TRUE);
-    // } else {
-    //     ShowWindow(HorizScrollBar, SW_HIDE);
-    // }
-    // MoveWindow(VertScrollBar, main.right - ScrollWidth - 2, 1, ScrollWidth,
-    //     NeedHoriz ? (IoListTop - ScrollHeight - 4) : (IoListTop - 3), TRUE);
-
-    // MoveWindow(VertScrollBar, main.right - ScrollWidth - 2, 1, ScrollWidth,
-    //     NeedHoriz ? (IoListTop - ScrollHeight - 4) : (IoListTop - 3), TRUE);
-
-    // InvalidateRect(DrawWindow, NULL, FALSE);
-}
-/*
-//-----------------------------------------------------------------------------
-// Respond to a WM_VSCROLL sent to the main window, presumably by the one and
-// only vertical scrollbar that it has as a child.
-//-----------------------------------------------------------------------------
-void VscrollProc(int wParam)
-{
-    int prevY = ScrollYOffset;
-    switch(wParam) {
-        case SB_LINEUP:
-        case SB_PAGEUP:
-            if(ScrollYOffset > 0) {
-                ScrollYOffset--;
-            }
-            break;
-
-        case SB_LINEDOWN:
-        case SB_PAGEDOWN:
-            if(ScrollYOffset < ScrollYOffsetMax) {
-                ScrollYOffset++;
-            }
-            break;
-
-        case SB_TOP:
-            ScrollYOffset = 0;
-            break;
-
-        case SB_BOTTOM:
-            ScrollYOffset = ScrollYOffsetMax;
-            break;
-
-        // case SB_THUMBTRACK:
-        // case SB_THUMBPOSITION:
-            // ScrollYOffset = HIWORD(wParam);
-            // break;
-    }
-    // if(prevY != ScrollYOffset) {
-    //     SCROLLINFO si;
-    //     si.cbSize = sizeof(si);
-    //     si.fMask = SIF_POS;
-    //     si.nPos = ScrollYOffset;
-    //     SetScrollInfo(VertScrollBar, SB_CTL, &si, TRUE);
-
-    //     InvalidateRect(MainWindow, NULL, FALSE);
-    // }
-}
-
-//-----------------------------------------------------------------------------
-// Respond to a WM_HSCROLL sent to the main window, presumably by the one and
-// only horizontal scrollbar that it has as a child.
-//-----------------------------------------------------------------------------
-void HscrollProc(int wParam)
-{
-    int prevX = ScrollXOffset;
-    switch(wParam) {
-        case SB_LINEUP:
-            ScrollXOffset -= FONT_WIDTH;
-            break;
-
-        case SB_PAGEUP:
-            ScrollXOffset -= POS_WIDTH*FONT_WIDTH;
-            break;
-
-        case SB_LINEDOWN:
-            ScrollXOffset += FONT_WIDTH;
-            break;
-
-        case SB_PAGEDOWN:
-            ScrollXOffset += POS_WIDTH*FONT_WIDTH;
-            break;
-
-        case SB_TOP:
-            ScrollXOffset = 0;
-            break;
-
-        case SB_BOTTOM:
-            ScrollXOffset = ScrollXOffsetMax;
-            break;
-
-        // case SB_THUMBTRACK:
-        // case SB_THUMBPOSITION:
-            // ScrollXOffset = HIWORD(wParam);
-            // break;
-    }
-
-    if(ScrollXOffset > ScrollXOffsetMax) ScrollXOffset = ScrollXOffsetMax;
-    if(ScrollXOffset < 0) ScrollXOffset = 0;
-
-    // if(prevX != ScrollXOffset) {
-    //     SCROLLINFO si;
-    //     si.cbSize = sizeof(si);
-    //     si.fMask = SIF_POS;
-    //     si.nPos = ScrollXOffset;
-    //     SetScrollInfo(HorizScrollBar, SB_CTL, &si, TRUE);
-
-    //     InvalidateRect(MainWindow, NULL, FALSE);
-    // }
-}
-*/
 //-----------------------------------------------------------------------------
 // Set up the title bar text for the main window; indicate whether we are in
 // simulation or editing mode, and indicate the filename.
@@ -953,8 +573,8 @@ void SetMenusEnabled(BOOL canNegate, BOOL canNormal, BOOL canResetOnly,
 //-----------------------------------------------------------------------------
 void SetUndoEnabled(BOOL undoEnabled, BOOL redoEnabled)
 {
-    // EnableMenuItem(EditMenu, UndoMenu, undoEnabled ? MF_ENABLED : MF_GRAYED);
-    // EnableMenuItem(EditMenu, RedoMenu, redoEnabled ? MF_ENABLED : MF_GRAYED);
+    EnableMenuItem(EditMenu, UndoMenu, undoEnabled ? MF_ENABLED : MF_GRAYED);
+    EnableMenuItem(EditMenu, RedoMenu, redoEnabled ? MF_ENABLED : MF_GRAYED);
 }
 
 //-----------------------------------------------------------------------------
@@ -1015,7 +635,7 @@ void ToggleSimulationMode(void)
         }
         }
 
-    // UpdateMainWindowTitleBar();
+    UpdateMainWindowTitleBar();
     RefreshControlsToSettings();
 }
 
@@ -1027,16 +647,6 @@ void ToggleSimulationMode(void)
 //-----------------------------------------------------------------------------
 void RefreshControlsToSettings(void)
 {
-    /*QList<QTreeWidgetItem *> items;
-    // sl.add()
-    QStringList sl;
-    sl.insert(0,"Item1");
-    sl.insert(3,"Item11");
-    items.append(new QTreeWidgetItem(sl));
-    items.append(new QTreeWidgetItem(QStringList(QString("Item2"))));
-    items.append(new QTreeWidgetItem(QStringList(QString("Item3"))));
-    IoList->insertTopLevelItems(0, items);*/
-    // DrawWindow->repaint();
     QTreeWidgetItem iter;
     QTreeWidgetItem* selection;
     if(!IoListOutOfSync) {
@@ -1046,7 +656,6 @@ void RefreshControlsToSettings(void)
     NMHDR h;
     h.code = LVN_GETDISPINFO;
     h.hlistFrom = IoList;
-    // printf("ioCount:%d\n",Prog.io.count);
     IoList->clear();
     h.hlistIter.clear();
     for(int i = 0; i < Prog.io.count; i++) {
@@ -1090,10 +699,12 @@ void RefreshControlsToSettings(void)
     }
     // `(no microcontroller)' setting
     if (!Prog.mcu){
-        CheckMenuItem(ProcessorMenu, ProcessorMenuItems[NUM_SUPPORTED_MCUS], MF_CHECKED);
+        CheckMenuItem(ProcessorMenu,
+            ProcessorMenuItems[NUM_SUPPORTED_MCUS], MF_CHECKED);
     }
     else {
-        CheckMenuItem(ProcessorMenu, ProcessorMenuItems[NUM_SUPPORTED_MCUS], MF_UNCHECKED);
+        CheckMenuItem(ProcessorMenu,
+            ProcessorMenuItems[NUM_SUPPORTED_MCUS], MF_UNCHECKED);
     }
 }
 
@@ -1121,35 +732,6 @@ void GenerateIoListDontLoseSelection(void)
 void MainWindowResized(void)
 {
     IoListTop = DrawWindow->height();
-    //PaintWindow();
-    /*RECT main;
-    //GetClientRect(DrawWindow, &main);
-
-    RECT status;
-    // GetWindowRect(StatusBar, &status);
-    // int statusHeight = status.bottom - status.top;
-
-    // MoveWindow(StatusBar, 0, main.bottom - statusHeight, main.right,
-        // statusHeight, TRUE);
-
-    // Make sure that the I/O list can't disappear entirely.
-    if(IoListHeight < 30) {
-        IoListHeight = 30;
-    }
-    //IoListTop = main.bottom ;//- IoListHeight - statusHeight;
-
-    // Make sure that we can't drag the top of the I/O list above the
-    // bottom of the menu bar, because it then becomes inaccessible.
-    if(IoListTop < 5) {
-        IoListHeight = main.bottom - 5;//- statusHeight - 5;
-        IoListTop = main.bottom - IoListHeight;// - statusHeight;
-    }*/
-    // DrawWindow->resize(MainWindow->width(),MainWindow->height() - IoListHeight);
-    // MoveWindow(IoList, 0, IoListTop, main.right, IoListHeight, TRUE);
-
-    // RefreshScrollbars();
-    
-    // InvalidateRect(DrawWindow, NULL, FALSE);
 
 }
 
@@ -1163,7 +745,7 @@ void StartSimulation(void)
     EnableMenuItem(SimulateMenu, StartSimulationMenu, MF_GRAYED);
     EnableMenuItem(SimulateMenu, StopSimulationMenu, MF_ENABLED);
     StartSimulationTimer();
-    // UpdateMainWindowTitleBar();
+    UpdateMainWindowTitleBar();
 }
 
 //-----------------------------------------------------------------------------
@@ -1178,5 +760,5 @@ void StopSimulation(void)
     EnableMenuItem(SimulateMenu, StopSimulationMenu, MF_GRAYED);
     KillTimer(DrawWindow, TIMER_SIMULATE);
     
-    // UpdateMainWindowTitleBar();
+    UpdateMainWindowTitleBar();
 }

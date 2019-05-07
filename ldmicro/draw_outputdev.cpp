@@ -95,20 +95,11 @@ BOOL BlinkCursor(BOOL kill = FALSE)
     QRect c;
     c = Cursor;
 
-    c.setTop(c.top() - /*ScrollYOffset**/POS_HEIGHT*FONT_HEIGHT);
-    c.setLeft(c.left() /*- ScrollXOffset*/);
-    // if(c.top() >= IoListTop) return TRUE;
-
-    /*if(c.top() + c.height() >= IoListTop) {
-        c.setHeight(IoListTop - c.top() - 3);
-    }*/
+    c.setTop(c.top() - POS_HEIGHT*FONT_HEIGHT);
+    c.setLeft(c.left());
     if(DrawWindow == NULL)
         return FALSE;
 
-    // if(!GDK_IS_DRAWING_CONTEXT(Hdc))
-        // return FALSE;
-
-    // HCRDC Hcr = gdk_cairo_create(gtk_widget_get_window(DrawWindow));
     HWID Hcr = DrawWindow;
 
     static int PREV_x = c.left();
@@ -116,7 +107,8 @@ BOOL BlinkCursor(BOOL kill = FALSE)
     static int PREV_w = c.width();
     static int PREV_h = c.height();
 
-    if (PREV_x != c.left() || PREV_y != c.top() || PREV_w != c.width() || PREV_h != c.height())
+    if (PREV_x != c.left() || PREV_y != c.top() ||
+        PREV_w != c.width() || PREV_h != c.height())
     {
         CursorObject->setGeometry(c);
         CursorObject->setVisible(TRUE);
@@ -124,22 +116,14 @@ BOOL BlinkCursor(BOOL kill = FALSE)
         PREV_y = c.top();
         PREV_w = c.width();
         PREV_h = c.height();
-        // printf("Cursor: x:%d, y:%d\n",c.left(),c.top());
-
-        // MainWindowResized();
-        // PaintWindow(Hcr);
-        // gtk_widget_queue_draw(DrawWindow);
     }
     CursorObject->setGeometry(Cursor);
 
     if (CursorObject->isVisible())
         CursorObject->setVisible(FALSE);
     else
-        // PatBlt(Hcr, c.left(), c.top(), c.width(), c.height(), PATINVERT, (HBRUSH)GetStockObject(BLACK_BRUSH));
         CursorObject->setVisible(TRUE);
     InvalidateRect(DrawWindow, NULL, FALSE);
-    // cairo_destroy(Hcr);
-    // CursorDrawn = !CursorDrawn;
 
     return !kill;
 }
@@ -150,10 +134,7 @@ BOOL BlinkCursor(BOOL kill = FALSE)
 //-----------------------------------------------------------------------------
 static void DrawCharsToScreen(HCRDC Hcr, int cx, int cy, const char *str)
 {
-    // cy -= ScrollYOffset*POS_HEIGHT;
     if(cy < -2) return;
-    // if(cy*FONT_HEIGHT + Y_PADDING > IoListTop) return;
-    // IoListTop not initialized.
 
     COLORREF prev;
     BOOL firstTime = TRUE;
@@ -387,14 +368,6 @@ void PaintWidget::paintEvent(QPaintEvent *event)
  
     CursorDrawn = FALSE;
 
-    // BitBlt(paintDc, 0, 0, bw, bh, BackDc, ScrollXOffset, 0, SRCCOPY);
-
-    /*if(InSimulationMode) {
-        KillTimer(DrawWindow, TIMER_BLINK_CURSOR);
-    } else {
-        CursorTimer = SetTimer(DrawWindow, TIMER_BLINK_CURSOR, 500, CursorTimer);
-    }*/
-
     ok();
 }
 
@@ -593,55 +566,4 @@ void ExportDrawingAsText(char *file)
 
     // we may have trashed the grid tables a bit; a repaint will fix that
     InvalidateRect(MainWindow, NULL, FALSE);
-}
-
-//-----------------------------------------------------------------------------
-// Determine the settings of the vertical and (if needed) horizontal
-// scrollbars used to scroll our view of the program.
-//-----------------------------------------------------------------------------
-void SetUpScrollbars(BOOL *horizShown, SCROLLINFO *horiz, SCROLLINFO *vert)
-{
-/*    int totalHeight = 0;
-    int i;
-    for(i = 0; i < Prog.numRungs; i++) {
-        totalHeight += CountHeightOfElement(ELEM_SERIES_SUBCKT, Prog.rungs[i]);
-        totalHeight++;
-    }
-    totalHeight += 1; // for the end rung
-
-    int totalWidth = ProgCountWidestRow();
-
-    if(totalWidth <= ScreenColsAvailable()) {
-        *horizShown = FALSE;
-        ScrollXOffset = 0;
-        ScrollXOffsetMax = 0;
-    } else {
-        *horizShown = TRUE;
-        memset(horiz, 0, sizeof(*horiz));
-        horiz->cbSize = sizeof(*horiz);
-        // horiz->fMask = SIF_DISABLENOSCROLL | SIF_ALL;
-        horiz->nMin = 0;
-        horiz->nMax = X_PADDING + totalWidth*POS_WIDTH*FONT_WIDTH;
-        RECT r;
-        GetClientRect(DrawWindow, &r);
-        horiz->nPage = r.right - X_PADDING;
-        horiz->nPos = ScrollXOffset;
-
-        ScrollXOffsetMax = horiz->nMax - horiz->nPage + 1;
-        if(ScrollXOffset > ScrollXOffsetMax) ScrollXOffset = ScrollXOffsetMax;
-        if(ScrollXOffset < 0) ScrollXOffset = 0;
-    }
-
-    vert->cbSize = sizeof(*vert);
-    // vert->fMask = SIF_DISABLENOSCROLL | SIF_ALL;
-    vert->nMin = 0;
-    vert->nMax = totalHeight - 1;
-    // vert->nPos = ScrollYOffset;
-    vert->nPos = 0;
-    vert->nPage = ScreenRowsAvailable();
-*/
-    // ScrollYOffsetMax = vert->nMax - vert->nPage + 1;
-
-    // if(ScrollYOffset > ScrollYOffsetMax) ScrollYOffset = ScrollYOffsetMax;
-    // if(ScrollYOffset < 0) ScrollYOffset = 0;
 }

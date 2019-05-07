@@ -29,17 +29,12 @@ HWID view;
 /// Wraper function for gtk_window_has_toplevel_focus
 BOOL GetFocus(HWID window)
 {
-    // return (BOOL) gtk_window_has_toplevel_focus(GTK_WINDOW(window));
     return TRUE;
 }
 
 COLORREF RGB(int red, int green, int blue)
 {
     COLORREF col(red, green, blue);
-    // col.red = red/255.0;
-    // col.green = green/255.0;
-    // col.blue = blue/255.0;
-    // col.alpha = 1.0;
 
     return col;
 }
@@ -138,11 +133,9 @@ void EnableMenuItem(HMENU MenuName, QAction* MenuItem, UINT CheckEnabledItem)
     switch (CheckEnabledItem){
         case MF_ENABLED :
            MenuItem->setEnabled(true);
-           // MenuItem->blockSignals(false);
         break;
         case MF_GRAYED :
            MenuItem->setEnabled(false);
-           // MenuItem->blockSignals(true);
         break; 
     }
 }
@@ -279,92 +272,20 @@ void TextOut(HWID hWid, HCRDC hcr, int nXStart, int nYStart, LPCTSTR lpString, i
     int height = hWid->height();
     BOOL resize_flag = FALSE;
     QFont newFont= hcr->font();
-    // newFont
-    /*if(nYStart+(extents.height/2.0) >= height)
-    {
-        height += extents.height + 50;
-        resize_flag = TRUE;
-    }
-    
-    if (nXStart+(extents.width/2.0) >= width)
-    {
-        width += extents.width;
-        resize_flag = TRUE;
-    }*/
     char* text = (char*)malloc(cchString);
     strncpy(text, lpString, cchString);
     text[cchString] = '\0';
 
     hcr->drawText(nXStart, nYStart, (QString)text);
-    // cairo_move_to(hcr, nXStart, nYStart);
-    // cairo_show_text(hcr, text);
-
-    // cairo_fill (hcr);
-
-    /*if (resize_flag)  // To do later
-        hcr->setWindow();*/
-    /*if (hcr == NULL)
-        return;
-    
-    nYStart += 30;
-    
-    cairo_text_extents_t extents;
-    cairo_text_extents (hcr, lpString, &extents);
-    int width = gtk_widget_get_allocated_width (hWid);
-    int height= gtk_widget_get_allocated_height (hWid);
-    BOOL resize_flag = FALSE;
-
-    if(nYStart+(extents.height/2.0) >= height)
-    {
-        height += extents.height + 50;
-        resize_flag = TRUE;
-    }
-    
-    if (nXStart+(extents.width/2.0) >= width)
-    {
-        width += extents.width;
-        resize_flag = TRUE;
-    }
-
-    if (resize_flag)
-        gtk_widget_set_size_request(hWid, width, height);
-    
-    char* text = (char*)malloc(cchString);
-    strncpy(text, lpString, cchString);
-    text[cchString] = '\0';
-
-    cairo_move_to(hcr, nXStart, nYStart);
-    cairo_show_text(hcr, text);
-
-    cairo_fill (hcr);*/
 }
 
 COLORREF GetTextColor(HCRDC Hdc)
 {
-    // COLORREF col;
-    // gtk_style_context_get_color (Hdc,
-    //                             gtk_style_context_get_state (Hdc),
-    //                             &col);
-    
     return HdcCurrentTextColor;
 }
 
 BOOL InvalidateRect(HWID hWid, const RECT *lpRect, BOOL bErase)
 {
-    /*if(!GDK_IS_WINDOW(hWid))
-        return FALSE;
-
-    if (lpRect == NULL)
-    {
-        gdk_window_invalidate_rect (gtk_widget_get_window (hWid), NULL, FALSE);
-        return TRUE;
-    }
-
-    GDRECT Gdrect;
-    RECT_to_GDRECT(lpRect, &Gdrect);
-    // gtk_widget_queue_draw(hWid);
-    gdk_window_invalidate_rect (gtk_widget_get_window (hWid), &Gdrect, FALSE);
-    */
     hWid->repaint();
     return TRUE;
 }
@@ -377,16 +298,7 @@ int FillRect(HCRDC hDC, const QRect *lprc, HBRUSH hbr)
     curbrush.setColor(*hbr);
     curbrush.setStyle(Qt::SolidPattern);
     hDC->setBrush(curbrush);
-    hDC->drawRect(*lprc);
-    /*
-    GDRECT gdrc;
-    RECT_to_GDRECT(lprc, &gdrc);
-
-    cairo_set_source_rgb(hDC, hbr->red, hbr->green, hbr->blue);
-    cairo_rectangle(hDC, gdrc.x, gdrc.y, gdrc.width, gdrc.height);
-    cairo_stroke_preserve(hDC);
-    cairo_fill(hDC);*/
-    
+    hDC->drawRect(*lprc);    
     return 0;
 }
 
@@ -414,35 +326,12 @@ UINT SetTimer(HWID hWid, UINT  nIDEvent, UINT uElapse, UINT TimerID)
         }
         break;
     }
-    // if(hWid!=NULL)
-    //     CursorObject->setVisible(TRUE);
 
     return TimerID;
-    // auto record_it = std::find_if(timerRecords.begin(), timerRecords.end(),  [&nIDEvent](TimerRecord &Record) { return Record.ufID == nIDEvent; });
-
-    // if (record_it != timerRecords.end())
-    //     return 0;
-
-    // TimerRecord tr;
-    // tr.pfun = lpTimerFunc;
-    // tr.ufID = nIDEvent;
-    // tr.utID = g_timeout_add(uElapse, (GSourceFunc)lpTimerFunc, FALSE);
-
-    // timerRecords.push_back(tr);
-    // return tr.utID;
 }
 
 BOOL KillTimer(HWID hWid, UINT uIDEvent)
 {
-    /*auto record_it = std::find_if(timerRecords.begin(), timerRecords.end(),  [&uIDEvent](TimerRecord &Record) { return Record.ufID == uIDEvent; });
-
-    if (record_it == timerRecords.end())
-        return FALSE;
-    
-    record_it->pfun(TRUE);
-    g_source_remove (record_it->utID);
-    timerRecords.erase(record_it);*/
-    // printf("KillTimer\n");
     switch(uIDEvent)
     {
         case TIMER_BLINK_CURSOR:

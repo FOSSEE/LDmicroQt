@@ -15,7 +15,8 @@
 #include <stdio.h>
 
 /*
- * store a window's position in the registry, or fail silently if the registry calls don't work
+ * store a window's position in the registry, or fail silently
+ * if the registry calls don't work
  */
 void FreezeWindowPosF(HWID hwid, char *subKey, char *name)
 {
@@ -31,9 +32,11 @@ void FreezeWindowPosF(HWID hwid, char *subKey, char *name)
         return;
     }
 
-    sprintf(moveToKeyLocatin, "mkdir -p %s/%s/%s", getenv("HOME"), FREEZE_REGISTER, subKey);
+    sprintf(moveToKeyLocatin, "mkdir -p %s/%s/%s", getenv("HOME"),
+        FREEZE_REGISTER, subKey);
     system(moveToKeyLocatin);
-    sprintf(moveToKeyLocatin, "%s/%s/%s", getenv("HOME"), FREEZE_REGISTER, subKey);
+    sprintf(moveToKeyLocatin, "%s/%s/%s", getenv("HOME"),
+        FREEZE_REGISTER, subKey);
     if (-1 == chdir(moveToKeyLocatin))
     {
         free(Ld_CWD);
@@ -61,7 +64,6 @@ void FreezeWindowPosF(HWID hwid, char *subKey, char *name)
         free(keyName);
         return;
     }
-    // gtk_window_get_size(GTK_WINDOW(hwid), &val, NULL);
     val = hwid->size();
     Register.write((char*)&val, sizeof(val));
     Register.close();
@@ -107,7 +109,8 @@ static void Clamp(LONG *v, LONG min, LONG max)
 }
 
 /*
- * retrieve a window's position from the registry, or do nothing if there is no info saved
+ * retrieve a window's position from the registry,
+ * or do nothing if there is no info saved
  */
 void ThawWindowPosF(HWID hwid, char *subKey, char *name)
 {
@@ -124,7 +127,8 @@ void ThawWindowPosF(HWID hwid, char *subKey, char *name)
         return;
     }
 
-    sprintf(moveToKeyLocatin, "%s/%s/%s", getenv("HOME"), FREEZE_REGISTER, subKey);
+    sprintf(moveToKeyLocatin, "%s/%s/%s", getenv("HOME"),
+        FREEZE_REGISTER, subKey);
     if (-1 == chdir(moveToKeyLocatin))
     {
         free(Ld_CWD);
@@ -216,9 +220,11 @@ void FreezeDWORDF(DWORD val, char *subKey, char *name)
         return;
     }
 
-    sprintf(moveToKeyLocatin, "mkdir -p %s/%s/%s", getenv("HOME"), FREEZE_REGISTER, subKey);
+    sprintf(moveToKeyLocatin, "mkdir -p %s/%s/%s", getenv("HOME"),
+        FREEZE_REGISTER, subKey);
     system(moveToKeyLocatin);  
-    sprintf(moveToKeyLocatin, "%s/%s/%s", getenv("HOME"), FREEZE_REGISTER, subKey);
+    sprintf(moveToKeyLocatin, "%s/%s/%s", getenv("HOME"),
+        FREEZE_REGISTER, subKey);
     if (-1 == chdir(moveToKeyLocatin))
     {
         free(Ld_CWD);
@@ -237,7 +243,8 @@ void FreezeDWORDF(DWORD val, char *subKey, char *name)
 }
 
 /*
- * retrieve a DWORD setting, or return the default if that setting is unavailable
+ * retrieve a DWORD setting,
+ * or return the default if that setting is unavailable
  */
 DWORD ThawDWORDF(DWORD val, char *subKey, char *name)
 {
@@ -254,7 +261,8 @@ DWORD ThawDWORDF(DWORD val, char *subKey, char *name)
         return val;
     }
 
-    sprintf(moveToKeyLocatin, "%s/%s/%s", getenv("HOME"), FREEZE_REGISTER, subKey);
+    sprintf(moveToKeyLocatin, "%s/%s/%s", getenv("HOME"),
+        FREEZE_REGISTER, subKey);
     if (-1 == chdir(moveToKeyLocatin))
     {
         free(Ld_CWD);
