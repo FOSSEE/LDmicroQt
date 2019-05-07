@@ -67,6 +67,7 @@ void ShowCommentDialog(char *comment)
     CommentGrid = new QGridLayout(CommentDialog);
     MakeControls();
     CommentTextbox->setText(comment);
+    CommentTextbox->setFocus();
     int ret = CommentDialog->exec();
     switch(ret)
     {

@@ -108,6 +108,7 @@ void ShowContactsDialog(BOOL *negated, char *name)
     NameTextbox->setValidator(
         new QRegExpValidator(
             QRegExp("[a-zA-Z0-9_]+")));
+    NameTextbox->setFocus();
 
     if(name[0] == 'R') {
         SourceInternalRelayRadio->setChecked(TRUE);

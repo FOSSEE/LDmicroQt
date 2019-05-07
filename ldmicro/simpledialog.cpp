@@ -150,6 +150,7 @@ BOOL ShowSimpleDialog(char *title, int boxes, char **labels, DWORD numOnlyMask,
                     QRegExp("[a-zA-Z0-9_'-]+")));
         }
     }
+    Textboxes[0]->setFocus();
     int ret = SimpleDialog->exec();
     switch(ret)
     {

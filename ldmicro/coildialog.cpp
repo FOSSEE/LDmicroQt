@@ -128,6 +128,7 @@ void ShowCoilDialog(BOOL *negated, BOOL *setOnly, BOOL *resetOnly, char *name)
     } else {
         NormalRadio->setChecked(TRUE);
     }
+    NameTextbox->setFocus();
     int ret = CoilDialog->exec();
     switch(ret)
     {

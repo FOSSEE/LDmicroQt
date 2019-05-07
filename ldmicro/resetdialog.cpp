@@ -99,6 +99,7 @@ void ShowResetDialog(char *name)
         TypeCounterRadio->setChecked(TRUE);
     }
     NameTextbox->setText(name + 1);
+    NameTextbox->setFocus();
 
     int ret = ResetDialog->exec();
     switch(ret)

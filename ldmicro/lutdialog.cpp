@@ -354,6 +354,7 @@ void ShowLookUpTableDialog(ElemLeaf *l)
     sprintf(buf, "%d", t->count);
     CountTextbox->setText(buf);
     AsStringCheckbox->setChecked(asString);
+    DestTextbox->setFocus();
     PrevTableAsString[0] = NULL;
     int ret = LutDialog->exec();
     switch(ret)
