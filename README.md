@@ -34,7 +34,11 @@ The install commands for all the packages required to compile LDMicro for Linux 
 _Note_: Be sure to run `sudo apt-get update` and `sudo apt-get upgrade` before running the following commands
 
 * Cmake: `sudo apt-get install cmake`
-* GTK3: `sudo apt-get install libgtk-3-dev`
+* Qt5: should be > 5.9
+  ```
+  sudo apt-get install qt5-default
+  sudo apt-get install qt511-meta-full
+  ```
 * MinGW: 
   ```
   sudo apt-get install gcc-mingw-w64
@@ -42,6 +46,13 @@ _Note_: Be sure to run `sudo apt-get update` and `sudo apt-get upgrade` before r
   ```
 * Perl: `sudo apt-get install perl`
 
+### Additional packages for Ubuntu 14
+*g++: >5
+  ```
+  sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+  sudo apt-get install g++-5
+  sudo apt-get install gcc-5
+  ```
 ## Running and testing LDMicro for Linux
 ### To run program in shell mode use the below command
 `./LDmicro /c <.ld file to compile> <.hex destination file>`
