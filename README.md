@@ -47,7 +47,7 @@ _Note_: Be sure to run `sudo apt-get update` and `sudo apt-get upgrade` before r
 * Perl: `sudo apt-get install perl`
 
 ### Additional packages for Ubuntu 14
-*g++: >5
+* g++: >5
   ```
   sudo add-apt-repository ppa:ubuntu-toolchain-r/test
   sudo apt-get install g++-5
