@@ -140,6 +140,62 @@ int                 IoListTop;
 static BOOL         RealTimeSimulationRunning;
 
 //-----------------------------------------------------------------------------
+// Ubuntu 14 on Vidyut does not handle Menu Shortcuts.
+// This function adds corresponding action for the shortcuts to the MainWindow
+//-----------------------------------------------------------------------------
+#if defined(__UBUNTU_14_)
+	inline void SetKeyboardShortcuts()
+	{
+		MainWindow->addAction(NewMenu);
+		MainWindow->addAction(OpenMenu);
+		MainWindow->addAction(SaveMenu);
+		MainWindow->addAction(SaveAsMenu);
+		MainWindow->addAction(ExportMenu);
+		MainWindow->addAction(UndoMenu);
+		MainWindow->addAction(RedoMenu);
+		MainWindow->addAction(InsertRungBeforeMenu);
+		MainWindow->addAction(InsertRungAfterMenu);
+		MainWindow->addAction(PushRungUpMenu);
+		MainWindow->addAction(PushRungDownMenu);
+		MainWindow->addAction(DeleteElementMenu);
+		MainWindow->addAction(DeleteRungMenu);
+		MainWindow->addAction(InsertCommentMenu);
+		MainWindow->addAction(InsertContactsMenu);
+		MainWindow->addAction(InsertOsrMenu);
+		MainWindow->addAction(InsertOsfMenu);
+		MainWindow->addAction(InsertTonMenu);
+		MainWindow->addAction(InsertTofMenu);
+		MainWindow->addAction(InsertRtoMenu);
+		MainWindow->addAction(InsertCtuMenu);
+		MainWindow->addAction(InsertCtdMenu);
+		MainWindow->addAction(InsertCtcMenu);
+		MainWindow->addAction(InsertEquMenu);
+		MainWindow->addAction(InsertGrtMenu);
+		MainWindow->addAction(InsertGeqMenu);
+		MainWindow->addAction(InsertLesMenu);
+		MainWindow->addAction(InsertLeqMenu);
+		MainWindow->addAction(InsertCoilMenu);
+		MainWindow->addAction(InsertResMenu);
+		MainWindow->addAction(InsertMovMenu);
+		MainWindow->addAction(InsertAddMenu);
+		MainWindow->addAction(InsertSubMenu);
+		MainWindow->addAction(InsertMulMenu);
+		MainWindow->addAction(InsertDivMenu);
+		MainWindow->addAction(InsertReadAdcMenu);
+		MainWindow->addAction(MakeNormalMenu);
+		MainWindow->addAction(NegateMenu);
+		MainWindow->addAction(MakeSetOnlyMenu);
+		MainWindow->addAction(MakeResetOnlyMenu);
+		MainWindow->addAction(CompileMenu);
+		MainWindow->addAction(ManualMenu);
+		MainWindow->addAction(SimulationModeMenu);
+		MainWindow->addAction(StartSimulationMenu);
+		MainWindow->addAction(StopSimulationMenu);
+		MainWindow->addAction(SingleCycleMenu);
+	}
+#endif
+
+//-----------------------------------------------------------------------------
 // Create the top-level menu bar for the main window. Mostly static, but we
 // create the "select processor" menu from the list in mcutable.h dynamically.
 //-----------------------------------------------------------------------------
@@ -411,6 +467,9 @@ HMENU MakeMainWindowMenus(void)
     MainMenu->addMenu(SimulateMenu);
     MainMenu->addMenu(Compile);
     MainMenu->addMenu(Help);
+    #if defined(__UBUNTU_14_)
+    	SetKeyboardShortcuts();
+    #endif
 
     return FileMenu;
 }

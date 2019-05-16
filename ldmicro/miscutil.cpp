@@ -117,10 +117,10 @@ void CompileSuccessfulMessage(char *str)
         //AttachConsoleDynamic(ATTACH_PARENT_PROCESS);
         //HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
         //DWORD written;
-        //riteFile(h, str, strlen(str), &written, NULL);
+        //WriteFile(h, str, strlen(str), &written, NULL);
     } else {
-        // MessageBox(MainWindow, str, _("Compile Successful"),
-        //     MB_OK | MB_ICONINFORMATION);
+        MessageBox(MainWindow, str, _("Compile Successful"),
+            MB_OK, MB_ICONINFORMATION);
     }
 }
 

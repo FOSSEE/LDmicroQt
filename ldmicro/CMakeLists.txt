@@ -30,6 +30,18 @@ IF(UNIX)
     add_definitions ("-g")
     add_definitions(-D__UNIX__)
     add_definitions(-DLDLANG_EN)
+    execute_process(COMMAND lsb_release -cs
+    OUTPUT_VARIABLE RELEASE_CODENAME
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+    STRING(TOLOWER ${RELEASE_CODENAME} RELEASE_LOWER)
+    message("-- os_version_suffix:${RELEASE_CODENAME}")
+    if(${RELEASE_LOWER} MATCHES "trusty")
+        MESSAGE("Add flag to compile for Ubuntu 14")
+        add_definitions(-D__UBUNTU_14_)
+    else()
+        MESSAGE("Add flag to compile for Ubuntu 16 and above")
+        add_definitions(-D__UBUNTU_16_)
+    endif()
     use_cxx14()
     
     # set_property(DIRECTORY PROPERTY ADDITIONAL_MAKE_CLEAN_FILES "${CMAKE_CURRENT_SOURCE_DIR}/build/")
@@ -125,7 +137,7 @@ endif()
                             compilecommon.cpp
                             intcode.cpp
                             lang.cpp
-                            miscutil.cpp    #add message boxes to Error(), CompileSuccessfulMessage()
+                            miscutil.cpp
                             iolist.cpp
                             confdialog.cpp
                             lutdialog.cpp
