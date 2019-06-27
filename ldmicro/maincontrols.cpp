@@ -41,7 +41,7 @@ static HMENU        EditMenu;
 static HMENU        InstructionMenu;
 static HMENU        ProcessorMenu;
 static HMENU        SimulateMenu;
-static HMENU        TopMenu;                                            // Menu Bar
+static HMENU        TopMenu;
 static HMENU        Settings;
 static HMENU        Compile;
 static HMENU        Help;
@@ -106,7 +106,7 @@ QAction* InsertPwlMenu;
 
 QAction* McuSettingsMenu;
 QAction* ProcessorMenuItems[NUM_SUPPORTED_MCUS+1];
-HMENU MicroControllerMenu;                                         // Item for Microcontroller
+HMENU MicroControllerMenu;
 
 QAction* SimulationModeMenu;
 QAction* StartSimulationMenu;

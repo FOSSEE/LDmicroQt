@@ -156,7 +156,8 @@ static void MakeControls(int a)
             copy[j] = '\0';
             COLORREF color = RGB(110, 255, 110);
             cf.setForeground(QBrush(color));
-            RichEdit[a]->appendPlainText(QString::fromStdString((const char*)copy));
+            RichEdit[a]->appendPlainText(
+                QString::fromStdString((const char*)copy));
             RichEdit[a]->setCurrentCharFormat(cf);
             // Special case if there's nothing except title on the line
             if(!justHeading) {

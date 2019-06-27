@@ -304,9 +304,11 @@ void FreezeStringF(char *val, char *subKey, char *name)
         return;
     }
 
-    sprintf(moveToKeyLocatin, "mkdir -p %s/%s/%s", getenv("HOME"), FREEZE_REGISTER, subKey);
+    sprintf(moveToKeyLocatin, "mkdir -p %s/%s/%s", getenv("HOME"),
+        FREEZE_REGISTER, subKey);
     system(moveToKeyLocatin);  
-    sprintf(moveToKeyLocatin, "%s/%s/%s", getenv("HOME"), FREEZE_REGISTER, subKey);
+    sprintf(moveToKeyLocatin, "%s/%s/%s", getenv("HOME"),
+        FREEZE_REGISTER, subKey);
     if (-1 == chdir(moveToKeyLocatin))
     {
         free(Ld_CWD);
@@ -325,7 +327,8 @@ void FreezeStringF(char *val, char *subKey, char *name)
 }
 
 /*
- * retrieve a string setting, or return the default if that setting is unavailable
+ * retrieve a string setting, or return
+ * the default if that setting is unavailable
  */
 void ThawStringF(char *val, int max, char *subKey, char *name)
 {
@@ -342,7 +345,8 @@ void ThawStringF(char *val, int max, char *subKey, char *name)
         return;
     }
 
-    sprintf(moveToKeyLocatin, "%s/%s/%s", getenv("HOME"), FREEZE_REGISTER, subKey);
+    sprintf(moveToKeyLocatin, "%s/%s/%s",
+        getenv("HOME"), FREEZE_REGISTER, subKey);
     if (-1 == chdir(moveToKeyLocatin))
     {
         free(Ld_CWD);

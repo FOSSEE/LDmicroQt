@@ -222,8 +222,10 @@ void NiceFont(HWID h)
     qtfont.setFamily(MyNiceFont->lpszFace);
     qtfont.setPixelSize(MyNiceFont->nHeight - 3);
     qtfont.setFixedPitch(TRUE);
-    qtfont.setStyle(MyNiceFont->fdwItalic ? QFont::StyleItalic : QFont::StyleNormal);
-    qtfont.setWeight(MyNiceFont->fnWeight == FW_BOLD ? QFont::Bold : QFont::Normal);
+    qtfont.setStyle(
+        MyNiceFont->fdwItalic ? QFont::StyleItalic : QFont::StyleNormal);
+    qtfont.setWeight(
+        MyNiceFont->fnWeight == FW_BOLD ? QFont::Bold : QFont::Normal);
     h->setFont(qtfont);
 
 //    SendMessage(h, WM_SETFONT, (WPARAM)MyNiceFont, TRUE);
@@ -239,8 +241,10 @@ void FixedFont(HWID h)
     qtfont.setFamily(MyFixedFont->lpszFace);
     qtfont.setPixelSize(MyFixedFont->nHeight - 3);
     qtfont.setFixedPitch(TRUE);
-    qtfont.setStyle(MyFixedFont->fdwItalic ? QFont::StyleItalic : QFont::StyleNormal);
-    qtfont.setWeight(MyFixedFont->fnWeight == FW_BOLD ? QFont::Bold : QFont::Normal);
+    qtfont.setStyle(
+        MyFixedFont->fdwItalic ? QFont::StyleItalic : QFont::StyleNormal);
+    qtfont.setWeight(
+        MyFixedFont->fnWeight == FW_BOLD ? QFont::Bold : QFont::Normal);
     h->setFont(qtfont);
   //  SendMessage(h, WM_SETFONT, (WPARAM)MyFixedFont, TRUE);
 }

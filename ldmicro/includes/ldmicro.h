@@ -635,7 +635,8 @@ extern HMENU ScrollWindow;
 // draw.cpp
 int ProgCountWidestRow(void);
 int CountHeightOfElement(int which, void *elem);
-BOOL DrawElement(HCRDC Hcr, int which, void *elem, int *cx, int *cy, BOOL poweredBefore);
+BOOL DrawElement(HCRDC Hcr, int which, void *elem,
+    int *cx, int *cy, BOOL poweredBefore);
 void DrawEndRung(HCRDC Hcr, int cx, int cy);
 extern int ColsAvailable;
 extern BOOL SelectionActive;

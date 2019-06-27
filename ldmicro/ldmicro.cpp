@@ -926,7 +926,8 @@ inline void MenuHandler ()
     } 
 
     //Connect map to combined function call
-    QObject::connect (CommandMapper, SIGNAL(mapped(int)), &MenuHandle, SLOT(LD_WM_Command_call(int))) ;
+    QObject::connect (CommandMapper, SIGNAL(mapped(int)),
+        &MenuHandle, SLOT(LD_WM_Command_call(int))) ;
 }
 void ActivateItem(QTreeWidgetItem* item, int column)
 {

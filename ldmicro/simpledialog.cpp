@@ -114,8 +114,10 @@ static void MakeControls(int boxes, char **labels, DWORD fixedFontMask)
     }
     SimpleGrid->addLayout(grid, 0,0);
     SimpleGrid->addWidget(ButtonBox, 0, 1);
-    QObject::connect(ButtonBox, SIGNAL(accepted()), SimpleDialog, SLOT(accept()));
-    QObject::connect(ButtonBox, SIGNAL(rejected()), SimpleDialog, SLOT(reject()));
+    QObject::connect(ButtonBox, SIGNAL(accepted()),
+        SimpleDialog, SLOT(accept()));
+    QObject::connect(ButtonBox, SIGNAL(rejected()),
+        SimpleDialog, SLOT(reject()));
 }
 
 BOOL ShowSimpleDialog(char *title, int boxes, char **labels, DWORD numOnlyMask,
@@ -166,7 +168,7 @@ BOOL ShowSimpleDialog(char *title, int boxes, char **labels, DWORD numOnlyMask,
                     strncpy(get, Textboxes[i]->text().toStdString().c_str(),15);
 
                     if( (!strchr(get, '\'')) ||
-                            (get[0] == '\'' && get[2] == '\'' && strlen(get)==3) )
+                        (get[0] == '\'' && get[2] == '\'' && strlen(get)==3) )
                     {
                         if(strlen(get) == 0) {
                             Error(_("Empty textbox; not permitted."));

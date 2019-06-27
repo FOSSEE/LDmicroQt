@@ -36,15 +36,12 @@
 #include <string.h>
 #include <stdlib.h>
 #include "linuxLD.h"
+#include "ldmicroVC.h"
 
 // 4000 ICON "ldmicro.ico"
 
 #define TRUE true
 #define FALSE false
-
-/// version control
-#define LDMicro_VERSION_MAJOR 1
-#define LDMicro_VERSION_MINOR 0
 
 // Timer IDs associated with the main window.
 #define TIMER_BLINK_CURSOR      1

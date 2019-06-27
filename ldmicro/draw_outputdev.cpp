@@ -292,7 +292,8 @@ void PaintWidget::paintEvent(QPaintEvent *event)
         /*if(((cy + thisHeight) >= (ScrollYOffset - 8)*POS_HEIGHT) &&
             (cy < (ScrollYOffset + rowsAvailable + 8)*POS_HEIGHT))*/
         {
-            SetBkColor(DrawWindow, Hcr, InSimulationMode ? HighlightColours.simBg :
+            SetBkColor(DrawWindow, Hcr,
+                InSimulationMode ? HighlightColours.simBg :
                 HighlightColours.bg);
             SetTextColor(Hcr, InSimulationMode ? HighlightColours.simRungNum :
                 HighlightColours.rungNum);
