@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 2.6)
 
 project(LDMicro)
 
+## Version control
+    set (LDMicro_VERSION_MAJOR 2)
+    set (LDMicro_VERSION_MINOR 2)
+    set (LDMicro_VERSION_PATCH 0)
+
 macro(use_cxx14)
 
 if (CMAKE_VERSION VERSION_LESS "3.1")
@@ -30,6 +35,7 @@ IF(UNIX)
     add_definitions ("-g")
     add_definitions(-D__UNIX__)
     add_definitions(-DLDLANG_EN)
+
     execute_process(COMMAND lsb_release -cs
     OUTPUT_VARIABLE RELEASE_CODENAME
     OUTPUT_STRIP_TRAILING_WHITESPACE)
@@ -79,10 +85,6 @@ IF(UNIX)
                             ${OBJDIR}/lang-tables.h)
 
     add_custom_target(LDMicro_SCRIPT_GENERATED_FILES DEPENDS ${SCRIPT_GENERATED_FILES})
-
-    ## Version control
-    set (LDMicro_VERSION_MAJOR 2)
-    set (LDMicro_VERSION_MINOR 2)
 
     ## configure a header file to pass some of the CMake settings
     ## to the source code
@@ -178,9 +180,9 @@ endif()
 
     ##Debian package creation
     set(CPACK_GENERATOR "DEB")
-    set(CPACK_PACKAGE_VERSION_MAJOR "2")
-    set(CPACK_PACKAGE_VERSION_MINOR "2")
-    set(CPACK_PACKAGE_VERSION_PATCH "0")
+    set(CPACK_PACKAGE_VERSION_MAJOR ${LDMicro_VERSION_MAJOR})
+    set(CPACK_PACKAGE_VERSION_MINOR ${LDMicro_VERSION_MINOR})
+    set(CPACK_PACKAGE_VERSION_PATCH ${LDMicro_VERSION_PATCH})
     
     set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
     set(CPACK_PACKAGE_DESCRIPTION "Ladder Logic editor, simulator and compiler for 8 bit microcontrollers")
