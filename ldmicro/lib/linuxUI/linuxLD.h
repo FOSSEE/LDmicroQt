@@ -26,7 +26,7 @@
 
 /// Image loading flags
 #define IMAGE_ICON 1
-#define LDMICRO_ICON "../ldmicro.ico"
+#define LDMICRO_ICON ":/ldmicro.ico"
 
 /// Typedefs
 //typedef int64_t __int64;

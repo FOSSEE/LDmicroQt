@@ -103,6 +103,7 @@ IF(UNIX)
 
     set(CMAKE_AUTOMOC ON)
     set(CMAKE_AUTOUIC ON)
+    set(CMAKE_AUTORCC ON)
     set(CMAKE_INCLUDE_CURRENT_DIR ON)
     find_package(Qt5Widgets CONFIG REQUIRED)
     find_package(Qt5Core CONFIG REQUIRED)
@@ -165,19 +166,40 @@ endif()
     target_link_libraries (ldinterpret LinuxUI)
     
     ## Build main LDMicro executable
-    add_executable (LDMicro ${COMPILE_CPP_SOURCES})
+    add_executable (LDMicro ${COMPILE_CPP_SOURCES} ldmicro.qrc)
     add_dependencies(LDMicro LDMicro_SCRIPT_GENERATED_FILES)
-    install (TARGETS LDMicro DESTINATION bin)
     target_link_libraries (LDMicro LinuxUI)
     target_link_libraries (LDMicro FreezeLD)
     target_link_libraries(LDMicro ${Qt5Widgets_LIBRARIES})
     target_link_libraries(LDMicro ${Qt5Core_LIBRARIES})
     target_link_libraries(LDMicro ${Qt5Gui_LIBRARIES})
 
-    INSTALL(TARGETS LDMicro DESTINATION /usr/local/bin/ldmicro)
-    INSTALL(FILES ldmicro.ico DESTINATION /usr/local/bin/ldmicro)
-    INSTALL(FILES LDMicro.desktop DESTINATION /usr/share/applications)
+    # Package Creation
 
+    if( NOT DEFAULT_INSTALL_PATH )
+    set( DEFAULT_INSTALL_PATH "${CMAKE_INSTALL_PREFIX}"
+         CACHE
+         PATH
+         "Location of LDMicro data files." )
+    endif()
+
+    # Set paths
+    set( UNIX_ICON_FILES icons/ )
+    set( UNIX_APPLICATIONS_FILES applications/ )
+    set( LDMICRO_BIN bin CACHE PATH "LDmicro binaries.")
+
+    install( DIRECTORY ${UNIX_ICON_FILES}
+        DESTINATION share/icons
+        COMPONENT resources
+        )
+
+    install( DIRECTORY ${UNIX_APPLICATIONS_FILES}
+        DESTINATION share/applications
+        COMPONENT resources
+        )
+    install( TARGETS LDMicro
+    DESTINATION bin
+    )
     ##Debian package creation
     set(CPACK_GENERATOR "DEB")
     set(CPACK_PACKAGE_VERSION_MAJOR ${LDMicro_VERSION_MAJOR})

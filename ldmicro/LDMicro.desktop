@@ -1,9 +1,0 @@
-[Desktop Entry]
-Version=1.0
-Type=Application
-Terminal=false
-Icon[en_IN]=/usr/local/bin/ldmicro/ldmicro.ico
-Name[en_IN]=LDMicro
-Exec=/usr/local/bin/ldmicro/LDMicro
-Name=LDMicro
-Icon=/usr/local/bin/ldmicro/ldmicro.ico
