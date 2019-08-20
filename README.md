@@ -37,7 +37,6 @@ _Note_: Be sure to run `sudo apt-get update` and `sudo apt-get upgrade` before r
 * Qt5: should be > 5.9
   ```
   sudo apt-get install qt5-default
-  sudo apt-get install qt511-meta-full <optional>
   ```
 * MinGW: 
   ```
@@ -46,16 +45,19 @@ _Note_: Be sure to run `sudo apt-get update` and `sudo apt-get upgrade` before r
   ```
 * Perl: `sudo apt-get install perl`
 
-### Additional packages for Ubuntu 14
+### Additional packages
+#### Ubuntu 14
 * g++: >5
   ```
   sudo add-apt-repository ppa:ubuntu-toolchain-r/test
   sudo apt-get install g++-5
   sudo apt-get install gcc-5
   ```
-* Qt: 5.11
+ #### Ubuntu16
+* Qt: 5.11 if necessary.
   ```
   sudo add-apt-repository ppa:beineri/opt-qt-5.11.1-xenial
+  sudo apt-get install qt511-meta-full
   ```
 
 ## Running and testing LDMicro for Linux
