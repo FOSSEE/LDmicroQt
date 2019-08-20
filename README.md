@@ -37,7 +37,7 @@ _Note_: Be sure to run `sudo apt-get update` and `sudo apt-get upgrade` before r
 * Qt5: should be > 5.9
   ```
   sudo apt-get install qt5-default
-  sudo apt-get install qt511-meta-full
+  sudo apt-get install qt511-meta-full <optional>
   ```
 * MinGW: 
   ```
@@ -53,6 +53,11 @@ _Note_: Be sure to run `sudo apt-get update` and `sudo apt-get upgrade` before r
   sudo apt-get install g++-5
   sudo apt-get install gcc-5
   ```
+* Qt: 5.11
+  ```
+  sudo add-apt-repository ppa:beineri/opt-qt-5.11.1-xenial
+  ```
+
 ## Running and testing LDMicro for Linux
 ### To run program in shell mode use the below command
 `./LDmicro /c <.ld file to compile> <.hex destination file>`
