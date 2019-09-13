@@ -245,6 +245,16 @@ void AddContact(void)
 
     AddLeaf(ELEM_CONTACTS, c);
 }
+void AddContactNeg(void)
+{
+    if(!CanInsertOther) return;
+
+    ElemLeaf *c = AllocLeaf();
+    strcpy(c->d.contacts.name, "Xnew");
+    c->d.contacts.negated = TRUE;
+
+    AddLeaf(ELEM_CONTACTS, c);
+}
 void AddCoil(void)
 {
     if(!CanInsertEnd) return;
@@ -254,6 +264,42 @@ void AddCoil(void)
     c->d.coil.negated = FALSE;
     c->d.coil.setOnly = FALSE;
     c->d.coil.resetOnly = FALSE;
+
+    AddLeaf(ELEM_COIL, c);
+}
+void AddCoilNeg(void)
+{
+    if(!CanInsertEnd) return;
+
+    ElemLeaf *c = AllocLeaf();
+    strcpy(c->d.coil.name, "Ynew");
+    c->d.coil.negated = TRUE;
+    c->d.coil.setOnly = FALSE;
+    c->d.coil.resetOnly = FALSE;
+
+    AddLeaf(ELEM_COIL, c);
+}
+void AddCoilSet(void)
+{
+    if(!CanInsertEnd) return;
+
+    ElemLeaf *c = AllocLeaf();
+    strcpy(c->d.coil.name, "Ynew");
+    c->d.coil.negated = FALSE;
+    c->d.coil.setOnly = TRUE;
+    c->d.coil.resetOnly = FALSE;
+
+    AddLeaf(ELEM_COIL, c);
+}
+void AddCoilRes(void)
+{
+    if(!CanInsertEnd) return;
+
+    ElemLeaf *c = AllocLeaf();
+    strcpy(c->d.coil.name, "Ynew");
+    c->d.coil.negated = FALSE;
+    c->d.coil.setOnly = FALSE;
+    c->d.coil.resetOnly = TRUE;
 
     AddLeaf(ELEM_COIL, c);
 }

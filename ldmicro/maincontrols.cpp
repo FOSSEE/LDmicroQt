@@ -30,6 +30,7 @@
 #include <stdlib.h>
 #include <QKeySequence>
 #include <QStatusBar>
+#include "toolbar.h"
 #include "ldmicro.h"
 
 // status bar at the bottom of the screen, to display settings
@@ -106,6 +107,8 @@ QAction* InsertPwlMenu;
 
 QAction* McuSettingsMenu;
 QAction* ProcessorMenuItems[NUM_SUPPORTED_MCUS+1];
+HMENU  ArithmeticMenu;
+HMENU  AnalogMenu;
 HMENU MicroControllerMenu;
 
 QAction* SimulationModeMenu;
@@ -205,6 +208,15 @@ HMENU MakeMainWindowMenus(void)
     HMENU  EditMenuSeparator;
     HMENU  InstructionMenuSeparator;
     HMENU  SimulateMenuSeparator;
+
+    HMENU  TimersMenu = new QMenu("&Timers",NULL);
+    HMENU  CountersMenu = new QMenu("C&ounters",NULL);
+    HMENU  ComparisonMenu = new QMenu("Com&parison Operators",NULL);
+    HMENU  UARTMenu = new QMenu("&UART Operations",NULL);
+    
+    ArithmeticMenu = new QMenu("A&rithmetic Operators",NULL);
+    AnalogMenu = new QMenu("A&nalog Operations",NULL);
+
 
     int i;
 
@@ -377,47 +389,54 @@ HMENU MakeMainWindowMenus(void)
     InstructionMenu->addAction(InsertCommentMenu);
     InstructionMenu->addSeparator();
     InstructionMenu->addAction(InsertContactsMenu);
+    InstructionMenu->addAction(InsertCoilMenu);
     InstructionMenu->addSeparator();
     InstructionMenu->addAction(InsertOsrMenu);
-    InstructionMenu->addSeparator();
     InstructionMenu->addAction(InsertOsfMenu);
-    InstructionMenu->addAction(InsertTonMenu);
-    InstructionMenu->addAction(InsertTofMenu);
-    InstructionMenu->addAction(InsertRtoMenu);
     InstructionMenu->addSeparator();
-    InstructionMenu->addAction(InsertCtuMenu);
-    InstructionMenu->addAction(InsertCtdMenu);
-    InstructionMenu->addAction(InsertCtcMenu);
+
+    TimersMenu->addAction(InsertTonMenu);
+    TimersMenu->addAction(InsertTofMenu);
+    TimersMenu->addAction(InsertRtoMenu);
+    InstructionMenu->addMenu(TimersMenu);
+    InstructionMenu->addAction(InsertResMenu);
     InstructionMenu->addSeparator();
-    InstructionMenu->addAction(InsertEquMenu);
-    InstructionMenu->addAction(InsertNeqMenu);
-    InstructionMenu->addAction(InsertGrtMenu);
-    InstructionMenu->addAction(InsertGeqMenu);
-    InstructionMenu->addAction(InsertLesMenu);
-    InstructionMenu->addAction(InsertLeqMenu);
+
+    CountersMenu->addAction(InsertCtuMenu);
+    CountersMenu->addAction(InsertCtdMenu);
+    CountersMenu->addAction(InsertCtcMenu);
+    InstructionMenu->addMenu(CountersMenu);
+    InstructionMenu->addSeparator();
+    ComparisonMenu->addAction(InsertEquMenu);
+    ComparisonMenu->addAction(InsertNeqMenu);
+    ComparisonMenu->addAction(InsertGrtMenu);
+    ComparisonMenu->addAction(InsertGeqMenu);
+    ComparisonMenu->addAction(InsertLesMenu);
+    ComparisonMenu->addAction(InsertLeqMenu);
+    InstructionMenu->addMenu(ComparisonMenu);
     InstructionMenu->addSeparator();
     InstructionMenu->addAction(InsertOpenMenu);
     InstructionMenu->addAction(InsertShortMenu);
     InstructionMenu->addAction(InsertMasterRlyMenu);
     InstructionMenu->addSeparator();
-    InstructionMenu->addAction(InsertCoilMenu);
-    InstructionMenu->addAction(InsertResMenu);
-    InstructionMenu->addSeparator();
     InstructionMenu->addAction(InsertMovMenu);
-    InstructionMenu->addAction(InsertAddMenu);
-    InstructionMenu->addAction(InsertSubMenu);
-    InstructionMenu->addAction(InsertMulMenu);
-    InstructionMenu->addAction(InsertDivMenu);
+    ArithmeticMenu->addAction(InsertAddMenu);
+    ArithmeticMenu->addAction(InsertSubMenu);
+    ArithmeticMenu->addAction(InsertMulMenu);
+    ArithmeticMenu->addAction(InsertDivMenu);
+    InstructionMenu->addMenu(ArithmeticMenu);
     InstructionMenu->addSeparator();
     InstructionMenu->addAction(InsertShiftRegMenu);
     InstructionMenu->addAction(InsertLutMenu);
     InstructionMenu->addAction(InsertPwlMenu);
-    InstructionMenu->addAction(InsertFmtdStrMenu);
     InstructionMenu->addSeparator();
-    InstructionMenu->addAction(InsertUartSendMenu);
-    InstructionMenu->addAction(InsertUartRecvMenu);
-    InstructionMenu->addAction(InsertSetPwmMenu);
-    InstructionMenu->addAction(InsertReadAdcMenu);
+    UARTMenu->addAction(InsertUartSendMenu);
+    UARTMenu->addAction(InsertUartRecvMenu);
+    UARTMenu->addAction(InsertFmtdStrMenu);
+    InstructionMenu->addMenu(UARTMenu);
+    AnalogMenu->addAction(InsertSetPwmMenu);
+    AnalogMenu->addAction(InsertReadAdcMenu);
+    InstructionMenu->addMenu(AnalogMenu);
     InstructionMenu->addAction(InsertPersistMenu);
     InstructionMenu->addSeparator();
     InstructionMenu->addAction(MakeNormalMenu);
@@ -484,6 +503,7 @@ void MakeMainWindowControls(void)
     QSplitter *splitter = new QSplitter(Qt::Orientation::Vertical);
     MainWindow->setLayout(PackBoxMenu);
     PackBoxMenu->setMenuBar(MainMenu);
+    // MainWindow->addToolBar(*EasyAccessTool);
     IoList = new QTreeWidget();
     IoList->setColumnCount(IO_COLUMN_COUNT);
     IoList->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -504,6 +524,9 @@ void MakeMainWindowControls(void)
     DrawWindow->setMinimumHeight(100);
     scrollbar->resize(DWSize);
     scrollbar->setWidget(DrawWindow);
+    PackBoxMenu->setSpacing(3);
+    PackBoxMenu->setContentsMargins(10,0,10,0);
+    PackBoxMenu->addWidget(EasyAccessTool);
     splitter->addWidget(scrollbar);
     DWSize.setWidth(MainWindow->width() - 
         (scrollbar->sizeHint().width()+ MainWindow->sizeHint().width()));
@@ -592,18 +615,30 @@ void SetMenusEnabled(BOOL canNegate, BOOL canNormal, BOOL canResetOnly,
     EnableMenuItem(InstructionMenu, InsertCoilMenu, t);
     EnableMenuItem(InstructionMenu, InsertResMenu, t);
     EnableMenuItem(InstructionMenu, InsertMovMenu, t);
+    EnableMenuItem(InstructionMenu, ArithmeticMenu, t);
     EnableMenuItem(InstructionMenu, InsertAddMenu, t);
     EnableMenuItem(InstructionMenu, InsertSubMenu, t);
     EnableMenuItem(InstructionMenu, InsertMulMenu, t);
     EnableMenuItem(InstructionMenu, InsertDivMenu, t);
     EnableMenuItem(InstructionMenu, InsertCtcMenu, t);
     EnableMenuItem(InstructionMenu, InsertPersistMenu, t);
+    EnableMenuItem(InstructionMenu, AnalogMenu, t);
     EnableMenuItem(InstructionMenu, InsertReadAdcMenu, t);
     EnableMenuItem(InstructionMenu, InsertSetPwmMenu, t);
     EnableMenuItem(InstructionMenu, InsertMasterRlyMenu, t);
     EnableMenuItem(InstructionMenu, InsertShiftRegMenu, t);
     EnableMenuItem(InstructionMenu, InsertLutMenu, t);
     EnableMenuItem(InstructionMenu, InsertPwlMenu, t);
+
+    // Disable tool buttons along with menus
+    EnableMenuItem(NULL, CoilBtn, t);
+    EnableMenuItem(NULL, NegCoilBtn, t);
+    EnableMenuItem(NULL, SetCoilBtn, t);
+    EnableMenuItem(NULL, ResetCoilBtn, t);
+    EnableMenuItem(NULL, AddBtn, t);
+    EnableMenuItem(NULL, SubBtn, t);
+    EnableMenuItem(NULL, MulBtn, t);
+    EnableMenuItem(NULL, DivBtn, t);
 
     t = canInsertOther ? MF_ENABLED : MF_GRAYED;
     EnableMenuItem(InstructionMenu, InsertTonMenu, t);
@@ -625,6 +660,12 @@ void SetMenusEnabled(BOOL canNegate, BOOL canNormal, BOOL canResetOnly,
     EnableMenuItem(InstructionMenu, InsertUartSendMenu, t);
     EnableMenuItem(InstructionMenu, InsertUartRecvMenu, t);
     EnableMenuItem(InstructionMenu, InsertFmtdStrMenu, t);
+
+    //Disable respective tool items
+    EnableMenuItem(NULL, TonBtn, t);
+    EnableMenuItem(NULL, TofBtn, t);
+    EnableMenuItem(NULL, CtuBtn, t);
+    EnableMenuItem(NULL, CtdBtn, t);
 }
 
 //-----------------------------------------------------------------------------

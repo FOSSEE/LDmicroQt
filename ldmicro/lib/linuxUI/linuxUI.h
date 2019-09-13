@@ -130,6 +130,22 @@
 #define LTGRAY_BRUSH   0x00000020L
 #define DKGRAY_BRUSH   0x00000040L
 
+#define ADD_ICON        ":/AddIcon"
+#define SUB_ICON        ":/SubIcon"
+#define MUL_ICON        ":/MulIcon"
+#define DIV_ICON        ":/DivIcon"
+#define CTU_ICON        ":/CTUIcon"
+#define CTD_ICON        ":/CTDIcon"
+#define TON_ICON        ":/TONIcon"
+#define TOF_ICON        ":/TOFIcon"
+#define RES_ICON        ":/ResIcon"
+#define CONT_ICON       ":/Contact"
+#define NEG_CONT_ICON   ":/NegContact"
+#define COIL_ICON       ":/Coil"
+#define NEG_COIL_ICON   ":/NegCoil"
+#define SET_COIL_ICON   ":/SetCoil"
+#define RESET_COIL_ICON ":/ResetCoil"
+
 extern const COLORREF BLACK_BR;
 extern const COLORREF WHITE_BR;
 extern const COLORREF GRAY_BR;

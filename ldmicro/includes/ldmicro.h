@@ -103,6 +103,11 @@ typedef signed long SDWORD;
 #define MNU_MAKE_SET_ONLY       0x44
 #define MNU_MAKE_RESET_ONLY     0x45
 #define MNU_INSERT_PWL          0x46
+#define MNU_INSERT_CONTACTS_N   0x47
+#define MNU_INSERT_COIL_N       0x48
+#define MNU_INSERT_COIL_S       0x49
+#define MNU_INSERT_COIL_R       0x4a
+
 
 #define MNU_MCU_SETTINGS        0x50
 #define MNU_PROCESSOR_0         0xa0
@@ -179,7 +184,9 @@ extern QAction* InsertPwlMenu;
 
 extern QAction* McuSettingsMenu;
 extern QAction* ProcessorMenuItems[NUM_SUPPORTED_MCUS+1];
-extern HMENU MicroControllerMenu;
+extern HMENU    MicroControllerMenu;
+extern HMENU    ArithmeticMenu;
+extern HMENU    AnalogMenu;
 
 extern QAction* SimulationModeMenu;
 extern QAction* StartSimulationMenu;
@@ -489,7 +496,7 @@ typedef struct PlcProgramTag {
 
 // offset from the top left of the window at which we start drawing, in pixels
 #define X_PADDING    35
-#define Y_PADDING    14
+#define Y_PADDING    24
 
 typedef class PlcCursorTag{
     int left;
@@ -497,6 +504,8 @@ typedef class PlcCursorTag{
     int width;
     int height;
 } PlcCursor;
+
+extern QToolBar* EasyAccessTool;
 
 //-----------------------------------------------
 // The syntax highlighting style colours; a structure for the palette.
@@ -632,6 +641,9 @@ extern int IoListTop;
 extern UINT IoListHeight;
 extern HMENU ScrollWindow;
 
+// toolbar.cpp
+void CreateToolBar(void);
+
 // draw.cpp
 int ProgCountWidestRow(void);
 int CountHeightOfElement(int which, void *elem);
@@ -695,7 +707,11 @@ extern BOOL CanInsertComment;
 // circuit.cpp
 void AddTimer(int which);
 void AddCoil(void);
+void AddCoilNeg(void);
+void AddCoilRes(void);
+void AddCoilSet(void);
 void AddContact(void);
+void AddContactNeg(void);
 void AddEmpty(int which);
 void AddMove(void);
 void AddMath(int which);

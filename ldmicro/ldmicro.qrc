@@ -1,5 +1,20 @@
 <!DOCTYPE RCC><RCC version="1.0">
     <qresource prefix="/">
         <file alias="ldmicro.ico">ldmicro.ico</file>  
+        <file alias="AddIcon">icons/toolbox/Add.png</file>
+        <file alias="SubIcon">icons/toolbox/Sub.png</file>
+        <file alias="MulIcon">icons/toolbox/Multiply.png</file>
+        <file alias="DivIcon">icons/toolbox/Div.png</file>
+        <file alias="CTUIcon">icons/toolbox/CountUp.png</file>
+        <file alias="CTDIcon">icons/toolbox/CountDown.png</file>
+        <file alias="TONIcon">icons/toolbox/OnTimer.png</file>
+        <file alias="TOFIcon">icons/toolbox/OffTimer.png</file>
+        <file alias="ResIcon">icons/toolbox/Reset.png</file>
+        <file alias="Contact">icons/toolbox/NormalContact.png</file>
+        <file alias="NegContact">icons/toolbox/NegatedContact.png</file>
+        <file alias="Coil">icons/toolbox/NormalCoil.png</file>
+        <file alias="NegCoil">icons/toolbox/NegatedCoil.png</file>
+        <file alias="SetCoil">icons/toolbox/SetOnlyCoil.png</file>
+        <file alias="ResetCoil">icons/toolbox/ResetOnlyCoil.png</file>
     </qresource>
 </RCC>

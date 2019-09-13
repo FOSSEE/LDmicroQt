@@ -891,21 +891,21 @@ cmp:
     switch(leaf->selectedState) {
         case SELECTED_LEFT:
             Cursor.setLeft(x0 + FONT_WIDTH - 4 - xadj);
-            Cursor.setTop(y0 - FONT_HEIGHT/2);
+            Cursor.setTop(y0 - FONT_HEIGHT/2 - 10);
             Cursor.setWidth(2);
             Cursor.setHeight(POS_HEIGHT*FONT_HEIGHT);
             break;
 
         case SELECTED_RIGHT:
             Cursor.setLeft(x0 + (POS_WIDTH-1)*FONT_WIDTH - 5);
-            Cursor.setTop(y0 - FONT_HEIGHT/2);
+            Cursor.setTop(y0 - FONT_HEIGHT/2 - 10);
             Cursor.setWidth(2);
             Cursor.setHeight(POS_HEIGHT*FONT_HEIGHT);
             break;
 
         case SELECTED_ABOVE:
             Cursor.setLeft(x0 + FONT_WIDTH/2 - xadj);
-            Cursor.setTop(y0 - 2);
+            Cursor.setTop(y0 - 10);
             Cursor.setWidth((POS_WIDTH-2)*FONT_WIDTH + xadj);
             Cursor.setHeight(2);
             break;
@@ -913,7 +913,7 @@ cmp:
         case SELECTED_BELOW:
             Cursor.setLeft(x0 + FONT_WIDTH/2 - xadj);
             Cursor.setTop(y0 + (POS_HEIGHT-1)*FONT_HEIGHT +
-                FONT_HEIGHT/2 - 2);
+                FONT_HEIGHT/2 - 10);
             Cursor.setWidth((POS_WIDTH-2)*(FONT_WIDTH) + xadj);
             Cursor.setHeight(2);
             break;

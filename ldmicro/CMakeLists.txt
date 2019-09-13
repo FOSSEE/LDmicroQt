@@ -2,10 +2,11 @@ cmake_minimum_required(VERSION 2.6)
 
 project(LDMicro)
 
-## Version control
-    set (LDMicro_VERSION_MAJOR 2)
-    set (LDMicro_VERSION_MINOR 2)
-    set (LDMicro_VERSION_PATCH 0)
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/includes/ldmicroVC.h" VersionRead)
+
+string(REGEX MATCH "LDMicro_VERSION_MAJOR ([0-9]*)" LDMicro_VERSION_MAJOR ${VersionRead})
+string(REGEX MATCH "LDMicro_VERSION_MINOR ([0-9]*)" LDMicro_VERSION_MINOR ${VersionRead})
+string(REGEX MATCH "LDMicro_VERSION_PATCH ([0-9]*)" LDMicro_VERSION_PATCH ${VersionRead})
 
 macro(use_cxx14)
 
@@ -157,6 +158,7 @@ endif()
                             draw.cpp
                             schematic.cpp
                             helpdialog.cpp
+                            toolbar.cpp
                             ${OBJDIR}/helptext.cpp
                             maincontrols.cpp
                             ldmicro.cpp)

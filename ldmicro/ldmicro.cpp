@@ -362,10 +362,25 @@ static void ProcessMenu(int code)
             CHANGING_PROGRAM(AddContact());
             break;
 
+        case MNU_INSERT_CONTACTS_N:
+            CHANGING_PROGRAM(AddContactNeg());
+            break;
+
         case MNU_INSERT_COIL:
             CHANGING_PROGRAM(AddCoil());
             break;
 
+        case MNU_INSERT_COIL_N:
+            CHANGING_PROGRAM(AddCoilNeg());
+            break;
+
+        case MNU_INSERT_COIL_S:
+            CHANGING_PROGRAM(AddCoilSet());
+            break;
+
+        case MNU_INSERT_COIL_R:
+            CHANGING_PROGRAM(AddCoilRes());
+            break;
         case MNU_INSERT_TON:
             CHANGING_PROGRAM(AddTimer(ELEM_TON));
             break;
@@ -1022,6 +1037,7 @@ int main(int argc, char** argv)
     app.setWindowIcon(*MWIcon);
     //Icon for main window
     MainWindow->setWindowIcon(*MWIcon);
+    CreateToolBar();
     MakeMainWindowMenus();
     MakeDialogBoxClass();
     InitForDrawing();

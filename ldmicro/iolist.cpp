@@ -60,7 +60,7 @@ static BOOL AnalogSliderCancel;
 
 //Slider procedures to display slider values at realtime
 // and to close slider window on release
-void AnalogSliderProc(int Value);
+void AnalogSliderProc(int Value, char* name);
 void AnalogSliderRelProc(char* name);
 void ListView_RedrawItems(HLIST list, int min, int max);
 
@@ -449,13 +449,14 @@ void ShowAnalogSliderPopup(char *name)
 
     AnalogSliderLabel = new QLabel();
     char str[5];
-                sprintf(str, "%d",currentVal);
+    sprintf(str, "%d",currentVal);
     AnalogSliderLabel->setText(str);
-    // AnalogSliderTrackbar->setTracking(FALSE);
     AnalogSliderLayout->addWidget(AnalogSliderTrackbar);
     AnalogSliderLayout->addWidget(AnalogSliderLabel);
     QObject::connect(AnalogSliderTrackbar,
-        &QSlider::valueChanged,AnalogSliderProc);
+        &QSlider::valueChanged,
+        std::bind(AnalogSliderProc, std::placeholders::_1, name)
+        );
     QObject::connect(AnalogSliderTrackbar,
         &QSlider::sliderReleased,
         std::bind(AnalogSliderRelProc, name)
@@ -469,10 +470,7 @@ void ShowAnalogSliderPopup(char *name)
 
 void AnalogSliderRelProc(char* name)
 {
-    SWORD v = AnalogSliderTrackbar->value();
     AnalogSliderMain->hide();
-    SetAdcShadow(name, v);
-    SimulateOneCycle(TRUE);
 }
 
 void ListView_RedrawItems(HLIST list, int min, int max)
@@ -498,11 +496,15 @@ void ListView_RedrawItems(HLIST list, int min, int max)
     }
 
 }
-void AnalogSliderProc(int Value)
+void AnalogSliderProc(int Value, char* name)
 {
     char str[5];
                 sprintf(str, "%d", Value);
     AnalogSliderLabel->setText(str);
+    SWORD v = AnalogSliderTrackbar->value();
+    // AnalogSliderMain->hide();
+    SetAdcShadow(name, v);
+    SimulateOneCycle(TRUE);
 }
 
 static void MakeControls()

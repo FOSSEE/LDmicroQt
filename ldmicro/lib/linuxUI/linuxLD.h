@@ -7,6 +7,7 @@
 #include <math.h>
 #include <algorithm>
 #include <QAction>
+#include <QToolBar>
 #include <QTreeWidget>
 #include <QSplitter>
 #include <Qt>
@@ -25,8 +26,8 @@
 #define HEAP_ZERO_MEMORY 0x00000008
 
 /// Image loading flags
-#define IMAGE_ICON 1
-#define LDMICRO_ICON ":/ldmicro.ico"
+#define IMAGE_ICON      1
+#define LDMICRO_ICON    ":/ldmicro.ico"
 
 /// Typedefs
 //typedef int64_t __int64;
