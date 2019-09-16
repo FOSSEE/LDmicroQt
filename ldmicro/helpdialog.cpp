@@ -27,6 +27,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include "ldmicroVC.h"
 //#include <commctrl.h>
 //#include <richedit.h>
 
@@ -59,13 +60,19 @@ static char *AboutText[] = {
 "You should have received a copy of the GNU General Public License along",
 "with this program. If not, see <http://www.gnu.org/licenses/>.",
 "",
-"The source code for LDmicro is available at",
+"The source code for LDmicroQt is available at",
+"",
+"    https://github.com/FOSSEE/LDmicroQt",
+"",
+"The original LDmicro source code is available at",
 "",
 "    http://cq.cx/ladder.pl",
 "",
 "Copyright 2005-2010 Jonathan Westhues",
-"Release 2.2, built " __TIME__ " " __DATE__ ".",
+"Release " LDMicro_VERSION_MAJOR "." LDMicro_VERSION_MINOR
+", built " __TIME__ " " __DATE__ ".",
 "",
+"Email: user info, at host fossee.in",
 "Email: user jwesthues, at host cq.cx",
 "",
 NULL

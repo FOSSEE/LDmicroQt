@@ -36,7 +36,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "linuxLD.h"
-#include "ldmicroVC.h"
+// #include "ldmicroVC.h"
 
 // 4000 ICON "ldmicro.ico"
 

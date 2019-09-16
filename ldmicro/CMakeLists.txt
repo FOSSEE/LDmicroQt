@@ -2,11 +2,10 @@ cmake_minimum_required(VERSION 2.6)
 
 project(LDMicro)
 
-file(READ "${CMAKE_CURRENT_SOURCE_DIR}/includes/ldmicroVC.h" VersionRead)
-
-string(REGEX MATCH "LDMicro_VERSION_MAJOR ([0-9]*)" LDMicro_VERSION_MAJOR ${VersionRead})
-string(REGEX MATCH "LDMicro_VERSION_MINOR ([0-9]*)" LDMicro_VERSION_MINOR ${VersionRead})
-string(REGEX MATCH "LDMicro_VERSION_PATCH ([0-9]*)" LDMicro_VERSION_PATCH ${VersionRead})
+#set version here. This version is updated to ldmicroVC.h
+set(LDMicro_VERSION_MAJOR 2)
+set(LDMicro_VERSION_MINOR 3)
+set(LDMicro_VERSION_PATCH 0)
 
 macro(use_cxx14)
 
@@ -207,6 +206,9 @@ endif()
     set(CPACK_PACKAGE_VERSION_MAJOR ${LDMicro_VERSION_MAJOR})
     set(CPACK_PACKAGE_VERSION_MINOR ${LDMicro_VERSION_MINOR})
     set(CPACK_PACKAGE_VERSION_PATCH ${LDMicro_VERSION_PATCH})
+
+    set (CPACK_DEBIAN_FILE_NAME
+        "LDmicro_Qt-${LDMicro_VERSION_MAJOR}.${LDMicro_VERSION_MINOR}.${LDMicro_VERSION_PATCH}-${RELEASE_CODENAME}.deb")
     
     set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
     set(CPACK_PACKAGE_DESCRIPTION "Ladder Logic editor, simulator and compiler for 8 bit microcontrollers")

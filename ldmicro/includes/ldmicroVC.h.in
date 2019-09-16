@@ -1,3 +1,8 @@
 /// version control
-#define LDMicro_VERSION_MAJOR @LDMicro_VERSION_MAJOR@
-#define LDMicro_VERSION_MINOR @LDMicro_VERSION_MINOR@
+#ifndef __LDMICRO_VC_
+#define __LDMICRO_VC_
+
+#define LDMicro_VERSION_MAJOR "@LDMicro_VERSION_MAJOR@"
+#define LDMicro_VERSION_MINOR "@LDMicro_VERSION_MINOR@"
+
+#endif
