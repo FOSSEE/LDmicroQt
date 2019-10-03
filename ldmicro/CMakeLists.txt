@@ -168,7 +168,7 @@ endif()
     
     ## Build main LDMicro executable
     add_executable (ldmicro ${COMPILE_CPP_SOURCES} ldmicro.qrc)
-    #add_dependencies(ldmicro LDMicro_SCRIPT_GENERATED_FILES)
+    add_dependencies(ldmicro LDMicro_SCRIPT_GENERATED_FILES)
     target_link_libraries (ldmicro LinuxUI)
     target_link_libraries (ldmicro FreezeLD)
     target_link_libraries(ldmicro ${Qt5Widgets_LIBRARIES})
