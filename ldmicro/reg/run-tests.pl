@@ -12,7 +12,7 @@ for $test (<tests/*.ld>) {
 
     unlink $output;
 
-    $cmd = "../build/LDMicro /c $test $output";
+    $cmd = "../build/ldmicro /c $test $output";
     system $cmd;
     $c++;
 }

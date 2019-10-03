@@ -1,12 +1,12 @@
 [Desktop Entry]
-Version=2.2
+Version=2.3
 Terminal=false
 Icon=ldmicro
 Type=Application
 Categories=Education;Development;Electronics;
-Exec=LDMicro
+Exec=ldmicro
 MimeType=application/x-ldmicro-ld;
-Name=LDMicro
+Name=ldmicro
 GenericName=PLC Ladder CAD
 Comment=Ladder Logic editor, simulator and compiler for 8 bit microcontrollers
-X-Desktop-File-Install-Version=2.2
+X-Desktop-File-Install-Version=2.3

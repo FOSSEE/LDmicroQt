@@ -5,7 +5,7 @@ project(LDMicro)
 #set version here. This version is updated to ldmicroVC.h
 set(LDMicro_VERSION_MAJOR 2)
 set(LDMicro_VERSION_MINOR 3)
-set(LDMicro_VERSION_PATCH 0)
+set(LDMicro_VERSION_PATCH 1)
 
 macro(use_cxx14)
 
@@ -167,13 +167,13 @@ endif()
     target_link_libraries (ldinterpret LinuxUI)
     
     ## Build main LDMicro executable
-    add_executable (LDMicro ${COMPILE_CPP_SOURCES} ldmicro.qrc)
-    add_dependencies(LDMicro LDMicro_SCRIPT_GENERATED_FILES)
-    target_link_libraries (LDMicro LinuxUI)
-    target_link_libraries (LDMicro FreezeLD)
-    target_link_libraries(LDMicro ${Qt5Widgets_LIBRARIES})
-    target_link_libraries(LDMicro ${Qt5Core_LIBRARIES})
-    target_link_libraries(LDMicro ${Qt5Gui_LIBRARIES})
+    add_executable (ldmicro ${COMPILE_CPP_SOURCES} ldmicro.qrc)
+    #add_dependencies(ldmicro LDMicro_SCRIPT_GENERATED_FILES)
+    target_link_libraries (ldmicro LinuxUI)
+    target_link_libraries (ldmicro FreezeLD)
+    target_link_libraries(ldmicro ${Qt5Widgets_LIBRARIES})
+    target_link_libraries(ldmicro ${Qt5Core_LIBRARIES})
+    target_link_libraries(ldmicro ${Qt5Gui_LIBRARIES})
 
     # Package Creation
 
@@ -198,7 +198,7 @@ endif()
         DESTINATION share/applications
         COMPONENT resources
         )
-    install( TARGETS LDMicro
+    install( TARGETS ldmicro
     DESTINATION bin
     )
     ##Debian package creation
@@ -207,8 +207,10 @@ endif()
     set(CPACK_PACKAGE_VERSION_MINOR ${LDMicro_VERSION_MINOR})
     set(CPACK_PACKAGE_VERSION_PATCH ${LDMicro_VERSION_PATCH})
 
-    set (CPACK_DEBIAN_FILE_NAME
-        "LDmicro_Qt-${LDMicro_VERSION_MAJOR}.${LDMicro_VERSION_MINOR}.${LDMicro_VERSION_PATCH}-${RELEASE_CODENAME}.deb")
+    string(CONCAT CPACK_PACKAGE_FILE_NAME
+        "LDmicro_Qt-${CPACK_PACKAGE_VERSION_MAJOR}."
+        "${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}"
+        "-Linux-${RELEASE_CODENAME}")
     
     set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
     set(CPACK_PACKAGE_DESCRIPTION "Ladder Logic editor, simulator and compiler for 8 bit microcontrollers")
@@ -220,7 +222,7 @@ endif()
     ## Add tests
     MESSAGE( STATUS "Adding tests.." )
     add_custom_command(
-        TARGET LDMicro
+        TARGET ldmicro
         POST_BUILD
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/reg
         COMMAND perl run-tests.pl)
