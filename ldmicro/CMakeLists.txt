@@ -5,7 +5,7 @@ project(LDMicro)
 #set version here. This version is updated to ldmicroVC.h
 set(LDMicro_VERSION_MAJOR 2)
 set(LDMicro_VERSION_MINOR 3)
-set(LDMicro_VERSION_PATCH 1)
+set(LDMicro_VERSION_PATCH 2)
 
 macro(use_cxx14)
 
