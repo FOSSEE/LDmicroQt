@@ -294,9 +294,12 @@ void ProgramChanged(void)
 }
 
 #define CHANGING_PROGRAM(x) { \
+        if(!InSimulationMode) \
+        { \
         UndoRemember(); \
         x; \
         ProgramChanged();\
+        } \
     }
 
 //-----------------------------------------------------------------------------

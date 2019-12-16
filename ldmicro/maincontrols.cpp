@@ -662,6 +662,8 @@ void SetMenusEnabled(BOOL canNegate, BOOL canNormal, BOOL canResetOnly,
     EnableMenuItem(InstructionMenu, InsertFmtdStrMenu, t);
 
     //Disable respective tool items
+    EnableMenuItem(NULL, ContactBtn, t);
+    EnableMenuItem(NULL, NegContactBtn, t);
     EnableMenuItem(NULL, TonBtn, t);
     EnableMenuItem(NULL, TofBtn, t);
     EnableMenuItem(NULL, CtuBtn, t);
@@ -702,6 +704,22 @@ void ToggleSimulationMode(void)
 
         CheckMenuItem(SimulateMenu, SimulationModeMenu, MF_CHECKED);
 
+        // Disable our easy-access toolbox
+        EnableMenuItem(NULL, ContactBtn, MF_GRAYED);
+        EnableMenuItem(NULL, NegContactBtn, MF_GRAYED);
+        EnableMenuItem(NULL, CoilBtn, MF_GRAYED);
+        EnableMenuItem(NULL, NegCoilBtn, MF_GRAYED);
+        EnableMenuItem(NULL, SetCoilBtn, MF_GRAYED);
+        EnableMenuItem(NULL, ResetCoilBtn, MF_GRAYED);
+        EnableMenuItem(NULL, AddBtn, MF_GRAYED);
+        EnableMenuItem(NULL, SubBtn, MF_GRAYED);
+        EnableMenuItem(NULL, MulBtn, MF_GRAYED);
+        EnableMenuItem(NULL, DivBtn, MF_GRAYED);
+        EnableMenuItem(NULL, TonBtn, MF_GRAYED);
+        EnableMenuItem(NULL, TofBtn, MF_GRAYED);
+        EnableMenuItem(NULL, CtuBtn, MF_GRAYED);
+        EnableMenuItem(NULL, CtdBtn, MF_GRAYED);
+
         ClearSimulationData(); // simulation.cpp, ldmicro.h
         // Recheck InSimulationMode, because there could have been a Compile
         // error, which would have kicked us out of simulation mode.
@@ -727,6 +745,9 @@ void ToggleSimulationMode(void)
         EnableMenuItem(TopMenu, Settings, MF_ENABLED);
         EnableMenuItem(TopMenu, InstructionMenu, MF_ENABLED);
         EnableMenuItem(TopMenu, Compile, MF_ENABLED);
+
+        //Enable our Easy-access Toolbar
+        WhatCanWeDoFromCursorAndTopology();
 
         CheckMenuItem(SimulateMenu, SimulationModeMenu, MF_UNCHECKED);
 

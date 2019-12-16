@@ -54,9 +54,9 @@ static void MakeControls(void)
 }
 
 static inline void DestroyWindow(){
-    delete CommentDialog;
     delete CommentTextbox;
     delete CommentGrid;
+    delete CommentDialog;
     ProgramChanged();
 }
 
@@ -76,7 +76,6 @@ void ShowCommentDialog(char *comment)
             strncpy(comment,
                 CommentTextbox->text().toStdString().c_str(),
                 MAX_COMMENT_LEN -1);
-            
         }
         break;
         case QDialog::Rejected:

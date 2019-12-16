@@ -37,8 +37,8 @@ typedef signed long SDWORD;
 // #define FREEZE_SUBKEY "LDMicro"
 
 // Size of the font that we will use to draw the ladder diagrams, in pixels
-#define FONT_WIDTH   7
-#define FONT_HEIGHT 14
+#define FONT_WIDTH   8
+#define FONT_HEIGHT 16
 
 //-----------------------------------------------
 // Constants for the GUI. We have drop-down menus, a listview for the I/Os,

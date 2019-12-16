@@ -110,8 +110,10 @@ BOOL BlinkCursor(BOOL kill = FALSE)
     if (PREV_x != c.left() || PREV_y != c.top() ||
         PREV_w != c.width() || PREV_h != c.height())
     {
+        scrollbar->setFrameRect(c);
         CursorObject->setGeometry(c);
         CursorObject->setVisible(TRUE);
+        scrollbar->ensureWidgetVisible(CursorObject);
         PREV_x = c.left();
         PREV_y = c.top();
         PREV_w = c.width();
@@ -319,7 +321,6 @@ void PaintWidget::paintEvent(QPaintEvent *event)
         cy += thisHeight;
         cy += POS_HEIGHT;
     }
-    // printf("Endrung:%d\n", cy);
     QSize DWSize = this->size();
     int newHeight = ((cy + (POS_HEIGHT/2)) * FONT_HEIGHT + Y_PADDING + 50);
     if(DWSize.height() + POS_HEIGHT < newHeight)
@@ -394,7 +395,7 @@ static void SetSyntaxHighlightingColours(void)
 
             RGB(0, 0, 0),           // simBg
             RGB(130, 130, 130),     // simRungNum
-            RGB(100, 130, 130),     // simOff
+            RGB(170, 200, 200),     // simOff
             RGB(255, 150, 150),     // simOn
 
             RGB(255, 150, 150),     // simBusLeft

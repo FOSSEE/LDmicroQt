@@ -53,21 +53,7 @@ void CreateToolBar()
 	DivIco = new QIcon(DIV_ICON);
 	CtuIco = new QIcon(CTU_ICON);
 	CtdIco = new QIcon(CTD_ICON);
-	/*ContactBtn = new QAction(*ContactIco, "C-NO");
-	NegContactBtn = new QAction(*NegContactIco, "C-NC");
-	CoilBtn = new QAction(*CoilIco, "L-NO");
-	NegCoilBtn = new QAction(*NegCoilIco, "L-NC");
-	SetCoilBtn = new QAction(*SetCoilIco, "L-SO");
-	ResetCoilBtn = new QAction(*ResetCoilIco, "L-RO");
-	TonBtn = new QAction(*TonIco, "TON");
-	TofBtn = new QAction(*TofIco, "TOF");
-	RtoBtn = new QAction(*RtoIco, "RTO");
-	AddBtn = new QAction(*AddIco, "Add");
-	SubBtn = new QAction(*SubIco, "Sub");
-	MulBtn = new QAction(*MulIco, "Mul");
-	DivBtn = new QAction(*DivIco, "Div");
-	CtuBtn = new QAction(*CtuIco, "CTU");
-	CtdBtn = new QAction(*CtdIco, "CTD");*/
+
 	EasyAccessTool = new QToolBar();
 	EasyAccessTool->addSeparator();
 	ContactBtn = EasyAccessTool->addAction(*ContactIco, "Normal Contact");

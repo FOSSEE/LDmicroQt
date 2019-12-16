@@ -85,10 +85,12 @@ static inline void DestroyWindow (){
     delete DestTextbox;
     delete IndexTextbox;
     delete CountTextbox;
-    delete AsStringCheckbox;
+    if(WasAsString)
+        delete AsStringCheckbox;
     delete FixedControlGrid;
     delete LutGrid;
     delete ButtonBox;
+    delete LutDialog;
     ProgramChanged();
 }
 
@@ -107,11 +109,8 @@ static void MakeFixedControls(BOOL forPwl)
     Labels[2] = new QLabel(forPwl ? _("Points:") : _("Count:"));
 
     DestTextbox = new QLineEdit();
-    // gtk_entry_set_max_length (GTK_ENTRY (DestTextbox), 0);
     IndexTextbox = new QLineEdit();
-    // gtk_entry_set_max_length (GTK_ENTRY (IndexTextbox), 0);
     CountTextbox = new QLineEdit();
-    // gtk_entry_set_max_length (GTK_ENTRY (CountTextbox), 0);
     DestTextbox->setValidator(
         new QRegExpValidator(
             QRegExp("[a-zA-Z0-9_]+")));
@@ -144,8 +143,11 @@ static void MakeFixedControls(BOOL forPwl)
     LutGrid->addWidget(ButtonBox,0,1);
     QObject::connect(ButtonBox, SIGNAL(accepted()), LutDialog, SLOT(accept()));
     QObject::connect(ButtonBox, SIGNAL(rejected()), LutDialog, SLOT(reject()));
-    QObject::connect(AsStringCheckbox,
-        &QCheckBox::stateChanged, CheckBoxFunction);
+    if (!forPwl)
+    {
+        QObject::connect(AsStringCheckbox,
+            &QCheckBox::stateChanged, CheckBoxFunction);
+    }
     QObject::connect(CountTextbox, &QLineEdit::textChanged,CountFunction);
 }
 
@@ -420,17 +422,11 @@ void CountFunction(QString text)
 // ShowLookUpTableDialog function to improve performance in Qt
 void StringFunction(QString text)
 {
-    // printf("StringFunction called \n");
     char* scratch = (char*)text.toStdString().c_str();
-            // SendMessage(StringTextbox, WM_GETTEXT, (WPARAM)sizeof(scratch),
-            //     (LPARAM)scratch);
             if(strcmp(scratch, PrevTableAsString)!=0) {
                 if(StringToValuesCache(scratch, &ControlCount)) {
                     strcpy(PrevTableAsString, scratch);
                 } else {
-                    // Too long; put back the old one
-                    // SendMessage(StringTextbox, WM_SETTEXT, 0,
-                    //     (LPARAM)PrevTableAsString);
                     StringTextbox->setText(PrevTableAsString);
                 }
             }

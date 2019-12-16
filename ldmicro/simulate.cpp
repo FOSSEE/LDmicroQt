@@ -722,8 +722,6 @@ void SimulateOneCycle(BOOL forceRefresh)
     if(NeedRedraw || SimulateRedrawAfterNextCycle || forceRefresh) {
         InvalidateRect(DrawWindow, NULL, FALSE);
         RefreshControlsToSettings();
-        // gtk_widget_queue_draw(DrawWindow);
-        // ListView_RedrawItems(IoList, 0, Prog.io.count - 1);
     }
 
     SimulateRedrawAfterNextCycle = FALSE;
@@ -854,8 +852,6 @@ void ShowUartSimulationWindow(void)
 
     UartSimulationWindow = CreateWindowClient("UART Simulation (Terminal)",
         TerminalX, TerminalY, TerminalW, TerminalH, MainWindow);
-    // UartSimulationWindow->setWindowTitle("UART Simulation (Terminal)");
-    /// remove close button
     UartSimulationWindow->setWindowFlags(Qt::Window
         | Qt::WindowMinimizeButtonHint |
         Qt::WindowStaysOnTopHint);
