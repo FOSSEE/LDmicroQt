@@ -23,7 +23,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QDialogButtonBox>
-#include <QRegExpValidator>
+#include <QRegularExpressionValidator>
 #include <QCheckBox>
 #include <QSlider>
 // #include <QtGui>

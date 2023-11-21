@@ -26,15 +26,18 @@
 //-----------------------------------------------------------------------------
 #include "linuxUI.h"
 //#include <commctrl.h>
+#include <qapplication.h>
 #include <stdio.h>
 #include<iostream>
 #include <stdlib.h>
 #include <limits.h>
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+#include <QDesktopWidget>
+#endif
 
 #include "ldmicro.h"
 #include "intcode.h"
 #include "freezeLD.h"
-#include <QDesktopWidget>
 
 static struct {
     char name[MAX_NAME_LEN];
@@ -845,7 +848,12 @@ void ShowUartSimulationWindow(void)
     if(TerminalW > 800) TerminalW = 100;
     if(TerminalH > 800) TerminalH = 100;
 
-    QRect r = QApplication::desktop()->screenGeometry();
+    QRect r =
+    #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        QApplication::desktop()->screenGeometry();
+    #else
+        QGuiApplication::primaryScreen()->geometry();
+    #endif
  
     if(TerminalX >= (DWORD)(r.width() - 10)) TerminalX = 100;
     if(TerminalY >= (DWORD)(r.height() - 10)) TerminalY = 100;

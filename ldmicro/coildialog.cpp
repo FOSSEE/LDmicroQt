@@ -111,7 +111,7 @@ void ShowCoilDialog(BOOL *negated, BOOL *setOnly, BOOL *resetOnly, char *name)
     // CoilDialog->setFixedSize(359,115);
     MakeControls();
     NameTextbox->setValidator(
-        new QRegExpValidator(QRegExp("[a-zA-Z0-9_]+")));
+        new QRegularExpressionValidator(QRegularExpression(QStringLiteral("[a-zA-Z0-9_]+"))));
 
     if(name[0] == 'R') {
         SourceInternalRelayRadio->setChecked(TRUE);

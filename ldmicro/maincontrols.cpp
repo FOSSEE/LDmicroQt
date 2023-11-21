@@ -30,6 +30,7 @@
 #include <stdlib.h>
 #include <QKeySequence>
 #include <QStatusBar>
+#include <QActionGroup>
 #include "toolbar.h"
 #include "ldmicro.h"
 

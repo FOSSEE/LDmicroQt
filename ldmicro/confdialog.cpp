@@ -23,6 +23,7 @@
 // Jonathan Westhues, Nov 2004
 //-----------------------------------------------------------------------------
 #include <linuxUI.h>
+#include <qregularexpression.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
@@ -64,14 +65,14 @@ static void MakeControls(void)
     CrystalTextbox = new QLineEdit();
     BaudTextbox = new QLineEdit();
     CycleTextbox->setValidator(
-                new QRegExpValidator(
-                    QRegExp("[0-9]+")));
+                new QRegularExpressionValidator(
+                    QRegularExpression(QStringLiteral("[0-9]+"))));
     CrystalTextbox->setValidator(
-                new QRegExpValidator(
-                    QRegExp("[0-9]+")));
+                new QRegularExpressionValidator(
+                    QRegularExpression(QStringLiteral("[0-9]+"))));
     BaudTextbox->setValidator(
-                new QRegExpValidator(
-                    QRegExp("[0-9]+")));
+                new QRegularExpressionValidator(
+                    QRegularExpression(QStringLiteral("[0-9]+"))));
 
     if(!UartFunctionUsed()) {   
         BaudTextbox->setEnabled(FALSE);

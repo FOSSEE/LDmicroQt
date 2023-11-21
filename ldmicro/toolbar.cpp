@@ -110,6 +110,6 @@ void ToolBarHandler()
 	QObject::connect(SubBtn, SIGNAL(triggered()), CommandMapper, SLOT(map()));
 	QObject::connect(MulBtn, SIGNAL(triggered()), CommandMapper, SLOT(map()));
 	QObject::connect(DivBtn, SIGNAL(triggered()), CommandMapper, SLOT(map()));
-	QObject::connect (CommandMapper, SIGNAL(mapped(int)),
+	QObject::connect (CommandMapper, SIGNAL(mappedInt(int)),
         &MenuHandle, SLOT(LD_WM_Command_call(int))) ;
 }
