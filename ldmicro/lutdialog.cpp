@@ -112,14 +112,14 @@ static void MakeFixedControls(BOOL forPwl)
     IndexTextbox = new QLineEdit();
     CountTextbox = new QLineEdit();
     DestTextbox->setValidator(
-        new QRegExpValidator(
-            QRegExp("[a-zA-Z0-9_]+")));
+        new QRegularExpressionValidator(
+                    QRegularExpression(QStringLiteral("[a-zA-Z0-9_]+"))));
     IndexTextbox->setValidator(
-        new QRegExpValidator(
-            QRegExp("[a-zA-Z0-9_]+")));
+        new QRegularExpressionValidator(
+                    QRegularExpression(QStringLiteral("[a-zA-Z0-9_]+"))));
     CountTextbox->setValidator(
-        new QRegExpValidator(
-            QRegExp("[0-9]+")));
+        new QRegularExpressionValidator(
+                    QRegularExpression(QStringLiteral("[0-9]+"))));
 
     if(!forPwl) {
         AsStringCheckbox = new QCheckBox(
@@ -256,8 +256,8 @@ static void MakeLutControls(BOOL asString, int counts, BOOL forPwl)
             ValuesTextbox[i] = new QLineEdit();
             ValuesTextbox[i]->setMaximumWidth(80);
             ValuesTextbox[i]->setValidator(
-                new QRegExpValidator(
-                    QRegExp("-?[0-9]+")));
+                new QRegularExpressionValidator(
+                    QRegularExpression(QStringLiteral("-?[0-9]+"))));
             NiceFont(ValuesTextbox[i]);
             ValuesTextbox[i]->setText(buf);
             LutControlGrid->addWidget(ValuesTextbox[i], x, y + 1);

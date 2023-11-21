@@ -9,3 +9,5 @@
 /ldmicro/includes/ldlogo.h
 LDMicro-linux-Workspace.code-workspace
 ldmicro/reg/t.pl
+/build/
+.cache/

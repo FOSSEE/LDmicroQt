@@ -116,15 +116,15 @@ BOOL GetOpenFileName(OPENFILENAME *ofn)
         QStandardPaths::locate(QStandardPaths::HomeLocation,".",
             QStandardPaths::LocateDirectory),
         strFilter.c_str());
-    if(filename == NULL)
+    if(filename == "")
     {
-        return FALSE;
+        return false;
     }
     
         strcpy(ofn->lpstrFile,filename.toStdString().c_str());
         // printf("FileName:%s",ofn->lpstrFile);
 
-    return TRUE;
+    return true;
 }
 
 
@@ -249,7 +249,7 @@ HFONT CreateFont(int nHeight, int nWidth, int nOrientation, int fnWeight,
 void SetBkColor(HWID widget, HCRDC hcr, COLORREF bkCol)
 {
     QPalette pal = widget->palette();
-    pal.setColor(QPalette::Background, bkCol);
+    pal.setColor(QPalette::Window, bkCol);
     widget->setPalette(pal);
 }
 
@@ -313,7 +313,7 @@ UINT SetTimer(HWID hWid, UINT  nIDEvent, UINT uElapse, UINT TimerID)
             TimerID = hWid->startTimer(uElapse);
             CursorObject = new QGroupBox(hWid);
             QPalette pal = CursorObject->palette();
-            pal.setColor(QPalette::Background, Qt::white);
+            pal.setColor(QPalette::Window, Qt::white);
             CursorObject->setAutoFillBackground(true);
             CursorObject->setPalette(pal);
             CursorObject->setGeometry(0,0,2,20);

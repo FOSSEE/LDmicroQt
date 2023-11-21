@@ -144,12 +144,12 @@ BOOL ShowSimpleDialog(char *title, int boxes, char **labels, DWORD numOnlyMask,
 
         if(numOnlyMask & (1 << i)) {
             Textboxes[i]->setValidator(
-        new QRegExpValidator(QRegExp("-?[0-9]+[.]?[0-9]+")));
+        new QRegularExpressionValidator(QRegularExpression(QStringLiteral("-?[0-9]+[.]?[0-9]+"))));
         }
         if(alnumOnlyMask & (1 << i)) {
             Textboxes[i]->setValidator(
-                new QRegExpValidator(
-                    QRegExp("[a-zA-Z0-9_'-]+")));
+                new QRegularExpressionValidator(
+                    QRegularExpression(QStringLiteral("[a-zA-Z0-9_'-]+"))));
         }
     }
     Textboxes[0]->setFocus();
